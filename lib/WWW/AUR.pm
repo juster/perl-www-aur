@@ -7,12 +7,10 @@ use LWP::Simple qw();
 use JSON        qw();
 use Carp        qw();
 
-our $VERSION = '0.01';
-
-my $AUR_BASEURI   = 'http://aur.archlinux.org';
-my $AUR_PKGFMT    = $AUR_BASEURI . '/packages/%s/%s.tar.gz';
-my $AUR_PBFMT     = $AUR_BASEURI . '/packages/%s/%s/PKGBUILD';
-my $AUR_USERAGENT = "WWW::AUR/v$VERSION";
+our $VERSION   = '0.01';
+our $USERAGENT = "WWW::AUR/v$VERSION";
+our $BASEPATH  = '/tmp/WWW-AUR';
+our $BASEURI   = 'http://aur.archlinux.org';
 
 my %_IS_AUR_FIELD = map { ( $_ => 1 ) } qw/ basepath buildpath pkgpath /;
 sub new
@@ -25,7 +23,7 @@ sub new
             unless $_IS_AUR_FIELD{ $key };
     }
 
-    $params{ basepath } ||= '/tmp/WWW-AUR';
+    $params{ basepath } ||= $BASEPATH;
 
     return bless \%params, $class
 }
@@ -39,7 +37,7 @@ sub _aur_rpc_url
     Carp::croak( "$method is not a valid AUR RPC method" )
         unless $_IS_RPC_METHOD{ $method };
 
-    return "${AUR_BASEURI}/rpc.php?type=${method}&arg=${arg}";
+    return "${BASEURI}/rpc.php?type=${method}&arg=${arg}";
 }
 
 my %_RENAME_FOR = ( 'Description' => 'desc',
