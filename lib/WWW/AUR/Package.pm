@@ -11,9 +11,14 @@ use WWW::AUR       qw();
 use Memoize        qw(memoize);
 use Carp           qw();
 
+##############################################################################
+# CONSTANTS
+#-----------------------------------------------------------------------------
+
 my $AUR_PKGFMT    = "$WWW::AUR::BASEURI/packages/%s/%s.tar.gz";
 my $AUR_PBFMT     = "$WWW::AUR::BASEURI/packages/%s/%s/PKGBUILD";
 
+#---CONSTRUCTOR---
 sub new
 {
     my $class = shift;
@@ -44,18 +49,21 @@ sub new
     bless \%obj, $class;
 }
 
+#---OBJECT METHOD---
 sub info
 {
     my ($self) = @_;
     return %{ $self->{info} };
 }
 
+#---PRIVATE METHOD---
 sub _download_url
 {
     my ($self) = @_;
     return sprintf $AUR_PKGFMT, $self->{name}, $self->{name};
 }
 
+#---OBJECT METHOD---
 sub download_size
 {
     my ($self) = @_;
@@ -68,6 +76,7 @@ sub download_size
 }
 memoize( 'download_size' );
 
+#---OBJECT METHOD---
 sub download
 {
     my ($self, $usercb) = @_;
@@ -111,12 +120,14 @@ sub download
     return $pkgpath;
 }
 
+#---OBJECT METHOD---
 sub srcpkg_path
 {
     my ($self) = @_;
     return $self->{srcpkg_path};
 }
 
+#---OBJECT METHOD---
 sub extract
 {
     my ($self) = @_;
@@ -134,6 +145,7 @@ sub extract
     return $self->{srcpkg_dir} = $srcpkg_dir;
 }
 
+#---OBJECT METHOD---
 sub srcpkg_dir
 {
     my ($self) = @_;
@@ -176,6 +188,7 @@ sub _unquote_bash
     return ( $elem, $bashtext );
 }
 
+#---HELPER FUNCTION---
 sub _pkgbuild_fields
 {
     my ($pbtext) = @_;
