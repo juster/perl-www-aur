@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 use LWP::UserAgent qw();
+use Text::Balanced qw(extract_delimited extract_bracketed);
 use File::Path     qw(make_path);
 use File::Spec     qw();
 use WWW::AUR       qw();
@@ -137,6 +138,72 @@ sub srcpkg_dir
 {
     my ($self) = @_;
     return $self->{srcpkg_dir};
+}
+
+#---HELPER FUNCTION---
+sub _unquote_bash
+{
+    my ($bashtext) = @_;
+    my $elem;
+
+    # Extract the values of a bash array...
+    if ( $bashtext =~ s/ \A [(] ([^)]*) [)] (.*) \z /$1/xms ) {
+        my ( $arrtext, @result );
+
+        ( $arrtext, $bashtext ) = ( $1, $2 );
+        while ( length $arrtext ) {
+            ( $elem, $arrtext ) = _unquote_bash( $arrtext );
+            $arrtext =~ s/ \A \s+ //xms;
+            push @result, $elem;
+        }
+
+        return ( \@result, $bashtext );
+    }
+
+    # Single quoted strings cannot escape the quote (')...
+    if ( $bashtext =~ / \A ' (.+?) ' (.*) \z /xms ) {
+        ( $elem, $bashtext ) = ( $1, $2 );
+    }
+    # Double quoted strings can...
+    elsif ( substr $bashtext, 0, 1 eq q{"} ) {
+        ( $elem, $bashtext ) = extract_delimited( $bashtext, q{"} );
+    }
+    # Otherwise regular words are treated as one element...
+    else {
+        ( $elem, $bashtext ) = $bashtext =~ / \A (\S+) (.+) \z /xms;
+    }
+
+    return ( $elem, $bashtext );
+}
+
+sub _pkgbuild_fields
+{
+    my ($pbtext) = @_;
+
+    my %fields;
+    while ( $pbtext =~ / ^ (\w+) = /xmsg ) { 
+        my $name = $1;
+        my $value;
+
+        # printf STDERR "DEBUG: \$name = $name -- pos = %d\n", pos $pbtext;
+        # printf STDERR "DEBUG: %s\n", substr $pbtext, 0, 70;
+        $pbtext = substr $pbtext, pos $pbtext;
+        ( $value, $pbtext ) = _unquote_bash( $pbtext );
+        # print STDERR "DEBUG: \$value = $value\n";
+
+        $fields{ $name } = $value;
+    }
+
+    return %fields;
+}
+
+#---OBJECT METHOD---
+sub _parse_pkgbuild
+{
+    my ($self, $pbtext) = @_;
+
+    my %pbfields = _pkgbuild_fields( $pbtext );
+    return $self->{pkgbuild} = \%pbfields;
 }
 
 1;
