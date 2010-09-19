@@ -11,3 +11,5 @@ cover_db
 pod2htm*.tmp
 WWW-AUR-*
 t/tmp
+*~
+MYMETA.yml
