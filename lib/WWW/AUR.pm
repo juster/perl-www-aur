@@ -84,7 +84,7 @@ sub info
 
 sub search
 {
-    my (undef, $query) = @_;
+    my ($self, $query) = @_;
 
     my $regexp;
     if ( $query =~ /\^/ || $query =~ /\$/ ) {
@@ -105,10 +105,17 @@ sub search
         Carp::croak "Remote error: $data->{results}";
     }
 
+    my %params;
+    if ( eval { $self->isa( 'WWW::AUR' ) } ) {
+        for my $key ( qw/ basepath dlpath extpath destpath / ) {
+            $params{ $key } = $self->{ $key };
+        }
+    }
+
     require WWW::AUR::Package;
     my @results = map {
         my $info = _rpc_pretty_pkginfo( $_ );
-        WWW::AUR::Package->new( $info->{name}, info => $info );
+        WWW::AUR::Package->new( $info->{name}, info => $info, %params );
     } @{ $data->{results} };
     return \@results;
 }
