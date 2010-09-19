@@ -42,9 +42,41 @@ pbtext_ok( $pbtext,
              'options'  => [ '!emptydirs' ],
              'makedepends' => [ 'perl-test-pod-coverage',
                                 'perl-test-pod' ],
-             'depends'  => [ 'perl' ],
+             'depends'  => [ { 'pkg' => 'perl',
+                               'cmp' => '>',
+                               'ver' => '0',
+                               'str' => 'perl', } ],
              'provides' => [ 'perl-cpanplus-dist-arch' ],
+             'conflicts' => [], # an empty list is stored
              'url'      => 'http://github.com/juster/perl-cpanplus-dist-arch',
              'md5sums'  => [],
              'source'   => [] },
            'perl-cpanplus-dist-arch-git PKGBUILD parses' );
+
+$pbtext = <<'END_PKGBUILD';
+pkgname='depends-string-test'
+depends=('dep>=0.01' 'dep-two')
+conflicts=('conflict<999.999' 'conflict-two')
+END_PKGBUILD
+
+my %parsed = WWW::AUR::Package::_pkgbuild_fields( $pbtext );
+is_deeply( $parsed{depends}, [ { 'pkg' => 'dep',
+                                 'ver' => '0.01',
+                                 'cmp' => '>=',
+                                 'str' => 'dep>=0.01',
+                                },
+                               { 'pkg' => 'dep-two',
+                                 'ver' => '0',
+                                 'cmp' => '>',
+                                 'str' => 'dep-two',
+                                }]);
+is_deeply( $parsed{conflicts}, [ { 'pkg' => 'conflict',
+                                   'ver' => '999.999',
+                                   'cmp' => '<',
+                                   'str' => 'conflict<999.999',
+                                  },
+                                 { 'pkg' => 'conflict-two',
+                                   'ver' => '0',
+                                   'cmp' => '>',
+                                   'str' => 'conflict-two',
+                                  }]);

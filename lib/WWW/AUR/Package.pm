@@ -189,11 +189,27 @@ sub _unquote_bash
 }
 
 #---HELPER FUNCTION---
+sub _depstr_to_hash
+{
+    my ($depstr) = @_;
+    my ($pkg, $cmp, $ver) = $depstr =~ / \A ([\w_-]+)
+                                         (?: ([=<>]=?)
+                                             ([\w._-]+) )? \z/xms;
+
+    Carp::croak "Failed to parse depend string: $_" unless $pkg;
+
+    $cmp ||= q{>};
+    $ver ||= 0;
+    return +{ 'pkg' => $pkg, 'cmp' => $cmp,
+              'ver' => $ver, 'str' => $depstr };
+}
+
+#---HELPER FUNCTION---
 sub _pkgbuild_fields
 {
     my ($pbtext) = @_;
 
-    my %fields;
+    my %pbfields;
     while ( $pbtext =~ / ^ (\w+) = /xmsg ) { 
         my $name = $1;
         my $value;
@@ -204,10 +220,19 @@ sub _pkgbuild_fields
         ( $value, $pbtext ) = _unquote_bash( $pbtext );
         # print STDERR "DEBUG: \$value = $value\n";
 
-        $fields{ $name } = $value;
+        $pbfields{ $name } = $value;
     }
 
-    return %fields;
+    for my $depkey ( qw/ depends conflicts / ) {
+        my @fixed;
+
+        @fixed = map { _depstr_to_hash($_) } @{$pbfields{ $depkey }}
+            if $pbfields{ $depkey };
+
+        $pbfields{ $depkey } = \@fixed;
+    }
+    
+    return %pbfields;
 }
 
 #---OBJECT METHOD---
