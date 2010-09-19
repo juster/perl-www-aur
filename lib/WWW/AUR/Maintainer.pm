@@ -13,10 +13,10 @@ sub new
 {
     my $class = shift;
 
-    my ($name) = @_
+    my ($name, %params) = @_
         or Carp::croak 'You must supply a maintainer name as argument';
 
-    my $packages = _find_owned_packages( $name )
+    my $packages = _find_owned_packages( $name, \%params )
         or Carp::croak qq{Could not find a maintainer named "$name"};
 
     bless { name => $name, packages => $packages }, $class;
@@ -25,7 +25,7 @@ sub new
 #---HELPER FUNCTION---
 sub _find_owned_packages
 {
-    my ($name) = @_;
+    my ($name, $params_ref) = @_;
 
     my $aururl = WWW::AUR::_aur_rpc_url( 'msearch', $name );
     my $ua     = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
@@ -42,10 +42,15 @@ sub _find_owned_packages
         Carp::croak "Remote error: $json_ref->{results}";        
     }
 
+    my %pkgparams;
+    for my $key ( qw/ basepath dlpath extpath destpath / ) {
+        $pkgparams{ $key } = $params_ref->{ $key };
+    }
+
     require WWW::AUR::Package;
     my @packages = map {
         my $info = WWW::AUR::_rpc_pretty_pkginfo( $_ );
-        WWW::AUR::Package->new( $info->{name}, info => $info );
+        WWW::AUR::Package->new( $info->{name}, info => $info, %pkgparams );
     } @{ $json_ref->{results} };
 
     return \@packages;
