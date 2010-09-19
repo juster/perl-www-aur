@@ -46,12 +46,19 @@ my %_RENAME_FOR = ( 'Description' => 'desc',
                     'LocationID'  => 'location',
                     'OutOfDate'   => 'outdated',
                    );
-#---HELPER FUNCTION---
-sub _aur_rpc_keyname
-{
-    my ($key) = @_;
 
-    return $_RENAME_FOR{ $key } || lc $key;
+#---HELPER FUNCTION---
+# Purpose :Map keys to their new names...
+sub _rpc_pretty_pkginfo
+{
+    my ($info_ref) = @_;
+
+    my %result;
+    for my $key ( keys %$info_ref ) {
+        my $newkey         = $_RENAME_FOR{ $key } || lc $key;
+        $result{ $newkey } = $info_ref->{ $key };
+    }
+    return \%result;
 }
 
 #---CLASS/OBJECT METHOD---
@@ -72,12 +79,7 @@ sub info
         Carp::croak "Remote error: $resp->{results}";
     }
 
-    # Map keys to their new names before we return the results...
-    my %result;
-    for my $key ( keys %{ $resp->{results} } ) {
-        $result{ _aur_rpc_keyname( $key ) } = $resp->{results}{$key};
-    }
-    return %result;
+    return %{ _rpc_pretty_pkginfo( $resp->{results} ) };
 }
 
 sub search
@@ -106,10 +108,7 @@ sub search
 
     require WWW::AUR::Package;
     @results = map {
-        my $info = {};
-        for my $key ( keys %$_ ) {
-            $info->{ _aur_rpc_keyname( $key ) } = $_->{ $key }; 
-        }
+        my $info = _rpc_pretty_pkginfo( $_ );
         WWW::AUR::Package->new( $info->{name}, info => $info );
     } @{ $data->{results} };
     return \@results;
