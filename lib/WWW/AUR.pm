@@ -82,6 +82,22 @@ sub info
     return %{ _rpc_pretty_pkginfo( $resp->{results} ) };
 }
 
+#---PRIVATE METHOD---
+# Purpose: Extract path parameters if we are an object
+sub _path_params
+{
+    my ($self) = @_;
+
+    my %params;
+    if ( eval { $self->isa( 'WWW::AUR' ) } ) {
+        for my $key ( qw/ basepath dlpath extpath destpath / ) {
+            $params{ $key } = $self->{ $key };
+        }
+    }
+
+    return %params;
+}
+
 sub search
 {
     my ($self, $query) = @_;
@@ -105,19 +121,29 @@ sub search
         Carp::croak "Remote error: $data->{results}";
     }
 
-    my %params;
-    if ( eval { $self->isa( 'WWW::AUR' ) } ) {
-        for my $key ( qw/ basepath dlpath extpath destpath / ) {
-            $params{ $key } = $self->{ $key };
-        }
-    }
-
     require WWW::AUR::Package;
-    my @results = map {
+    my %params   = $self->_path_params;
+    my @results  = map {
         my $info = _rpc_pretty_pkginfo( $_ );
         WWW::AUR::Package->new( $info->{name}, info => $info, %params );
     } @{ $data->{results} };
     return \@results;
+}
+
+sub get
+{
+    my ($self, $name) = @_;
+
+    my %params = $self->_path_params;
+    return eval { WWW::AUR::Package->new( $name, %params ) };
+}
+
+sub maintainer
+{
+    my ($self, $name) = @_;
+
+    my %params = $self->_path_params;
+    return eval { WWW::AUR::Maintainer->new( $name, %params ) };
 }
 
 1;
