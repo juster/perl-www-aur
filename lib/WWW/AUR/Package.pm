@@ -16,8 +16,14 @@ use Cwd            qw(getcwd);
 # CONSTANTS
 #-----------------------------------------------------------------------------
 
-my $AUR_PKGFMT    = "$WWW::AUR::BASEURI/packages/%s/%s.tar.gz";
-my $AUR_PBFMT     = "$WWW::AUR::BASEURI/packages/%s/%s/PKGBUILD";
+my $AUR_PKGFMT = "$WWW::AUR::BASEURI/packages/%s/%s.tar.gz";
+my $AUR_PBFMT  = "$WWW::AUR::BASEURI/packages/%s/%s/PKGBUILD";
+my $PKGURI     = "$WWW::AUR::BASEURI/packages.php";
+my $PKGGETFMT  = "$PKGURI?ID=%d";
+
+my $MAINTAINER_MATCH = qr{ <span [ ] class='f3'>
+                           Maintainer: \s+ ( [^<]+ )
+                           </span> }xms;
 
 #---CONSTRUCTOR---
 sub new
@@ -354,6 +360,34 @@ sub bin_pkg_path
 {
     my ($self) = @_;
     return $self->{builtpkg_path};
+}
+
+#---PUBLIC METHOD---
+# Purpose: Scrape the package webpage to get the maintainer's name
+sub maintainer
+{
+    my ($self) = @_;
+
+    my $uri = sprintf $PKGGETFMT, $self->{id};
+    my $ua  = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
+    my $req = $ua->get( $uri );
+
+    Carp::croak qq{Failed to load webpage for the "$self->{name}" package:\n}
+        . $req->status_line unless $req->is_success;
+
+    open my $fh, '>debug' or die "open: $!";
+    print $fh $req->content;
+    close $fh;
+
+    my ($username) = $req->content =~ /$MAINTAINER_MATCH/xms;
+    Carp::croak qq{Failed to scrape package webpage for maintainer}
+        unless $username;
+
+    # Propogate parameters to our new Maintainer object...
+    my %params = WWW::AUR::_path_params( $self );
+    my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
+
+    return $m_obj;
 }
 
 1;

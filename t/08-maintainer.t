@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-use Test::More qw(no_plan);
+use Test::More tests => 5;
 
 use WWW::AUR::Maintainer;
 
@@ -17,3 +17,8 @@ ok $found, 'found perl-cpanplus-dist-arch, owned by juster';
 
 eval { WWW::AUR::Maintainer->new( 'bkajsdlfk' ) };
 like $@, qr/\ACould not find a maintainer named "bkajsdlfk"/;
+
+my $pkg = WWW::AUR::Package->new( 'perl-alpm' );
+ok $pkg;
+my $maintainer = $pkg->maintainer;
+ok $maintainer->name eq 'juster';
