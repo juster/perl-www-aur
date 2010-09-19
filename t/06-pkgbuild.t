@@ -81,7 +81,7 @@ is_deeply( $parsed{conflicts}, [ { 'pkg' => 'conflict',
                                    'str' => 'conflict-two',
                                   }]);
 
-my $pkg      = WWW::AUR::Package->new( 'perl-alpm' );
+my $pkg      = WWW::AUR::Package->new( 'perl-alpm', basepath => 't/tmp' );
 my $pkgbuild = $pkg->pkgbuild;
 is ref $pkgbuild, 'HASH';
 is $pkgbuild->{pkgname}, 'perl-alpm';
