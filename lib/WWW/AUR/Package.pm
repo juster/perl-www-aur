@@ -10,6 +10,7 @@ use File::Spec     qw();
 use WWW::AUR       qw();
 use Memoize        qw(memoize);
 use Carp           qw();
+use Cwd            qw(getcwd);
 
 ##############################################################################
 # CONSTANTS
@@ -121,18 +122,11 @@ sub download
 }
 
 #---OBJECT METHOD---
-sub srcpkg_path
-{
-    my ($self) = @_;
-    return $self->{srcpkg_path};
-}
-
-#---OBJECT METHOD---
 sub extract
 {
     my ($self) = @_;
 
-    my $pkgpath = $self->srcpkg_path || $self->download();
+    my $pkgpath = $self->src_pkg_path || $self->download();
     my $destdir = $self->{dlpath};
 
     make_path( $destdir );
@@ -146,14 +140,21 @@ sub extract
 }
 
 #---OBJECT METHOD---
-sub srcpkg_dir
+sub src_pkg_path
+{
+    my ($self) = @_;
+    return $self->{srcpkg_path};
+}
+
+#---OBJECT METHOD---
+sub src_dir_path
 {
     my ($self) = @_;
     return $self->{srcpkg_dir};
 }
 
 #---PUBLIC METHOD---
-sub srcdir_file
+sub make_src_path
 {
     my ($self, $relpath) = @_;
     
@@ -260,7 +261,7 @@ sub _parse_pkgbuild
 sub _extracted_pkgbuild
 {
     my ($self) = @_;
-    my $pbpath = $self->srcdir_file( 'PKGBUILD' );
+    my $pbpath = $self->make_src_path( 'PKGBUILD' );
     open my $pbfile, '<', $pbpath or die "open: $!";
     my $pbtext = do { local $/; <$pbfile> };
     close $pbfile;
@@ -297,6 +298,69 @@ sub pkgbuild
                    ? $self->_extracted_pkgbuild()
                    : $self->_download_pkgbuild() );
     return $self->_parse_pkgbuild( $pbtext );
+}
+
+#---PRIVATE METHOD---
+sub _builtpkg_path
+{
+    my ($self, $pkgdest) = @_;
+    my $pkgbuild    = $self->pkgbuild;
+    my $arch        = $pkgbuild->{arch};
+
+    if ( eval { $arch->[0] eq 'any' } ) {
+        $arch = 'any';
+    }
+
+    unless ( $arch eq 'any' ) {
+        $arch = `uname -m`;
+        chomp $arch;
+    }
+
+    my $pkgfile = sprintf '%s-%s-%d-%s.pkg.tar.xz',
+        $self->{name}, $pkgbuild->{pkgver}, $pkgbuild->{pkgrel}, $arch;
+    return File::Spec->catfile( $pkgdest, $pkgfile );
+}
+
+#---PUBLIC METHOD---
+sub build
+{
+    my ($self, %params) = @_;
+
+    return $self->{builtpkg_path}
+        if $self->{builtpkg_path};
+
+    my $srcdir  = $self->src_dir_path || $self->extract();
+    my $pkgdest = $params{ pkgdest };
+    if ( $pkgdest ) { $pkgdest =~ s{/+\z}{};        }
+    else            { $pkgdest = $self->{destpath}; }
+    $pkgdest = File::Spec->rel2abs( $pkgdest );
+
+    make_path( $pkgdest );
+    my $oldcwd = getcwd();
+    chdir $srcdir;
+
+    my $cmd = 'makepkg -f';
+    $cmd = "$params{prefix} $cmd" if $params{prefix};
+    $cmd = "$cmd $params{args}"   if $params{args};
+
+    if ( $params{quiet} ) { $cmd .= ' 2>&1 >/dev/null'; }
+ 
+    local $ENV{PKGDEST} = $pkgdest;
+    ( system $cmd ) == 0
+        or Carp::croak "makepkg failed to run: $?";
+
+    chdir $oldcwd;
+
+    my $built_path = $self->_builtpkg_path( $pkgdest );
+    Carp::croak 'makepkg succeeded but the package file is missing'
+        unless -f $built_path;
+    return $self->{builtpkg_path} = $built_path;
+}
+
+sub bin_pkg_path
+{
+    my ($self) = @_;
+    return $self->{builtpkg_path};
 }
 
 1;
