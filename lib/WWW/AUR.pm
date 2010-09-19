@@ -48,7 +48,7 @@ my %_RENAME_FOR = ( 'Description' => 'desc',
                    );
 
 #---HELPER FUNCTION---
-# Purpose :Map keys to their new names...
+# Purpose: Map JSON package info keys to their new names...
 sub _rpc_pretty_pkginfo
 {
     my ($info_ref) = @_;
@@ -100,14 +100,13 @@ sub search
     my $data    = $json->decode( $jsontxt )
         or die 'Failed to decode the search AUR json request';
 
-    my @results;
     if ( $data->{type} eq 'error' ) {
         return [] if $data->{results} eq 'No results found';
         Carp::croak "Remote error: $data->{results}";
     }
 
     require WWW::AUR::Package;
-    @results = map {
+    my @results = map {
         my $info = _rpc_pretty_pkginfo( $_ );
         WWW::AUR::Package->new( $info->{name}, info => $info );
     } @{ $data->{results} };
