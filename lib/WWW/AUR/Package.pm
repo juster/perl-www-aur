@@ -50,13 +50,6 @@ sub new
     bless \%obj, $class;
 }
 
-#---OBJECT METHOD---
-sub info
-{
-    my ($self) = @_;
-    return %{ $self->{info} };
-}
-
 #---PRIVATE METHOD---
 sub _download_url
 {

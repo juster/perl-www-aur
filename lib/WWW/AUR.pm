@@ -104,12 +104,13 @@ sub search
         Carp::croak "Remote error: $data->{results}";
     }
 
+    require WWW::AUR::Package;
     @results = map {
-        my $package = {};
+        my $info = {};
         for my $key ( keys %$_ ) {
-            $package->{ _aur_rpc_keyname( $key ) } = $_->{ $key }; 
+            $info->{ _aur_rpc_keyname( $key ) } = $_->{ $key }; 
         }
-        $package;
+        WWW::AUR::Package->new( $info->{name}, info => $info );
     } @{ $data->{results} };
     return \@results;
 }
