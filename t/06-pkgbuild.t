@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-use Test::More qw(no_plan);
+use Test::More tests => 8;
 
 use WWW::AUR::Package;
 
@@ -80,3 +80,13 @@ is_deeply( $parsed{conflicts}, [ { 'pkg' => 'conflict',
                                    'cmp' => '>',
                                    'str' => 'conflict-two',
                                   }]);
+
+my $pkg      = WWW::AUR::Package->new( 'perl-alpm' );
+my $pkgbuild = $pkg->pkgbuild;
+is ref $pkgbuild, 'HASH';
+is $pkgbuild->{pkgname}, 'perl-alpm';
+
+ok $pkg->extract;
+$pkgbuild = $pkg->pkgbuild;
+is ref $pkgbuild, 'HASH';
+is $pkgbuild->{pkgname}, 'perl-alpm';

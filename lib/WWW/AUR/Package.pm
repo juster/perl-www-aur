@@ -152,6 +152,18 @@ sub srcpkg_dir
     return $self->{srcpkg_dir};
 }
 
+#---PUBLIC METHOD---
+sub srcdir_file
+{
+    my ($self, $relpath) = @_;
+    
+    Carp::croak 'You must call extract() before srcdir_file()'
+        unless $self->{srcpkg_dir};
+
+    $relpath =~ s{\A/+}{};
+    return $self->{srcpkg_dir} . q{/} . $relpath;
+}
+
 #---HELPER FUNCTION---
 sub _unquote_bash
 {
@@ -235,13 +247,56 @@ sub _pkgbuild_fields
     return %pbfields;
 }
 
-#---OBJECT METHOD---
+#---PRIVATE METHOD---
 sub _parse_pkgbuild
 {
     my ($self, $pbtext) = @_;
 
     my %pbfields = _pkgbuild_fields( $pbtext );
     return $self->{pkgbuild} = \%pbfields;
+}
+
+#---PRIVATE METHOD---
+sub _extracted_pkgbuild
+{
+    my ($self) = @_;
+    my $pbpath = $self->srcdir_file( 'PKGBUILD' );
+    open my $pbfile, '<', $pbpath or die "open: $!";
+    my $pbtext = do { local $/; <$pbfile> };
+    close $pbfile;
+    return $pbtext;
+}
+
+#---PRIVATE METHOD---
+# Purpose: Download the package's PKGBUILD without saving it to a file.
+sub _download_pkgbuild
+{
+    my ($self) = @_;
+
+    my $name = $self->{name};
+    my $pkgbuild_url = sprintf $AUR_PBFMT, $name, $name;
+
+    my $ua   = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
+    my $resp = $ua->get( $pkgbuild_url );
+    
+    Carp::croak "Failed to download ${name}'s PKGBUILD: "
+        . $resp->status_line() unless $resp->is_success();
+
+    return $resp->content();
+}
+
+#---PUBLIC METHOD---
+sub pkgbuild
+{
+    my ($self) = @_;
+
+    return $self->{pkgbuild}
+        if $self->{pkgbuild};
+    
+    my $pbtext = ( $self->{srcpkg_dir}
+                   ? $self->_extracted_pkgbuild()
+                   : $self->_download_pkgbuild() );
+    return $self->_parse_pkgbuild( $pbtext );
 }
 
 1;
