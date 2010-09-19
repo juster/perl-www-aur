@@ -56,6 +56,12 @@ sub _find_owned_packages
     return \@packages;
 }
 
+sub name
+{
+    my ($self) = @_;
+    return $self->{name};
+}
+
 #---PUBLIC METHOD---
 sub packages
 {
