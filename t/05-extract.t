@@ -15,4 +15,4 @@ ok $pkg;
 
 my $srcpkgdir = $pkg->extract();
 ok $srcpkgdir, 'extract appears to succeed';
-is $srcpkgdir, $pkg->srcpkg_dir(), 'extract() result matches srcpkg_dir()';
+is $srcpkgdir, $pkg->src_dir_path(), 'extract() result matches src_dir_path()';
