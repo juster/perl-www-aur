@@ -65,6 +65,41 @@ WWW::AUR - API for the Archlinux User Repository website.
 
   use WWW::AUR;
   my $aur = WWW::AUR->new( basepath => '/tmp/aurtmp' );
+  my $pkg = $aur->find( 'perl-www-aur' );
+  
+  # download_size() can check the file size without downloading...
+  printf "Preparing to download source package file (%d bytes).\n",
+      $pkg->download_size;
+  
+  $pkg->download;
+  printf "Downloaded pkgfile to %s.\n", $pkg->src_pkg_path;
+  
+  $pkg->extract;  # calls download() if you didn't
+  printf "Extracted pkgfile to %s.\n", $pkg->src_dir_path;
+  
+  $pkg->build;    # calls extract()  if you didn't
+  printf "Built binary pkgfile and saved to %s.\n", $pkg->bin_pkg_path;
+  
+  my $who = $pkg->maintainer();
+  printf "%s is maintained by %s.\n", $pkg->{name}, $who->name;
+  
+  print "As well as the following packages:\n";
+  for my $otherpkg ( $who->packages ) {
+      printf " - %s\n", $otherpkg->name;
+  }
+  
+  my $login = $aur->login( 'myname', 'mypassword' )
+      or die "Failed to login as myname, what a shock";
+  
+  $login->vote( 'my-favorite-package' );
+  $login->disown( 'i-hate-this-package' );
+  $login->upload( '../a-new-package-file.src.pkg.tar.gz' );
+  
+  print "Iterating through ALL packages...\n";
+  my $iter = $aur->packages;
+  while ( my $pkgobj = $iter->next ) {
+      print "$pkgobj->{name} -- $pkgobj->{version}\n";
+  }
 
 =head1 DESCRIPTION
 
