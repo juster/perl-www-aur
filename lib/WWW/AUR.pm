@@ -13,34 +13,13 @@ use WWW::AUR::RPC;
 
 our $VERSION   = $VERSION;
 
-my %_IS_AUR_FIELD = map { ( $_ => 1 ) } qw/ basepath buildpath pkgpath /;
 sub new
 {
     my $class  = shift;
     my %params = @_;
-
-    for my $key ( keys %params ) {
-        Carp::croak "Invalid constructor parameter: $key"
-            unless $_IS_AUR_FIELD{ $key };
-    }
-
     $params{ basepath } ||= $BASEPATH;
 
     return bless \%params, $class
-}
-
-#---PRIVATE METHOD---
-# Purpose: Extract path parameters if we are an object
-sub _path_params
-{
-    my ($self) = @_;
-
-    my %params;
-    for my $key ( qw/ basepath dlpath extpath destpath / ) {
-        $params{ $key } = $self->{ $key };
-    }
-
-    return %params;
 }
 
 sub search
@@ -49,7 +28,7 @@ sub search
     my $found_ref = WWW::AUR::RPC::search( $query );
 
     require WWW::AUR::Package;
-    my %params = $self->_path_params;
+    my %params = path_params( %$self );
     return [ map {
         WWW::AUR::Package->new( $_->{name}, info => $_, %params );
     } @$found_ref ];
@@ -62,7 +41,7 @@ sub _def_wrapper_method
     no strict 'refs';
     *{ "WWW::AUR::$name" } = sub {
         my $self        = shift;
-        my %path_params = $self->_path_params;
+        my %path_params = path_params( %$self );
 
         eval "require $class";
         return eval { $class->new( @_, %path_params ) };
@@ -83,6 +62,9 @@ __END__
 WWW::AUR - API for the Archlinux User Repository website.
 
 =head1 SYNOPSIS
+
+  use WWW::AUR;
+  my $aur = WWW::AUR->new( basepath => '/tmp/aurtmp' );
 
 =head1 DESCRIPTION
 

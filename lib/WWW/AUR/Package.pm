@@ -126,7 +126,7 @@ sub extract
     my ($self) = @_;
 
     my $pkgpath = $self->src_pkg_path || $self->download();
-    my $destdir = $self->{dlpath};
+    my $destdir = $self->{extpath};
 
     make_path( $destdir );
 
@@ -362,20 +362,6 @@ sub bin_pkg_path
     return $self->{builtpkg_path};
 }
 
-#---PRIVATE METHOD---
-# Purpose: Extract path parameters if we are an object
-sub _path_params
-{
-    my ($self) = @_;
-
-    my %params;
-    for my $key ( qw/ basepath dlpath extpath destpath / ) {
-        $params{ $key } = $self->{ $key };
-    }
-
-    return %params;
-}
-
 #---PUBLIC METHOD---
 # Purpose: Scrape the package webpage to get the maintainer's name
 sub maintainer
@@ -399,7 +385,7 @@ sub maintainer
     return undef if $username eq 'None';
 
     # Propogate parameters to our new Maintainer object...
-    my %params = $self->_path_params;
+    my %params = path_params( %$self );
     my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
 
     return $m_obj;

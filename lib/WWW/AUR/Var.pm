@@ -7,12 +7,29 @@ use parent qw(Exporter);
 use Carp   qw();
 
 our @EXPORT = qw($VERSION $BASEPATH $BASEURI $USERAGENT
-                 category_index category_name);;
+                 category_index category_name is_path_param path_params);
 
 our $VERSION   = '0.01';
 our $BASEPATH  = '/tmp/WWW-AUR';
 our $BASEURI   = 'http://aur.archlinux.org';
 our $USERAGENT = "WWW::AUR/v$VERSION";
+
+my %_IS_PATH_PARAM = map { ( $_ => 1 ) }
+    qw/ basepath dlpath extpath destpath /;
+sub is_path_param
+{
+    return $_IS_PATH_PARAM{ shift };
+}
+
+sub path_params
+{
+    my %filterme = @_;
+    my %result;
+    for my $key ( grep { is_path_param( $_ ) } keys %filterme ) {
+        $result{ $key } = $filterme{ $key };
+    }
+    return %result;
+}
 
 my @_CATEGORIES = qw{ daemons devel editors emulators games gnome
                       i18n kde kernels lib modules multimedia
