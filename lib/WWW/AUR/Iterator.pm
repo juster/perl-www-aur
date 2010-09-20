@@ -49,18 +49,12 @@ sub _scrape_pkglist
     my ($self) = @_;
 
     my $uri  = _pkglist_uri( $self->{curridx} );
-    print STDERR "DEBUG uri = $uri\n";
     my $resp = $self->{useragent}->get( $uri );
     
     Carp::croak 'Failed to GET package list webpage: ' . $resp->status_line
         unless $resp->is_success;
 
-    open my $fh, '>debug' or die "open: $!";
-    print $fh $resp->content;
-    close $fh;
-
     my @packages = $resp->content =~ /$PKGENTRY_MATCH/xmsg;
-    printf STDERR "DEBUG packages length = %d\n", scalar @packages;
     return \@packages;
 }
 
