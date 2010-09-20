@@ -11,8 +11,12 @@ use WWW::AUR::Package qw();
 use WWW::AUR::Var;
 use WWW::AUR::URI;
 
-my $COOKIE_NAME   = 'AURSID';
-my $BAD_LOGIN_MSG = 'Bad username or password.';
+my $UPLOADURI      = "${BASEURI}/pkgsubmit.php";
+my $COOKIE_NAME    = 'AURSID';
+my $BAD_LOGIN_MSG  = 'Bad username or password.';
+my $PKG_EXISTS_MSG = ( 'You are not allowed to overwrite the '
+                       . '<b>.*?</b> package.' );
+my $PKG_EXISTS_ERR = 'You tried to submit a package you do not own';
 
 my $PKGOUTPUT_MATCH = qr{ <p [ ] class="pkgoutput"> ( [^<]+ ) </p> }xms;
 
@@ -120,6 +124,28 @@ my %_ACTIONS = ( 'adopt'    => 'The selected packages have been adopted.',
 
 while ( my ($name, $goodmsg) = each %_ACTIONS ) {
     _def_action_method( $name, $goodmsg );
+}
+
+sub upload
+{
+    my ($self, $pkgfile_path, $catname) = @_;
+
+    Carp::croak "Given file path ($pkgfile_path) does not exist"
+        unless -f $pkgfile_path;
+
+    my $catidx = category_index( $catname );
+    my $ua     = $self->{useragent};
+    my $resp   = $ua->post( $UPLOADURI,
+                            'Content-Type' => 'form-data',
+                            'Content'      => [ category  => $catidx,
+                                                submit    => 'Upload',
+                                                pkgsubmit => 1,
+                                                pfile     => [ $pkg_path ],
+                                               ] );
+
+    Carp::croak $PKG_EXISTS_ERR if $resp->content =~ /$PKG_EXISTS_MSG/;
+
+    return;
 }
 
 1;
