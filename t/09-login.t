@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 use WWW::AUR::Login;
 
@@ -29,4 +29,7 @@ END_MSG
     ok $login->unvote( $pkg );
     ok $login->flag( $pkg );
     ok $login->unflag( $pkg );
+
+    my @packages = $login->my_packages;
+    ok @packages > 0, 'successfully found your owned packages';
 };

@@ -7,9 +7,10 @@ use LWP::UserAgent qw();
 use HTTP::Cookies  qw();
 use Carp           qw();
 
-use WWW::AUR::Package qw();
 use WWW::AUR::Var;
 use WWW::AUR::URI;
+
+use parent qw(WWW::AUR::Maintainer);
 
 my $UPLOADURI      = "${BASEURI}/pkgsubmit.php";
 my $COOKIE_NAME    = 'AURSID';
@@ -40,7 +41,10 @@ sub new
     Carp::croak 'Failed to login to AUR: ' . $resp->status_line
         if ! $resp->is_success && $resp->code != 302;
 
-    bless { name => $name, password => $password, useragent => $ua }, $class;
+    my $self = $class->SUPER::new( $name );
+    $self->{password}  = $password;
+    $self->{useragent} = $ua;
+    return $self;
 }
 
 my %_PKG_ACTIONS = map { ( lc $_ => "do_$_" ) }
@@ -76,6 +80,8 @@ sub _pkgid
 
     if ( ! ref $pkg ) {
         return $pkg if $pkg =~ /\A\d+\z/;
+
+        require WWW::AUR::Package;
         my $pkgobj = WWW::AUR::Package->new( $pkg );
         return $pkgobj->{id};
     }
@@ -137,16 +143,20 @@ sub upload
     my $ua     = $self->{useragent};
     my $resp   = $ua->post( $UPLOADURI,
                             'Content-Type' => 'form-data',
-                            'Content'      => [ category  => $catidx,
-                                                submit    => 'Upload',
-                                                pkgsubmit => 1,
-                                                pfile     => [ $pkg_path ],
-                                               ] );
+                            'Content'      =>
+                            [ category  => $catidx,
+                              submit    => 'Upload',
+                              pkgsubmit => 1,
+                              pfile     => [ $pkgfile_path ],
+                             ] );
 
     Carp::croak $PKG_EXISTS_ERR if $resp->content =~ /$PKG_EXISTS_MSG/;
 
     return;
 }
+
+# Create a nifty alias, to match the "My Packages" AUR link...
+*my_packages = \&WWW::AUR::Maintainer::packages;
 
 1;
 
