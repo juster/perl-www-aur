@@ -20,8 +20,8 @@ my $PKGENTRY_MATCH = qr{ <tr> \s*
 
 sub new
 {
-    my $class = shift;
-    my $self  = bless { }, $class;
+    my $class  = shift;
+    my $self   = bless { @_ }, $class;
     $self->reset();
     return $self;
 }
@@ -85,7 +85,7 @@ sub next
     my ($self) = @_;
 
     my $next = $self->next_name;
-    return ( $next ? WWW::AUR::Package->new( $next ) : undef );
+    return ( $next ? WWW::AUR::Package->new( $next, %$self ) : undef );
 }
 
 1;

@@ -10,7 +10,6 @@ use Carp        qw();
 use WWW::AUR::URI;
 use WWW::AUR::Var;
 use WWW::AUR::RPC;
-use WWW::AUR::Package;
 
 our $VERSION   = $VERSION;
 
@@ -49,27 +48,31 @@ sub search
     my ($self, $query) = @_;
     my $found_ref = WWW::AUR::RPC::search( $query );
 
+    require WWW::AUR::Package;
     my %params = $self->_path_params;
     return [ map {
         WWW::AUR::Package->new( $_->{name}, info => $_, %params );
     } @$found_ref ];
 }
 
-sub find
+sub _def_wrapper_method
 {
-    my ($self, $name) = @_;
+    my ($name, $class, $param_count) = @_;
 
-    my %params = $self->_path_params;
-    return eval { WWW::AUR::Package->new( $name, %params ) };
+    no strict 'refs';
+    *{ "WWW::AUR::$name" } = sub {
+        my $self        = shift;
+        my %path_params = $self->_path_params;
+
+        eval "require $class";
+        return eval { $class->new( @_, %path_params ) };
+    };
 }
 
-sub maintainer
-{
-    my ($self, $name) = @_;
-
-    my %params = $self->_path_params;
-    return eval { WWW::AUR::Maintainer->new( $name, %params ) };
-}
+_def_wrapper_method( 'find'       => 'WWW::AUR::Package',    1 );
+_def_wrapper_method( 'maintainer' => 'WWW::AUR::Maintainer', 1 );
+_def_wrapper_method( 'packages'   => 'WWW::AUR::Iterator',   0 );
+_def_wrapper_method( 'login'      => 'WWW::AUR::Login',      2 );
 
 1;
 
