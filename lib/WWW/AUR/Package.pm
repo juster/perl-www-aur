@@ -383,6 +383,9 @@ sub maintainer
     Carp::croak qq{Failed to scrape package webpage for maintainer}
         unless $username;
 
+    # Orphaned packages don't have a maintainer...
+    return undef if $username eq 'None';
+
     # Propogate parameters to our new Maintainer object...
     my %params = WWW::AUR::_path_params( $self );
     my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
