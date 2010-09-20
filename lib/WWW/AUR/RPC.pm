@@ -29,6 +29,9 @@ sub _rpc_pretty_pkginfo
         my $newkey         = $_RENAME_FOR{ $key } || lc $key;
         $result{ $newkey } = $info_ref->{ $key };
     }
+
+    $result{category} = category_name( $result{category} );
+
     return \%result;
 }
 

@@ -16,4 +16,6 @@ for my $field ( @VALID_FIELDS ) {
     ok exists $info{ $field }, qq{info contains "$field" field};
 }
 
+is $info{category}, 'system', 'category was converted to its name';
+
 done_testing();
