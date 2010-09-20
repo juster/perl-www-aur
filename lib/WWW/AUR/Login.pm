@@ -55,7 +55,7 @@ sub _do_pkg_action
 
     my $id   = _pkgid( $pkg );
     my $ua   = $self->{useragent};
-    my $resp = $ua->post( pkg_uri( $id ),
+    my $resp = $ua->post( pkg_uri( ID => $id ),
                           [ "IDs[$id]" => 1, 'ID' => $id,
                             $action    => 1, @params ] );
 
