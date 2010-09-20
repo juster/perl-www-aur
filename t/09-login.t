@@ -17,7 +17,7 @@ END_MSG
 
     unless ( $user && $passwd && $pkg ) {
         diag $msg;
-        skip $msg, 1;
+        skip $msg, 7;
     }
 
     my $login = WWW::AUR::Login->new( $user, $passwd );
