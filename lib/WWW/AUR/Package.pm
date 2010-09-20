@@ -375,10 +375,6 @@ sub maintainer
     Carp::croak qq{Failed to load webpage for the "$self->{name}" package:\n}
         . $req->status_line unless $req->is_success;
 
-    open my $fh, '>debug' or die "open: $!";
-    print $fh $req->content;
-    close $fh;
-
     my ($username) = $req->content =~ /$MAINTAINER_MATCH/xms;
     Carp::croak qq{Failed to scrape package webpage for maintainer}
         unless $username;
