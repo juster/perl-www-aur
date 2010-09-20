@@ -3,10 +3,10 @@
 use warnings;
 use strict;
 use Test::More;
-use WWW::AUR;
 
-my $aur  = WWW::AUR->new;
-ok my %info = $aur->info( 'clyde-git' );
+use_ok 'WWW::AUR::RPC';
+
+ok my %info = WWW::AUR::RPC::info( 'clyde-git' );
 is $info{ name }, 'clyde-git';
 
 my @VALID_FIELDS = qw{ id name version category desc url urlpath

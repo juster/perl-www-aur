@@ -7,19 +7,17 @@ use LWP::UserAgent qw();
 use Text::Balanced qw(extract_delimited extract_bracketed);
 use File::Path     qw(make_path);
 use File::Spec     qw();
-use WWW::AUR       qw();
 use Memoize        qw(memoize);
 use Carp           qw();
 use Cwd            qw(getcwd);
 
+use WWW::AUR::Var;
+use WWW::AUR::URI;
+use WWW::AUR::RPC;
+
 ##############################################################################
 # CONSTANTS
 #-----------------------------------------------------------------------------
-
-my $AUR_PKGFMT = "$WWW::AUR::BASEURI/packages/%s/%s.tar.gz";
-my $AUR_PBFMT  = "$WWW::AUR::BASEURI/packages/%s/%s/PKGBUILD";
-my $PKGURI     = "$WWW::AUR::BASEURI/packages.php";
-my $PKGGETFMT  = "$PKGURI?ID=%d";
 
 my $MAINTAINER_MATCH = qr{ <span [ ] class='f3'>
                            Maintainer: \s+ ( [^<]+ )
@@ -36,7 +34,7 @@ sub new
 
     my %obj;
     if ( ! defined $params{info} ) {
-        %obj = eval { WWW::AUR->info( $name ) }
+        %obj = eval { WWW::AUR::RPC::info( $name ) }
             or Carp::croak( "Failed to find package: $name" );
     }
     else { %obj = %{ $params{info} }; }
@@ -44,7 +42,7 @@ sub new
     my $base = $params{basepath};
     unless ( ( $params{dlpath} && $params{extpath} && $params{destpath} )
              || $base ) {
-        $base = $WWW::AUR::BASEPATH;
+        $base = $BASEPATH;
     }
 
     $obj{ dlpath   } = $params{dlpath}   || "$base/src";
@@ -60,7 +58,8 @@ sub new
 sub _download_url
 {
     my ($self) = @_;
-    return sprintf $AUR_PKGFMT, $self->{name}, $self->{name};
+
+    return pkgfile_uri( $self->{name} );
 }
 
 #---OBJECT METHOD---
@@ -82,7 +81,8 @@ sub download
     my ($self, $usercb) = @_;
 
     my $pkgurl  = $self->_download_url();
-    my $pkgpath = "$self->{dlpath}/$self->{pkgfile}";
+    my $pkgpath = File::Spec->catfile( $self->{dlpath},
+                                       $self->{pkgfile} );
 
     make_path( $self->{dlpath} );
 
@@ -273,11 +273,11 @@ sub _download_pkgbuild
 {
     my ($self) = @_;
 
-    my $name = $self->{name};
-    my $pkgbuild_url = sprintf $AUR_PBFMT, $name, $name;
+    my $name         = $self->{name};
+    my $pkgbuild_uri = pkgbuild_uri( $name );
 
     my $ua   = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
-    my $resp = $ua->get( $pkgbuild_url );
+    my $resp = $ua->get( $pkgbuild_uri );
     
     Carp::croak "Failed to download ${name}'s PKGBUILD: "
         . $resp->status_line() unless $resp->is_success();
@@ -362,13 +362,29 @@ sub bin_pkg_path
     return $self->{builtpkg_path};
 }
 
+#---PRIVATE METHOD---
+# Purpose: Extract path parameters if we are an object
+sub _path_params
+{
+    my ($self) = @_;
+
+    my %params;
+    for my $key ( qw/ basepath dlpath extpath destpath / ) {
+        $params{ $key } = $self->{ $key };
+    }
+
+    return %params;
+}
+
 #---PUBLIC METHOD---
 # Purpose: Scrape the package webpage to get the maintainer's name
 sub maintainer
 {
     my ($self) = @_;
 
-    my $uri = sprintf $PKGGETFMT, $self->{id};
+    require WWW::AUR::Maintainer;
+
+    my $uri = pkg_uri( ID => $self->{id} );
     my $ua  = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
     my $req = $ua->get( $uri );
 
@@ -383,7 +399,7 @@ sub maintainer
     return undef if $username eq 'None';
 
     # Propogate parameters to our new Maintainer object...
-    my %params = WWW::AUR::_path_params( $self );
+    my %params = $self->_path_params;
     my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
 
     return $m_obj;

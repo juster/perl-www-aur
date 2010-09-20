@@ -7,16 +7,14 @@ use LWP::UserAgent qw();
 use HTTP::Cookies  qw();
 use Carp           qw();
 
-use WWW::AUR          qw();
 use WWW::AUR::Package qw();
+use WWW::AUR::Var;
+use WWW::AUR::URI;
 
 my $COOKIE_NAME   = 'AURSID';
 my $BAD_LOGIN_MSG = 'Bad username or password.';
-my $PKGURI        = "$WWW::AUR::BASEURI/packages.php";
 
-my $PKGOUTPUT_MATCH = qr{ <p [ ] class="pkgoutput">
-                          ( [^<]+ )
-                          </p> }xms;
+my $PKGOUTPUT_MATCH = qr{ <p [ ] class="pkgoutput"> ( [^<]+ ) </p> }xms;
 
 sub new
 {
@@ -26,9 +24,9 @@ sub new
         unless @_ >= 2;
     my ($name, $password) = @_;
 
-    my $ua   = LWP::UserAgent->new( agent      => $WWW::AUR::USERAGENT,
+    my $ua   = LWP::UserAgent->new( agent      => $USERAGENT,
                                     cookie_jar => HTTP::Cookies->new() );
-    my $resp = $ua->post( $WWW::AUR::BASEURI,
+    my $resp = $ua->post( $BASEURI,
                           [ user   => $name,
                             passwd => $password ]);
 
@@ -53,8 +51,9 @@ sub _do_pkg_action
 
     my $id   = _pkgid( $pkg );
     my $ua   = $self->{useragent};
-    my $resp = $ua->post( $PKGURI, [ "IDs[$id]" => 1, 'ID' => $id,
-                                     $action    => 1, @params ] );
+    my $resp = $ua->post( pkg_uri( $id ),
+                          [ "IDs[$id]" => 1, 'ID' => $id,
+                            $action    => 1, @params ] );
 
     Carp::croak 'Failed to send package action: ' .. $resp->status_line
         if ! $resp->is_success;

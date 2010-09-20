@@ -7,10 +7,12 @@ use LWP::Simple qw();
 use JSON        qw();
 use Carp        qw();
 
-our $VERSION   = '0.01';
-our $USERAGENT = "WWW::AUR/v$VERSION";
-our $BASEPATH  = '/tmp/WWW-AUR';
-our $BASEURI   = 'http://aur.archlinux.org';
+use WWW::AUR::URI;
+use WWW::AUR::Var;
+use WWW::AUR::RPC;
+use WWW::AUR::Package;
+
+our $VERSION   = $VERSION;
 
 my %_IS_AUR_FIELD = map { ( $_ => 1 ) } qw/ basepath buildpath pkgpath /;
 sub new
@@ -28,60 +30,6 @@ sub new
     return bless \%params, $class
 }
 
-my %_IS_RPC_METHOD = map { ( $_ => 1 ) } qw/ search info msearch /;
-#---HELPER FUNCTION---
-sub _aur_rpc_url
-{
-    my ($method, $arg) = @_;
-
-    Carp::croak( "$method is not a valid AUR RPC method" )
-        unless $_IS_RPC_METHOD{ $method };
-
-    return "${BASEURI}/rpc.php?type=${method}&arg=${arg}";
-}
-
-my %_RENAME_FOR = ( 'Description' => 'desc',
-                    'NumVotes'    => 'votes',
-                    'CategoryID'  => 'category',
-                    'LocationID'  => 'location',
-                    'OutOfDate'   => 'outdated',
-                   );
-
-#---HELPER FUNCTION---
-# Purpose: Map JSON package info keys to their new names...
-sub _rpc_pretty_pkginfo
-{
-    my ($info_ref) = @_;
-
-    my %result;
-    for my $key ( keys %$info_ref ) {
-        my $newkey         = $_RENAME_FOR{ $key } || lc $key;
-        $result{ $newkey } = $info_ref->{ $key };
-    }
-    return \%result;
-}
-
-#---CLASS/OBJECT METHOD---
-sub info
-{
-    my (undef, $name) = @_;
-
-    my $url     = _aur_rpc_url( "info", $name );
-    my $jsontxt = LWP::Simple::get( $url );
-
-    Carp::croak "Failed to call info AUR RPC" unless defined $jsontxt;
-
-    my $json = JSON->new;
-    my $resp = $json->decode( $jsontxt );
-
-    if ( $resp->{type} eq "error" ) {
-        return undef if $resp->{results} eq 'No results found';
-        Carp::croak "Remote error: $resp->{results}";
-    }
-
-    return %{ _rpc_pretty_pkginfo( $resp->{results} ) };
-}
-
 #---PRIVATE METHOD---
 # Purpose: Extract path parameters if we are an object
 sub _path_params
@@ -89,10 +37,8 @@ sub _path_params
     my ($self) = @_;
 
     my %params;
-    if ( eval { $self->isa( 'WWW::AUR' ) } ) {
-        for my $key ( qw/ basepath dlpath extpath destpath / ) {
-            $params{ $key } = $self->{ $key };
-        }
+    for my $key ( qw/ basepath dlpath extpath destpath / ) {
+        $params{ $key } = $self->{ $key };
     }
 
     return %params;
@@ -101,36 +47,15 @@ sub _path_params
 sub search
 {
     my ($self, $query) = @_;
+    my $found_ref = WWW::AUR::RPC::search( $query );
 
-    my $regexp;
-    if ( $query =~ /\^/ || $query =~ /\$/ ) {
-        $regexp = quotemeta $query;
-        $query  =~ s/\A^//;
-        $query  =~ s/\$\z//;
-    }
-
-    my $url     = _aur_rpc_url( "search", $query );
-    my $jsontxt = LWP::Simple::get( $url )
-        or Carp::croak 'Failed to search AUR using RPC';
-    my $json    = JSON->new;
-    my $data    = $json->decode( $jsontxt )
-        or die 'Failed to decode the search AUR json request';
-
-    if ( $data->{type} eq 'error' ) {
-        return [] if $data->{results} eq 'No results found';
-        Carp::croak "Remote error: $data->{results}";
-    }
-
-    require WWW::AUR::Package;
-    my %params   = $self->_path_params;
-    my @results  = map {
-        my $info = _rpc_pretty_pkginfo( $_ );
-        WWW::AUR::Package->new( $info->{name}, info => $info, %params );
-    } @{ $data->{results} };
-    return \@results;
+    my %params = $self->_path_params;
+    return [ map {
+        WWW::AUR::Package->new( $_->{name}, info => $_, %params );
+    } @$found_ref ];
 }
 
-sub get
+sub find
 {
     my ($self, $name) = @_;
 
