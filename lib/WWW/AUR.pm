@@ -3,9 +3,7 @@ package WWW::AUR;
 use warnings;
 use strict;
 
-use LWP::Simple qw();
-use JSON        qw();
-use Carp        qw();
+use Carp qw();
 
 use WWW::AUR::URI;
 use WWW::AUR::Var;
