@@ -9,7 +9,7 @@ use WWW::AUR::URI;
 use WWW::AUR::Var;
 use WWW::AUR::RPC;
 
-our $VERSION   = $VERSION;
+our $VERSION = '0.01';
 
 sub new
 {

@@ -1,0 +1,5 @@
+steps = FindVersion, ChangeVersion, DistTest, AddChangeLog, PodReadme, Commit, Tag, MakeDist, UploadCPAN
+
+AddChangeLog.files = ChangeLog
+git.tagpattern = v%v
+git.push_to = origin
