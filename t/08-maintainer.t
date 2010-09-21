@@ -16,7 +16,7 @@ for my $pkg ( $who->packages ) {
 ok $found, 'found perl-cpanplus-dist-arch, owned by juster';
 
 eval { WWW::AUR::Maintainer->new( 'bkajsdlfk' ) };
-like $@, qr/\ACould not find a maintainer named "bkajsdlfk"/;
+like $@, qr/\AMaintainer named ".*" does not exist/;
 
 my $pkg = WWW::AUR::Package->new( 'perl-alpm' );
 ok $pkg;

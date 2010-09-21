@@ -3,8 +3,7 @@ package WWW::AUR::Iterator;
 use warnings;
 use strict;
 
-use LWP::UserAgent qw();
-
+use WWW::AUR::UserAgent;
 use WWW::AUR::Package;
 use WWW::AUR::URI;
 use WWW::AUR::Var;
@@ -32,7 +31,7 @@ sub reset
     $self->{curridx}   = 0;
     $self->{finished}  = 0;
     $self->{packages}  = [];
-    $self->{useragent} = LWP::UserAgent->new( agent => $USERAGENT );
+    $self->{useragent} = WWW::AUR::UserAgent->new();
     return;
 }
 

@@ -3,14 +3,13 @@ package WWW::AUR::Package;
 use warnings;
 use strict;
 
-use LWP::UserAgent qw();
 use Text::Balanced qw(extract_delimited extract_bracketed);
 use File::Path     qw(make_path);
 use File::Spec     qw();
-use Memoize        qw(memoize);
 use Carp           qw();
 use Cwd            qw(getcwd);
 
+use WWW::AUR::UserAgent;
 use WWW::AUR::Var;
 use WWW::AUR::URI;
 use WWW::AUR::RPC;
@@ -67,13 +66,12 @@ sub download_size
 {
     my ($self) = @_;
 
-    my $ua   = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
+    my $ua   = WWW::AUR::UserAgent->new();
     my $resp = $ua->head( $self->_download_url() );
     
     return undef unless $resp->is_success;
     return $resp->header( 'content-length' );
 }
-memoize( 'download_size' );
 
 #---OBJECT METHOD---
 sub download
@@ -107,12 +105,10 @@ sub download
         };
     }
 
-    my $ua   = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
+    my $ua   = WWW::AUR::UserAgent->new();
     my $resp = $ua->get( $self->_download_url(),
                          ':content_cb' => $store_chunk );
-
     close $pkgfile or die "close: $!";
-
     Carp::croak( 'Failed to download package file:' . $resp->status_line )
         unless $resp->is_success;
 
@@ -276,7 +272,7 @@ sub _download_pkgbuild
     my $name         = $self->{name};
     my $pkgbuild_uri = pkgbuild_uri( $name );
 
-    my $ua   = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
+    my $ua   = WWW::AUR::UserAgent->new();
     my $resp = $ua->get( $pkgbuild_uri );
     
     Carp::croak "Failed to download ${name}'s PKGBUILD: "
@@ -371,7 +367,7 @@ sub maintainer
     require WWW::AUR::Maintainer;
 
     my $uri = pkg_uri( ID => $self->{id} );
-    my $ua  = LWP::UserAgent->new( agent => $WWW::AUR::USERAGENT );
+    my $ua  = WWW::AUR::UserAgent->new();
     my $req = $ua->get( $uri );
 
     Carp::croak qq{Failed to load webpage for the "$self->{name}" package:\n}

@@ -3,11 +3,11 @@ package WWW::AUR::RPC;
 use warnings;
 use strict;
 
-use LWP::UserAgent qw();
 use LWP::Simple    qw();
 use JSON           qw();
 use Carp           qw();
 
+use WWW::AUR::UserAgent;
 use WWW::AUR::URI;
 use WWW::AUR::Var;
 
@@ -67,11 +67,14 @@ sub search
         $query  =~ s/\$\z//;
     }
 
-    my $uri     = rpc_uri( "search", $query );
-    my $jsontxt = LWP::Simple::get( $uri )
-        or Carp::croak 'Failed to search AUR using RPC';
-    my $json    = JSON->new;
-    my $data    = $json->decode( $jsontxt )
+    my $uri  = rpc_uri( "search", $query );
+    my $ua   = WWW::AUR::UserAgent->new();
+    my $resp = $ua->get( $uri );
+    Carp::croak 'Failed to search AUR using RPC: ' .. $resp->status_line
+        unless $resp->is_success;
+
+    my $json = JSON->new;
+    my $data = $json->decode( $resp->content )
         or die 'Failed to decode the search AUR json request';
 
     if ( $data->{type} eq 'error' ) {
@@ -87,17 +90,16 @@ sub msearch
     my ($name) = @_;
 
     my $aururi = rpc_uri( 'msearch', $name );
-    my $ua     = LWP::UserAgent->new( agent => $USERAGENT );
+    my $ua     = WWW::AUR::UserAgent->new();
     my $resp   = $ua->get( $aururi );
-
-    Carp::croak qq{Failed to lookup maintainer with AUR RPC:\n}
+    Carp::croak qq{Failed to lookup maintainer using RPC:\n}
         . $resp->status_code unless $resp->is_success;
 
     my $json     = JSON->new;
     my $json_ref = $json->decode( $resp->content );
 
     if ( $json_ref->{type} eq 'error' ) {
-        return undef if $json_ref->{results} eq 'No results found';
+        return [] if $json_ref->{results} eq 'No results found';
         Carp::croak "Remote error: $json_ref->{results}";        
     }
 

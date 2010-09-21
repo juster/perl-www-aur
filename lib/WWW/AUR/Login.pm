@@ -3,10 +3,10 @@ package WWW::AUR::Login;
 use warnings;
 use strict;
 
-use LWP::UserAgent qw();
 use HTTP::Cookies  qw();
 use Carp           qw();
 
+use WWW::AUR::UserAgent;
 use WWW::AUR::Var;
 use WWW::AUR::URI;
 
@@ -29,8 +29,8 @@ sub new
         unless @_ >= 2;
     my ($name, $password) = @_;
 
-    my $ua   = LWP::UserAgent->new( agent      => $USERAGENT,
-                                    cookie_jar => HTTP::Cookies->new() );
+    my $ua   = WWW::AUR::UserAgent->new( agent      => $USERAGENT,
+                                         cookie_jar => HTTP::Cookies->new() );
     my $resp = $ua->post( $BASEURI,
                           [ user   => $name,
                             passwd => $password ]);

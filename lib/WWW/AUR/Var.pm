@@ -39,9 +39,7 @@ my @_CATEGORIES = qw{ daemons devel editors emulators games gnome
 sub category_name
 {
     my ($idx) = @_;
-    Carp::croak "$idx is not a valid category index"
-        unless $idx > 0 && $idx <= scalar @_CATEGORIES;
-
+    return 'undefined' unless $idx > 0 && $idx <= scalar @_CATEGORIES;
     return $_CATEGORIES[ $idx - 1 ];
 }
 
