@@ -34,7 +34,7 @@ sub search
 
 sub _def_wrapper_method
 {
-    my ($name, $class, $param_count) = @_;
+    my ($name, $class) = @_;
 
     no strict 'refs';
     *{ "WWW::AUR::$name" } = sub {
@@ -46,10 +46,10 @@ sub _def_wrapper_method
     };
 }
 
-_def_wrapper_method( 'find'       => 'WWW::AUR::Package',    1 );
-_def_wrapper_method( 'maintainer' => 'WWW::AUR::Maintainer', 1 );
-_def_wrapper_method( 'packages'   => 'WWW::AUR::Iterator',   0 );
-_def_wrapper_method( 'login'      => 'WWW::AUR::Login',      2 );
+_def_wrapper_method( 'find'       => 'WWW::AUR::Package'    );
+_def_wrapper_method( 'maintainer' => 'WWW::AUR::Maintainer' );
+_def_wrapper_method( 'packages'   => 'WWW::AUR::Iterator'   );
+_def_wrapper_method( 'login'      => 'WWW::AUR::Login'      );
 
 1;
 
