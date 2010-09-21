@@ -63,7 +63,7 @@ sub _do_pkg_action
                           [ "IDs[$id]" => 1, 'ID' => $id,
                             $action    => 1, @params ] );
 
-    Carp::croak 'Failed to send package action: ' .. $resp->status_line
+    Carp::croak 'Failed to send package action: ' . $resp->status_line
         if ! $resp->is_success;
 
     my ($pkgoutput) = $resp->content =~ /$PKGOUTPUT_MATCH/;

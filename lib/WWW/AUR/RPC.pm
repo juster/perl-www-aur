@@ -71,7 +71,7 @@ sub search
     my $uri  = rpc_uri( "search", $query );
     my $ua   = WWW::AUR::UserAgent->new();
     my $resp = $ua->get( $uri );
-    Carp::croak 'Failed to search AUR using RPC: ' .. $resp->status_line
+    Carp::croak 'Failed to search AUR using RPC: ' . $resp->status_line
         unless $resp->is_success;
 
     my $json = JSON->new;
