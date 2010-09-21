@@ -3,9 +3,8 @@ package WWW::AUR::RPC;
 use warnings;
 use strict;
 
-use LWP::Simple    qw();
-use JSON           qw();
-use Carp           qw();
+use JSON qw();
+use Carp qw();
 
 use WWW::AUR::UserAgent;
 use WWW::AUR::URI;
@@ -41,19 +40,21 @@ sub info
     my ($name) = @_;
 
     my $uri     = rpc_uri( "info", $name );
-    my $jsontxt = LWP::Simple::get( $uri );
+    my $ua      = WWW::AUR::UserAgent->new;
+    my $resp    = $ua->get( $uri );
 
-    Carp::croak "Failed to call info AUR RPC" unless defined $jsontxt;
+    Carp::croak 'Failed to call info AUR RPC: ' . $resp->status_line
+        unless $resp->is_success;
 
     my $json = JSON->new;
-    my $resp = $json->decode( $jsontxt );
+    my $data = $json->decode( $resp->content );
 
-    if ( $resp->{type} eq "error" ) {
-        return undef if $resp->{results} eq 'No results found';
-        Carp::croak "Remote error: $resp->{results}";
+    if ( $data->{type} eq "error" ) {
+        return undef if $data->{results} eq 'No results found';
+        Carp::croak "Remote error: $data->{results}";
     }
 
-    return %{ _rpc_pretty_pkginfo( $resp->{results} ) };
+    return %{ _rpc_pretty_pkginfo( $data->{results} ) };
 }
 
 sub search
