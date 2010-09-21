@@ -15,9 +15,7 @@ sub new
     my ($name, %params) = @_
         or Carp::croak 'You must supply a maintainer name as argument';
 
-    my $packages_ref = WWW::AUR::RPC::msearch( $name )
-        or Carp::croak qq{Maintainer named "$name" does not exist};
-
+    my $packages_ref = WWW::AUR::RPC::msearch( $name );
     bless { name => $name, packages => $packages_ref, %params }, $class;
 }
 

@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-use Test::More tests => 5;
+use Test::More tests => 4;
 
 use WWW::AUR::Maintainer;
 
@@ -14,9 +14,6 @@ for my $pkg ( $who->packages ) {
     if ( $pkg->{name} eq 'perl-cpanplus-dist-arch' ) { $found = 1; }
 }
 ok $found, 'found perl-cpanplus-dist-arch, owned by juster';
-
-eval { WWW::AUR::Maintainer->new( 'bkajsdlfk' ) };
-like $@, qr/\AMaintainer named ".*" does not exist/;
 
 my $pkg = WWW::AUR::Package->new( 'perl-alpm' );
 ok $pkg;
