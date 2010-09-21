@@ -18,7 +18,8 @@ my %_IS_PATH_PARAM = map { ( $_ => 1 ) }
     qw/ basepath dlpath extpath destpath /;
 sub is_path_param
 {
-    return $_IS_PATH_PARAM{ shift };
+    my ($name) = @_;
+    return $_IS_PATH_PARAM{ $name };
 }
 
 sub path_params
