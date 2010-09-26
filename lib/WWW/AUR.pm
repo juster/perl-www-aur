@@ -27,9 +27,9 @@ sub search
 
     require WWW::AUR::Package;
     my %params = path_params( %$self );
-    return [ map {
+    return map {
         WWW::AUR::Package->new( $_->{name}, info => $_, %params );
-    } @$found_ref ];
+    } @$found_ref;
 }
 
 sub _def_wrapper_method
