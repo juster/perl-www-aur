@@ -58,6 +58,18 @@ The L<WWW::AUR::Package> module also allows the module user to
 download and build source packages using I<makepkg>. Installation is
 left up to the module user and is not implemented in this module.
 
+=begin readme
+
+=head1 TESTS WARNING
+
+The automated testing (by using 'make test') can only succeed if there
+is an internet connection available. I suppose the tests would also
+fail if the AUR website is down...
+
+=end readme
+
+=for readme stop
+
 =head1 CONSTRUCTOR
 
   $OBJ = WWW::AUR->new( basepath => $BASEPATH || '/tmp/WWW-AUR',
@@ -291,6 +303,20 @@ to the L<WWW::AUR::Maintainer> object created by
 L</METHODS/maintainer>, the L<WWW::AUR::Login> object created by
 L</METHODS/login>, and the L<WWW::AUR::Iterator> object created by
 L</METHODS/packages>.
+
+=for readme continue
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<http://github.com/juster/perl-www-aur>
+
+=item * L<http://aur.archlinux.org>
+
+=item * L<makepkg(8)>
+
+=back
 
 =head1 AUTHOR
 
