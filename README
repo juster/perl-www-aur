@@ -1,55 +1,89 @@
-WWW-AUR
+NAME
+    WWW::AUR - API for the Archlinux User Repository website.
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+SYNOPSIS
+      use WWW::AUR;
+      my $aur = WWW::AUR->new( basepath => '/tmp/aurtmp' );
+      my $pkg = $aur->find( 'perl-www-aur' );
+  
+      # download_size() can check the file size without downloading...
+      printf "Preparing to download source package file (%d bytes).\n",
+          $pkg->download_size;
+  
+      $pkg->download;
+      printf "Downloaded pkgfile to %s.\n", $pkg->src_pkg_path;
+  
+      $pkg->extract;  # calls download() if you didn't
+      printf "Extracted pkgfile to %s.\n", $pkg->src_dir_path;
+  
+      $pkg->build;    # calls extract()  if you didn't
+      printf "Built binary pkgfile and saved to %s.\n", $pkg->bin_pkg_path;
+  
+      my $who = $pkg->maintainer();
+      printf "%s is maintained by %s.\n", $pkg->{name}, $who->name;
+  
+      print "As well as the following packages:\n";
+      for my $otherpkg ( $who->packages ) {
+          printf " - %s\n", $otherpkg->name;
+      }
+  
+      my $login = $aur->login( 'myname', 'mypassword' )
+          or die "Failed to login as myname, what a shock";
+  
+      $login->vote( 'my-favorite-package' );
+      $login->disown( 'i-hate-this-package' );
+      $login->upload( '../a-new-package-file.src.pkg.tar.gz' );
+  
+      print "Iterating through ALL packages...\n";
+      my $iter = $aur->packages;
+      while ( my $pkgobj = $iter->next ) {
+          print "$pkgobj->{name} -- $pkgobj->{version}\n";
+      }
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+DESCRIPTION
+    The Archlinux User Repository is a relatively simple website that houses
+    user-submitted packages for ArchLinux. These "source packages" merely
+    contain what is required to build the package, unlike Archlinux's
+    official repository which house binary packages.
 
+    This module provides an interface for the straight-forward AUR user as
+    well as for AUR author, aka package maintainers. The goal is to be able
+    to do anything with this module that you could with a web browser.
 
-INSTALLATION
+    The WWW::AUR::Package module also allows the module user to download and
+    build source packages using *makepkg*. Installation is left up to the
+    module user and is not implemented in this module.
 
-To install this module, run the following commands:
+TESTS WARNING
+    The automated testing (by using 'make test') can only succeed if there
+    is an internet connection available. I suppose the tests would also fail
+    if the AUR website is down...
 
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
+SEE ALSO
+    * http://github.com/juster/perl-www-aur
+    * http://aur.archlinux.org
+    * makepkg(8)
 
-SUPPORT AND DOCUMENTATION
+AUTHOR
+    Justin Davis, `<juster at cpan dot org>'
 
-After installing, you can find documentation for this module with the
-perldoc command.
+BUGS
+    Please report any bugs or feature requests to `bug-www-aur at
+    rt.cpan.org', or through the web interface at
+    http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-AUR. I will be
+    notified, and then you'll automatically be notified of progress on your
+    bug as I make changes.
 
-    perldoc WWW::AUR
-
-You can also look for information at:
-
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=WWW-AUR
-
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/WWW-AUR
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/WWW-AUR
-
-    Search CPAN
-        http://search.cpan.org/dist/WWW-AUR/
-
+SUPPORT
+    Send me an email at the above address if you have any questions or need
+    help.
 
 LICENSE AND COPYRIGHT
+    Copyright 2010 Justin Davis.
 
-Copyright (C) 2010 Justin Davis
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of either: the GNU General Public License as published
+    by the Free Software Foundation; or the Artistic License.
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
+    See http://dev.perl.org/licenses/ for more information.
 

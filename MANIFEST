@@ -11,6 +11,15 @@ lib/WWW/AUR/RPC.pm
 lib/WWW/AUR/Package.pm
 lib/WWW/AUR/Login.pm
 lib/WWW/AUR.pm
+lib/WWW/AUR.pod
+inc/Module/Install/Makefile.pm
+inc/Module/Install/Can.pm
+inc/Module/Install/WriteAll.pm
+inc/Module/Install/Base.pm
+inc/Module/Install/Metadata.pm
+inc/Module/Install/Win32.pm
+inc/Module/Install/Fetch.pm
+inc/Module/Install.pm
 t/00-load.t
 t/01-info.t
 t/02-search.t

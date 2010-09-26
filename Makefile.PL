@@ -1,7 +1,8 @@
 use inc::Module::Install;
 
-name     'WWW-AUR';
-all_from 'lib/WWW/AUR.pm';
+name         'WWW-AUR';
+version_from 'lib/WWW/AUR.pm';
+author_from  'lib/WWW/AUR.pod';
 
 requires 'Carp'           => 0;
 requires 'HTTP::Cookies'  => 0;
