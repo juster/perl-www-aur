@@ -11,7 +11,7 @@ ok $who;
 
 my $found = 0;
 for my $pkg ( $who->packages ) {
-    if ( $pkg->{name} eq 'perl-cpanplus-dist-arch' ) { $found = 1; }
+    if ( $pkg->name eq 'perl-cpanplus-dist-arch' ) { $found = 1; }
 }
 ok $found, 'found perl-cpanplus-dist-arch, owned by juster';
 

@@ -31,12 +31,12 @@ sub new
     my $name   = shift;
     my %params = @_;
 
-    my %obj;
+    my %info;
     if ( ! defined $params{info} ) {
-        %obj = eval { WWW::AUR::RPC::info( $name ) }
+        %info = eval { WWW::AUR::RPC::info( $name ) }
             or Carp::croak( "Failed to find package: $name" );
     }
-    else { %obj = %{ $params{info} }; }
+    else { %info = %{ $params{info} }; }
 
     my $base = $params{basepath};
     unless ( ( $params{dlpath} && $params{extpath} && $params{destpath} )
@@ -44,21 +44,36 @@ sub new
         $base = $BASEPATH;
     }
 
+    my %obj;
+    $obj{ info     } = \%info;
     $obj{ dlpath   } = $params{dlpath}   || "$base/src";
     $obj{ extpath  } = $params{extpath}  || "$base/build";
     $obj{ destpath } = $params{destpath} || "$base/cache";
     $obj{ pkgfile  } = "$name.src.tar.gz";
-    $obj{ name     } = $name;
     
     bless \%obj, $class;
 }
+
+sub _def_info_accessor
+{
+    my ($field) = @_;
+
+    no strict 'refs';
+    *{ "WWW::AUR::Package::$field" } = sub {
+        my ($self) = @_;
+        return $self->{info}{$field} || q{};
+    };
+}
+
+for ( qw{ id name version desc category locationid url urlpath
+          license votes outdated } ) { _def_info_accessor( $_ ); }
 
 #---PRIVATE METHOD---
 sub _download_url
 {
     my ($self) = @_;
 
-    return pkgfile_uri( $self->{name} );
+    return pkgfile_uri( $self->name );
 }
 
 #---OBJECT METHOD---
@@ -130,7 +145,7 @@ sub extract
     die "failed to extract source packge with bsdtar:\n$!"
         unless $retval == 0;
 
-    my $srcpkg_dir = File::Spec->catdir( $destdir, $self->{name} );
+    my $srcpkg_dir = File::Spec->catdir( $destdir, $self->name );
     return $self->{srcpkg_dir} = $srcpkg_dir;
 }
 
@@ -269,7 +284,7 @@ sub _download_pkgbuild
 {
     my ($self) = @_;
 
-    my $name         = $self->{name};
+    my $name         = $self->name;
     my $pkgbuild_uri = pkgbuild_uri( $name );
 
     my $ua   = WWW::AUR::UserAgent->new();
@@ -312,7 +327,7 @@ sub _builtpkg_path
     }
 
     my $pkgfile = sprintf '%s-%s-%d-%s.pkg.tar.xz',
-        $self->{name}, $pkgbuild->{pkgver}, $pkgbuild->{pkgrel}, $arch;
+        $self->name, $pkgbuild->{pkgver}, $pkgbuild->{pkgrel}, $arch;
     return File::Spec->catfile( $pkgdest, $pkgfile );
 }
 
@@ -364,16 +379,15 @@ sub maintainer
 {
     my ($self) = @_;
 
-    require WWW::AUR::Maintainer;
+    my $uri  = pkg_uri( ID => $self->id );
+    my $ua   = WWW::AUR::UserAgent->new();
+    my $resp = $ua->get( $uri );
 
-    my $uri = pkg_uri( ID => $self->{id} );
-    my $ua  = WWW::AUR::UserAgent->new();
-    my $req = $ua->get( $uri );
+    Carp::croak sprintf q{Failed to load webpage for the }
+        . q{"%s" package:\n%s}, $self->name, $resp->status_line
+        unless $resp->is_success;
 
-    Carp::croak qq{Failed to load webpage for the "$self->{name}" package:\n}
-        . $req->status_line unless $req->is_success;
-
-    my ($username) = $req->content =~ /$MAINTAINER_MATCH/xms;
+    my ($username) = $resp->content() =~ /$MAINTAINER_MATCH/xms;
     Carp::croak qq{Failed to scrape package webpage for maintainer}
         unless $username;
 
@@ -381,6 +395,7 @@ sub maintainer
     return undef if $username eq 'None';
 
     # Propogate parameters to our new Maintainer object...
+    require WWW::AUR::Maintainer;
     my %params = path_params( %$self );
     my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
 

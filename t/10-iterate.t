@@ -28,7 +28,7 @@ sub check_pkgobjs
     while ( @$pkgnames_ref ) {
         my $pkgname = shift @$pkgnames_ref;
         my $pkg     = $iter->next;
-        return 0 unless $pkg->{name} eq $pkgname;
+        return 0 unless $pkg->name eq $pkgname;
     }
     return 1;
 }

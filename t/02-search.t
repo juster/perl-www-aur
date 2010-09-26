@@ -17,7 +17,10 @@ my @VALID_FIELDS = qw{ id name version category desc url urlpath
 my $pkg = $found->[0];
 ok ref $pkg eq 'WWW::AUR::Package';
 for my $field ( @VALID_FIELDS ) {
-    ok exists $pkg->{ $field }, qq{package contains "$field" field};
+    my $method = $WWW::AUR::Package::{ $field };
+    ok $method, qq{package metod "$field" exists};
+    eval { $method->( $pkg ) };
+    ok !$@, qq{package accessor "$field" works};
 }
 
 done_testing();
