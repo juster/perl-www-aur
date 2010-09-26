@@ -27,8 +27,8 @@ sub print_progress
 }
 
 my $aur  = WWW::AUR->new;
-my @pkgs = sort { $a->{name} cmp $b->{name} }
-    grep { $_->{name} =~ /\Aperl-/ } @{ $aur->search( 'perl' ) };
+my @pkgs = sort { $a->name cmp $b->name }
+    grep { $_->name =~ /\Aperl-/ } $aur->search( 'perl' );
 
 my @orphans;
 for my $i ( 0 .. $#pkgs ) {
@@ -42,6 +42,6 @@ printf "\nFound %d orphaned perl packages.\n", scalar @orphans;
 
 open my $fh, '>orphaned-perl' or die "open: $!";
 for my $pkg ( @orphans ) {
-    print $fh "$pkg->{name}\n";
+    print $fh $pkg->name, "\n";
 }
 close $fh;
