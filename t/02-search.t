@@ -22,4 +22,16 @@ for my $field ( @VALID_FIELDS ) {
     ok !$@, qq{package accessor "$field" works};
 }
 
+sub wrong_match
+{
+    for my $pkg ( @_ ) {
+        return 1 if $pkg->name !~ /\Aperl-/;
+    }
+    return 0;
+}
+
+@found = $aur->search( '^perl-' );
+ok @found > 1, 'more than one perl-... package was found';
+ok !wrong_match( @found ), 'anchored search returned all matching results';
+
 done_testing();

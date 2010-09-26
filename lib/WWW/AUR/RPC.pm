@@ -62,13 +62,17 @@ sub search
     my ($query) = @_;
 
     my $regexp;
-    if ( $query =~ /\^/ || $query =~ /\$/ ) {
-        $regexp = quotemeta $query;
-        $query  =~ s/\A^//;
+    if ( $query =~ /\A\^/ || $query =~ /\$\z/ ) {
+        $regexp = eval { qr/$query/ };
+        if ( $@ ) {
+            Carp::croak qq{Failed to compile "$query" into regexp:\n$@};
+        }
+
+        $query  =~ s/\A\^//;
         $query  =~ s/\$\z//;
     }
 
-    my $uri  = rpc_uri( "search", $query );
+    my $uri  = rpc_uri( 'search', $query );
     my $ua   = WWW::AUR::UserAgent->new();
     my $resp = $ua->get( $uri );
     Carp::croak 'Failed to search AUR using RPC: ' . $resp->status_line
@@ -83,7 +87,13 @@ sub search
         Carp::croak "Remote error: $data->{results}";
     }
 
-    return [ map { _rpc_pretty_pkginfo( $_ ) } @{ $data->{results} } ];
+    my $results = [ map { _rpc_pretty_pkginfo( $_ ) } @{ $data->{results} } ];
+
+    if ( $regexp ) {
+        $results = [ grep { $_->{name} =~ /$regexp/ } @$results ];
+    }
+    
+    return $results;
 }
 
 sub msearch
