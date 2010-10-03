@@ -83,13 +83,13 @@ sub _pkgid
 
         require WWW::AUR::Package;
         my $pkgobj = WWW::AUR::Package->new( $pkg );
-        return $pkgobj->{id};
+        return $pkgobj->id;
     }
 
     Carp::croak 'You must provide a package name, id, or object'
         unless eval { $pkg->isa( 'WWW::AUR::Package' ) };
 
-    return $pkg->{id};
+    return $pkg->id;
 }
 
 sub _def_action_method
