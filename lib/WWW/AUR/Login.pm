@@ -164,14 +164,90 @@ __END__
 
 =head1 NAME
 
-WWW::AUR::Login - Class used to login to the AUR and manage packages.
+WWW::AUR::Login - Login to the AUR and manage packages, vote, etc.
 
 =head1 SYNOPSIS
 
+  my $login = $aurobj->login( 'whoami', 'password' )
+      or die 'failed to login as whoami';
+  
+  # or ...
+  
+  my $login = eval { WWW::AUR::Login->( 'whoami', 'password' ) };
+  die 'failed to login as whoami' if $@;
+  
+  # You can use package names for actions...
+  $login->adopt( 'my-new-package');
+  $login->disown( 'not-my-problem' );
+  
+  # Or package IDs for actions...
+  $login->vote( 12353 );
+  $login->unvote( 12353 );
+
+  # Or package objects for actions...
+  $login->notify( WWW::AUR::Package->new( 'interesting-package' ));
+  $login->unnotify( WWW::AUR::Package->new( 'boring-package' ));
+  
+  # Flagging packages out of date...
+  $login->flag( 'out-of-date-package' );
+  $login->unflag( 'up-to-date-package' );
+  
+  # Upload a new package file...
+  $login->upload( '/path/to/package-file.src.tar.gz' );
+  
+  # Use the inherited WWW::AUR::Maintainer accessors.
+  my $name     = $login->name;
+  my @packages = $login->packages;
+
 =head1 DESCRIPTION
 
-This module provides an interface for the straight-forward AUR user
-as well as an AUR author, or package maintainer.
+This module provides an interface for the AUR package maintainer to
+perform I<almost> any action they could perform on the
+website. Commenting has not yet been implemented.
+
+B<WWW::AUR::Login> is a sub-class of L<WWW::AUR::Maintainer>.
+
+=head1 CONSTRUCTOR
+
+  $OBJ = WWW::AUR::Login->new( $USERNAME, $PASSWORD )
+
+=over 4
+
+=item Parameters
+
+=over 4
+
+=item C<$USERNAME>
+
+The AUR user name to login as.
+
+=item C<$PASSWORD>
+
+The password needed to login as the specified user.
+
+=back
+
+=item Errors
+
+The following errors are thrown with C<die> if we were unable to login
+to the AUR.
+
+=over 4
+
+=item Failed to login to AUR: bad username or password
+
+=item Failed to login to AUR: I<< <LWP error> >>
+
+If LWP failed to retrieve the page, an HTTP status code and short
+message is inserted after "Failed to login to AUR:".
+
+=back
+
+=back
+
+=head1 SEE ALSO
+
+L<WWW::AUR>
 
 =head1 AUTHOR
 
