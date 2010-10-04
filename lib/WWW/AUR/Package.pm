@@ -365,7 +365,8 @@ sub build
  
     local $ENV{PKGDEST} = $pkgdest;
     ( system $cmd ) == 0
-        or Carp::croak "makepkg failed to run: $?";
+        or Carp::croak sprintf 'makepkg failed to run, error code %d',
+            $? >> 8;
 
     chdir $oldcwd;
 
