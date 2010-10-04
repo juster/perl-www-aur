@@ -68,6 +68,14 @@ sub _def_info_accessor
 for ( qw{ id name version desc category locationid url urlpath
           license votes outdated } ) { _def_info_accessor( $_ ); }
 
+#---PUBLIC METHOD---
+# Returns a copy of the package info as a hash...
+sub info
+{
+    my ($self) = @_;
+    return %{ $self->{info} };
+}
+
 #---PRIVATE METHOD---
 sub _download_url
 {
@@ -403,5 +411,3 @@ sub maintainer
 }
 
 1;
-
-__END__
