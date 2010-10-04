@@ -12,5 +12,7 @@ pod2htm*.tmp
 WWW-AUR-*
 t/tmp
 *~
+META.yml
 MYMETA.yml
 inc
+README.bak

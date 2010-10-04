@@ -2,6 +2,7 @@ Makefile.PL
 ChangeLog
 MANIFEST
 README
+META.yml
 lib/WWW/AUR/Maintainer.pm
 lib/WWW/AUR/UserAgent.pm
 lib/WWW/AUR/Var.pm
@@ -9,6 +10,7 @@ lib/WWW/AUR/Iterator.pm
 lib/WWW/AUR/URI.pm
 lib/WWW/AUR/RPC.pm
 lib/WWW/AUR/Package.pm
+lib/WWW/AUR/Package.pod
 lib/WWW/AUR/Login.pm
 lib/WWW/AUR.pm
 lib/WWW/AUR.pod
@@ -35,3 +37,4 @@ xt/boilerplate.t
 xt/manifest.t
 xt/pod-coverage.t
 xt/pod.t
+ex/find-perl-orphans.pl
