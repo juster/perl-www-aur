@@ -72,10 +72,7 @@ fail if the AUR website is down...
 
 =head1 CONSTRUCTOR
 
-  $OBJ = WWW::AUR->new( basepath => $BASEPATH || '/tmp/WWW-AUR',
-                        dlpath   => $DLPATH   || "$BASEPATH/src",
-                        extpath  => $EXTPATH  || "$BASEPATH/build",
-                        destpath => $DESTPATH || "$BASEPATH/cache" );
+  $OBJ = WWW::AUR->new( %PATH_PARAMS );
 
 =over 4
 
@@ -83,7 +80,11 @@ fail if the AUR website is down...
 
 =over 4
 
-=over 4
+=item C<%PATH_PARAMS>
+
+These parameters are optional. See L</PATH PARAMETERS>.
+
+=back
 
 =item Returns
 
@@ -260,18 +261,18 @@ If the login failed.
 The constructor's only parameters are for paths to use in
 objects. Path parameters are propogated to every L<WWW::AUR::Package>
 object that is created. Package objects are created when methods such
-as L</METHODS/search> and L</METHODS/find>.
+as L</search> and L</find>.
 
 Path parameters are also propogated to objects that create their own
 L<WWW::AUR::Package> object, in turn. For example they are propogated
 to the L<WWW::AUR::Maintainer> object created by
-L</METHODS/maintainer>, the L<WWW::AUR::Login> object created by
-L</METHODS/login>, and the L<WWW::AUR::Iterator> object created by
-L</METHODS/packages>.
+L</maintainer>, the L<WWW::AUR::Login> object created by
+L</login>, and the L<WWW::AUR::Iterator> object created by
+L</packages>.
 
 =over 4
 
-=item C<$BASEPATH> (optional)
+=item C<$BASEPATH>
 
 Specifies a base with which to set the C<dlpath>, C<extpath>, and
 C<destpath> quickly. Setting the base path sets the other path
@@ -282,20 +283,20 @@ overriden with their own parameters to C<new>.
 
 Defaults to C</tmp/WWW-AUR>.
 
-=item C<$DLPATH> (optional)
+=item C<$DLPATH>
 
 A directory to store downloaded source package files.
 
 Defaults to C<$BASEPATH/src>.
 
-=item C<$EXTPATH> (optional)
+=item C<$EXTPATH>
 
 A directory to store source package directories. These are extracted
 from the source package file.
 
 Defaults to C<$BASEPATH/build>.
 
-=item C<$DESTPATH> (optional)
+=item C<$DESTPATH>
 
 A directory to store built binary package files. Binary package files
 are built from the source package files by using I<makepkg>.
@@ -314,7 +315,7 @@ Defaults to C<$BASEPATH/cache>.
 
 =item * L<http://aur.archlinux.org>
 
-=item * L<makepkg(8)>
+=item * L<makepkg>(8)
 
 =back
 
