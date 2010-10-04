@@ -1,0 +1,295 @@
+=head1 NAME
+
+WWW::AUR::Package - Query, download, and build AUR packages.
+
+=head1 SYNOPSIS
+
+  use WWW::AUR;
+  my $aurobj = WWW::AUR->new();
+  my $pkg = $aurobj->find( 'perl-www-aur' );
+  
+  # or using WWW::AUR::Package directly ...
+  use WWW::AUR::Package;
+  my $pkg = WWW::AUR::Package->new( 'perl-www-aur' );
+  
+  #----------------------------------------------------------------------
+  
+  # Accessors exist for package info fields...
+  printf "ID: %d -- Name: %s -- Version: %s\n",
+      $pkg->id, $pkg->name, $pkg->version;
+  
+  # Or retrieve the info as a hash, easier for printing...
+  my %info = $pkg->info;
+  print "ID: $info{id} -- Name: $info{name} -- Version: $info{version}"
+  
+  # Before extracting, pkgbuild() gets the PKGBUILD from the webpage...
+  my %pkgbuild = $pkg->pkgbuild;
+  print "pkgname: $pkgbuild{pkgname}\npkgver: $pkgbuild{pkgver}\n";
+  
+  #----------------------------------------------------------------------
+  
+  # Check the source package file size before downloading...
+  my $dlsize = $pkg->download_size;
+  print "Source package size is $dlsize bytes.\n";
+  
+  # PKGBUILD arrays are turned into array refs...
+  printf "depends: %s\n", join q{ }, @{ $pkgbuild{depends} };
+  
+  # download() method sets the src_pkg_path() accessor...
+  $pkg->download;
+  print "Downloaded %s to %s.\n", $pkg->name, $pkg->src_pkg_path;
+  
+  # extract() method sets the src_dir_path() accessor...
+  $pkg->extract;
+  print "Extracted source package to %s.\n", $pkg->src_dir_path;
+  
+  # build() method sets the bin_pkg_path() accessor...
+  $pkg->build;
+  print "Build binary package and saved to %s.\n", $pkg->bin_pkg_path();
+  
+  # After extracting, pkgbuild() is read from the file on disk...
+  %pkgbuild = $pkg->pkgbuild;
+  
+  # Get the package owner maintainer object...
+  my $maint_obj = $pkg->maintainer();
+
+=head1 DESCRIPTION
+
+The package class is the most important class for the B<WWW::AUR>
+package. Using a package object, you can lookup any information you
+need for the package as well as download, extract, and build
+the package with the makepkg command.
+
+=head1 CONSTRUCTOR
+
+  $OBJ = WWW::AUR::Package->new( $NAME, %PATH_PARAMS );
+
+The constructor takes the package name as its argument. An error will
+be I<croaked> with L<Carp> if the package could not be found on the
+AUR.  Path parameters are optional, see L<WWW::AUR/PATH PARAMETERS>
+for more information.
+
+=over 4
+
+=item C<$NAME>
+
+The name of the AUR package.
+
+=item C<%PATH_PARAMS>
+
+Optional path parameters. See L<WWW::AUR/PATH PARAMETERS>.
+
+=item Errors
+
+=over 4
+
+=item Failed to find package: I<$NAME>
+
+This error is I<croaked> if the package with the given I<$NAME> could
+not be found.
+
+=back
+
+=back
+
+=head1 METHODS
+
+=head2 PACKAGE INFO ACCESSORS
+
+  $IDNUM    = $OBJ->id;         (RPC Field Names)
+  $NAME     = $OBJ->name;
+  $VERSION  = $OBJ->version;
+  $DESC     = $OBJ->desc;       ("Description")
+  $CATEGORY = $OBJ->category;
+  $LOCID    = $OBJ->locationid;
+  $URL      = $OBJ->url;
+  $URLPATH  = $OBJ->urlpath;
+  $LICENSE  = $OBJ->license;
+  $VOTES    = $OBJ->votes;      ("NumVotes")
+  $OUTDATED = $OBJ->outdated;   ("OutOfDate")
+
+These accessors correlate exactly to the keys returned to by the AUR's
+rpc.php output given. Most of the fields are self explanatory.
+
+=over 4
+
+=item C<$CATEGORY>
+
+Instead of using an id number for categories, they are mapped to the
+name of the category. The following names are used for each corresponding
+category ID:
+
+=over 4
+
+=item 1. daemons
+
+=item 2. devel
+
+=item 3. editors
+
+=item 4. emulators
+
+=item 5. games
+
+=item 6. gnome
+
+=item 7. i18n
+
+=item 8. kde
+
+=item 9. kernels
+
+=item 10. lib
+
+=item 11. modules
+
+=item 12. multimedia
+
+=item 13. network
+
+=item 14. office
+
+=item 15. science
+
+=item 16. system
+
+=item 17. x11
+
+=item 18. xfce
+
+=back
+
+=item C<$VOTES>
+
+The I<NumVotes> RPC field was renamed to, simply, I<votes>.
+
+=item C<$OUTDATED>
+
+The I<OutOfDate> RPC field was renamed to I<outdated>.
+
+=back
+
+=head2 pkgbuild
+
+  %PKGBUILD = $OBJ->pkgbuild;
+
+Parses the PKGBUILD file and returns it as a hash, converting all bash
+arrays to array references.  The hash key names are identical to the
+PKGBUILD variable names. See L<PKGBUILD>(5).
+
+If the package has already been extracted (see L</extract>)
+then the PKGBUILD is read from the PKGBUILD file extracted to
+disk. Otherwise, the PKGBUILD is read direct from the AUR webpage
+without downloading a source package file.
+
+=head2 download
+
+  $SRCPKGPATH = $OBJ->download( $CALLBACK? )
+
+=over 4
+
+=item C<$CALLBACK> (Optional)
+
+A code reference that will be called everytime a "chunk" of data
+is downloaded. Two parameters are passed to the supplied code reference:
+
+=over 4
+
+=item 1. The number of bytes downloaded so far.
+
+=item 2. The total size of the package, in bytes.
+
+=back
+
+=item C<$SRCPKGPATH>
+
+The absolute path to the source package file that was downloaded.
+
+=back
+
+=head2 extract
+
+  $SRCPKGDIR = $OBJ->extract;
+
+=over 4
+
+=item C<$SRCPKGDIR>
+
+The absolute path to the directory where the source package was
+extracted. (This is the directory that is contained in the source
+package file, extracted)
+
+=back
+
+=head2 build
+
+  $BINPKGDIR = $OBJ->build;
+
+Builds the AUR package, using the makepkg utility.
+
+=over 4
+
+=item C<$BINPKGDIR>
+
+The absolute path to the binary package that was created by running
+makepkg.
+
+=back
+
+=head2 src_pkg_path
+
+  undef | $PATH = $OBJ->src_pkg_path;
+
+If I<download> has been called, then the path of the downloaded source
+package file is returned. Otherwise C<undef> is returned.
+
+=head2 src_pkg_dir
+
+  undef | $PATH = $OBJ->src_pkg_dir;
+
+If I<extract> has been called, then the path of the extract source
+package dir is returned. Otherwise C<undef> is returned.
+
+=head2 bin_pkg_path
+
+  undef | $PATH = $OBJ->bin_pkg_path;
+
+If I<build> has been called, then the path of the built binary package
+is returned. Otherwise C<undef> is returned.
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<WWW::AUR>
+
+=item * L<makepkg>(8)
+
+=back
+
+=head1 AUTHOR
+
+Justin Davis, C<< <juster at cpan dot org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-www-aur at
+rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-AUR>.  I will be
+notified, and then you'll automatically be notified of progress on
+your bug as I make changes.
+
+=head1 SUPPORT
+
+Send me an email at the above address if you have any questions or
+need help.
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2010 Justin Davis.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of either: the GNU General Public License as published
+by the Free Software Foundation; or the Artistic License.
+
+See http://dev.perl.org/licenses/ for more information.
