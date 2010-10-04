@@ -83,41 +83,6 @@ fail if the AUR website is down...
 
 =over 4
 
-=item C<$BASEPATH> (optional)
-
-Specifies a base with which to set the C<dlpath>, C<extpath>, and
-C<destpath> quickly. Setting the base path sets the other path
-parameters to paths relative to the basepath.
-
-After the 'basepath' is set, other path parameters can still be
-overriden with their own parameters to C<new>.
-
-Defaults to C</tmp/WWW-AUR>.
-
-=item C<$DLPATH> (optional)
-
-A directory to store downloaded source package files.
-
-Defaults to C<$BASEPATH/src>.
-
-=item C<$EXTPATH> (optional)
-
-A directory to store source package directories. These are extracted
-from the source package file.
-
-Defaults to C<$BASEPATH/build>.
-
-=item C<$DESTPATH> (optional)
-
-A directory to store built binary package files. Binary package files
-are built from the source package files by using I<makepkg>.
-
-Defaults to C<$BASEPATH/cache>.
-
-=back
-
-=back
-
 =over 4
 
 =item Returns
@@ -303,6 +268,41 @@ to the L<WWW::AUR::Maintainer> object created by
 L</METHODS/maintainer>, the L<WWW::AUR::Login> object created by
 L</METHODS/login>, and the L<WWW::AUR::Iterator> object created by
 L</METHODS/packages>.
+
+=over 4
+
+=item C<$BASEPATH> (optional)
+
+Specifies a base with which to set the C<dlpath>, C<extpath>, and
+C<destpath> quickly. Setting the base path sets the other path
+parameters to paths relative to the basepath.
+
+After the 'basepath' is set, other path parameters can still be
+overriden with their own parameters to C<new>.
+
+Defaults to C</tmp/WWW-AUR>.
+
+=item C<$DLPATH> (optional)
+
+A directory to store downloaded source package files.
+
+Defaults to C<$BASEPATH/src>.
+
+=item C<$EXTPATH> (optional)
+
+A directory to store source package directories. These are extracted
+from the source package file.
+
+Defaults to C<$BASEPATH/build>.
+
+=item C<$DESTPATH> (optional)
+
+A directory to store built binary package files. Binary package files
+are built from the source package files by using I<makepkg>.
+
+Defaults to C<$BASEPATH/cache>.
+
+=back
 
 =for readme continue
 
