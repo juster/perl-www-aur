@@ -223,11 +223,38 @@ package file, extracted)
 
 =head2 build
 
-  $BINPKGDIR = $OBJ->build;
+  $BINPKGDIR = $OBJ->build( %BUILD_PARAMS? );
 
 Builds the AUR package, using the makepkg utility.
 
 =over 4
+
+=item C<%BUILD_PARMAS> (Optional)
+
+Path parameters can be mixed with build parameters. Several build
+parameters can be used to provide arguments to makepkg.
+
+Build parameter keys:
+
+=over 4
+
+=item pkgdest
+
+Overrides where to store the built binary package file.
+
+=item quiet
+
+If set to a true value the makepkg output is redirected to I</dev/null>.
+
+=item prefix
+
+A string to prefix before the makepkg command.
+
+=item args
+
+A string to append to the makepkg command as arguments.
+
+=back
 
 =item C<$BINPKGDIR>
 
