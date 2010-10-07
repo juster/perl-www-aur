@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 use Text::Balanced qw(extract_delimited extract_bracketed);
+use Archive::Tar   qw();
 use File::Path     qw(make_path);
 use File::Spec     qw();
 use Carp           qw();
@@ -148,10 +149,24 @@ sub extract
     my $destdir = $self->{extpath};
 
     make_path( $destdir );
+    my $olddir = getcwd();
 
-    my $retval = system "bsdtar -zx -f $pkgpath -C $destdir";
-    die "failed to extract source packge with bsdtar:\n$!"
-        unless $retval == 0;
+    eval {
+        my $tarball = Archive::Tar->new( $pkgpath )
+            or die 'Failed to create Archive::Tar object';
+
+        chdir $destdir or Carp::confess "Failed to chdir to $destdir";
+
+        $tarball->extract()
+            or Carp::croak "Failed to extract source package file\nerror:"
+                . $tarball->error;
+    };
+
+    # ALWAYS chdir back...
+    { local $@; chdir $olddir; }
+
+    # Propogates an error if one exists...
+    die if $@;
 
     my $srcpkg_dir = File::Spec->catdir( $destdir, $self->name );
     return $self->{srcpkg_dir} = $srcpkg_dir;
