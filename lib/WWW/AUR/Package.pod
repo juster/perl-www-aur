@@ -229,7 +229,7 @@ Builds the AUR package, using the makepkg utility.
 
 =over 4
 
-=item C<%BUILD_PARMAS> (Optional)
+=item C<%BUILD_PARAMS> (Optional)
 
 Path parameters can be mixed with build parameters. Several build
 parameters can be used to provide arguments to makepkg.

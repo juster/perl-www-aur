@@ -213,10 +213,6 @@ B<WWW::AUR::Login> is a sub-class of L<WWW::AUR::Maintainer>.
 
 =over 4
 
-=item Parameters
-
-=over 4
-
 =item C<$USERNAME>
 
 The AUR user name to login as.
@@ -227,19 +223,156 @@ The password needed to login as the specified user.
 
 =back
 
-=item Errors
+=head2 Errors
 
-The following errors are thrown with C<die> if we were unable to login
-to the AUR.
+The following errors messages are thrown with C<Carp::croak> if we
+were unable to login to the AUR.
 
 =over 4
 
 =item Failed to login to AUR: bad username or password
 
+We could not login because either the username doesn't exist or
+the password for the username is incorrect.
+
 =item Failed to login to AUR: I<< <LWP error> >>
 
-If LWP failed to retrieve the page, an HTTP status code and short
-message is inserted after "Failed to login to AUR:".
+If LWP failed to retrieve the page because of some problem with the
+HTTP request an HTTP status code and short message is given at
+I<< <LWP error> >>.
+
+=back
+
+=head1 METHODS
+
+=head2 adopt disown [un]vote [un]notify [un]flag
+
+  $HTML = $OBJ->adopt( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->disown( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->unvote( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->vote( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->unnotify( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->notify( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->unflag( $PKGID | $PKGNAME | $PKGOBJ );
+  $HTML = $OBJ->flag( $PKGID | $PKGNAME | $PKGOBJ );
+
+If you are an AUR maintainer you already know what these do. These
+actions are the same actions you can perform to a package (with
+buttons on the webpage) when you are logged in.
+
+=over 4
+
+=item C<$HTML>
+
+The HTML text of the response given when we performed the action. You
+probably don't need to use this.
+
+=item C<$PKGID>
+
+The ID of the package. You can see this on a package's webpage after
+the C<?ID=>. You can also use a L<WWW::AUR::Package> object's C<id>
+method. Interally, the ID is what is passed as a parameter to the AUR
+action script.
+
+=item C<$PKGNAME>
+
+The name of the package you want to perform the action on. The package
+is looked up in order to find the ID number.
+
+=item C<$PKGOBJ>
+
+A L<WWW::AUR::Package> object.
+
+=back
+
+=head3 Errors
+
+=over 4
+
+=item Failed to find package: I<< <Package Name> >>
+
+This happens when you pass a package name as argument to an action
+but no package with that name exists.
+
+=item Failed to send package action: I<< <LWP Error> >>
+
+Some low level error with the HTTP request occurred. The HTTP status
+code and a short message describing the problem is inserted at
+I<< <LWP Error> >>.
+
+=item Failed to parse package action response
+
+The code examines the HTML that is sent to it in response to an
+attempted action. When we scraped the HTML it did not match the output
+we expected. Maybe the AUR website was changed and this module wasn't
+updated?
+
+=item Failed to perform the I<< <action> >> action on package "I<< <package> >>"
+
+This seems to never really happen. Even if you try to do something silly
+like adopt a package owned by someone else, call C<notify> when you are
+already being notified, etc... AUR will say the action succeeded.
+
+=back
+
+=head2 upload
+
+  $OBJ->upload( $SRCPKG_PATH, $CATEGORY );
+
+This method submits a new package to the AUR by uploading a source
+package file. Just point it to a source package file and specify which
+category to assign the package to.
+
+=over 4
+
+=item C<$SRCPKG_PATH>
+
+The path to a source package file to upload/submit to the AUR.
+
+=item C<$CATEGORY>
+
+Every package in the AUR belongs to a category. This may be useful
+someday. You will have to choose which category your package should
+belong to. The category is given as a string and must be one of the
+following:
+
+=over 4
+
+=item * daemons
+
+=item * devel
+
+=item * editors
+
+=item * emulators
+
+=item * games
+
+=item * gnome
+
+=item * i18n
+
+=item * kde
+
+=item * kernels
+
+=item * lib
+
+=item * modules
+
+=item * multimedia
+
+=item * network
+
+=item * office
+
+=item * science
+
+=item * system
+
+=item * x11
+
+=item * xfce
 
 =back
 

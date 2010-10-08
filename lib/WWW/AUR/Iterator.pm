@@ -120,24 +120,14 @@ packages currently listed on the AUR webiste.
 
 =over 4
 
-=item Parameters
+=item C<%PATH_PARAMS>
 
 The parameters are the same as the L<WWW::AUR> constructor. These are
 propogated to any L<WWW::AUR::Package> objects that are created.
 
-=back
-
-=over 4
-
-=item Returns
-
-=over 4
-
 =item C<$OBJ>
 
 A L<WWW::AUR::Iterator> object.
-
-=back
 
 =back
 
@@ -157,19 +147,13 @@ I<WWW::AUR::Iterator> object.
 
 =over 4
 
-=item Returns
-
-=over 4
-
 =item C<$PKGOBJ>
 
 A L<WWW::AUR::Package> object representing the next package in the AUR.
 
-=item I<undef>
+=item C<undef>
 
-If we have iterated through all packages, then I<undef> is returned.
-
-=back
+If we have iterated through all packages, then C<undef> is returned.
 
 =back
 
@@ -179,21 +163,15 @@ If we have iterated through all packages, then I<undef> is returned.
 
 =over 4
 
-=item Returns
-
-=over 4
-
 =item C<$PKGNAME>
 
 The name of the next package in the AUR. This is faster than
 L<METHODS/next> because L<WWW::AUR::Package> objects do not have to be
 created for every package on the AUR.
 
-=item I<undef>
+=item C<undef>
 
-If we have iterated through all packages, then I<undef> is returned.
-
-=back
+If we have iterated through all packages, then C<undef> is returned.
 
 =back
 

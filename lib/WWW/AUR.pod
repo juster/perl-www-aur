@@ -34,7 +34,8 @@ WWW::AUR - API for the Archlinux User Repository website.
   
   $login->vote( 'my-favorite-package' );
   $login->disown( 'i-hate-this-package' );
-  $login->upload( '../a-new-package-file.src.pkg.tar.gz' );
+  $login->upload( '../a-new-package-file.src.pkg.tar.gz',
+                  'lib' );
   
   print "Iterating through ALL packages...\n";
   my $iter = $aur->packages;
@@ -76,25 +77,13 @@ fail if the AUR website is down...
 
 =over 4
 
-=item Parameters
-
-=over 4
-
 =item C<%PATH_PARAMS>
 
 These parameters are optional. See L</PATH PARAMETERS>.
 
-=back
-
-=item Returns
-
-=over 4
-
 =item C<$OBJ>
 
 A C<WWW::AUR> object.
-
-=back
 
 =back
 
@@ -103,10 +92,6 @@ A C<WWW::AUR> object.
 =head2 search
 
   @PACKAGES = $OBJ->search( $QUERY );
-
-=over 4
-
-=item Parameters
 
 =over 4
 
@@ -120,17 +105,9 @@ anchored text are returned. Other special regexp chars will be sent to
 the query literally. Since the AUR does not directly support regexp
 searches this will most likely return unexpected results.
 
-=back
-
-=item Returns
-
-=over 4
-
 =item C<@PACKAGES>
 
 A list of L<WWW::AUR::Package> objects that matched the search query.
-
-=back
 
 =back
 
@@ -140,19 +117,9 @@ A list of L<WWW::AUR::Package> objects that matched the search query.
 
 =over 4
 
-=item Parameters
-
-=over 4
-
 =item C<$NAME>
 
 The exact name of a package to find.
-
-=back
-
-=item Returns
-
-=over 4
 
 =item C<$PKGOBJ>
 
@@ -164,27 +131,15 @@ If no package matching the given C<$NAME> was found.
 
 =back
 
-=back
-
 =head2 maintainer
 
   $MAINOBJ | undef = $OBJ->maintainer( $NAME );
 
 =over 4
 
-=item Parameters
-
-=over 4
-
 =item C<$NAME>
 
 The name of the maintainer to find. Case-insensitive.
-
-=back
-
-=item Returns
-
-=over 4
 
 =item C<$MAINOBJ>
 
@@ -196,19 +151,9 @@ If no matching maintainer was found.
 
 =back
 
-=back
-
 =head2 packages
 
   $ITEROBJ = $OBJ->packages()
-
-=over 4
-
-=item Parameters
-
-I<None>
-
-=item Returns
 
 =over 4
 
@@ -218,15 +163,9 @@ A L<WWW::AUR::Iterator> object.
 
 =back
 
-=back
-
 =head2 login
 
   $LOGINOBJ | undef = $OBJ->login( $USERNAME, $PASSWORD );
-
-=over 4
-
-=item Parameters
 
 =over 4
 
@@ -238,12 +177,6 @@ The maintainer name to login to the AUR with.
 
 The password to use for logging in.
 
-=back
-
-=item Returns
-
-=over 4
-
 =item C<$LOGINOBJ>
 
 A L<WWW::AUR::Login> object, if the login succeeded.
@@ -251,8 +184,6 @@ A L<WWW::AUR::Login> object, if the login succeeded.
 =item C<undef>
 
 If the login failed.
-
-=back
 
 =back
 

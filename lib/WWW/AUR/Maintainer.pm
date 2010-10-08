@@ -57,7 +57,7 @@ WWW::AUR::Maintainer - List packages owned by a given maintainer.
 
 =head1 CONSTRUCTOR
 
-  $OBJ = WWW::AUR::Maintainer->new( $NAME, %PATH_PARAMS );
+  $OBJ = WWW::AUR::Maintainer->new( $NAME, %PATH_PARAMS? );
 
 If the maintainer matching the given name does not exist, it is hard
 to tell. Currently if a bad maintainer name is given, the results
@@ -65,21 +65,15 @@ of L<METHODS/packages> will return an empty list.
 
 =over 4
 
-=item Parameters
-
-=over 4
-
 =item C<$NAME>
 
 The name of the maintainer.
 
-=item C<%PATH_PARAMS>
+=item C<%PATH_PARAMS> (Optional)
 
 These are propogated to the L<WWW::AUR::Package> objects created by
 L<METHODS/packages>. See L<WWW::AUR/PATH PARAMETERS> for
 more info.
-
-=back
 
 =back
 
@@ -91,15 +85,9 @@ more info.
 
 =over 4
 
-=item Returns
-
-=over 4
-
-=item $MNAME
+=item C<$MNAME>
 
 The name of the maintainer as given to the constructor.
-
-=back
 
 =back
 
@@ -109,17 +97,11 @@ The name of the maintainer as given to the constructor.
 
 =over 4
 
-=item Returns
-
-=over 4
-
-=item @PKGOBJS
+=item C<@PKGOBJS>
 
 A list of L<WWW::AUR::Package> objects. These represent the packages
 that are owned by the given maintainer. The list can be empty. If the
 maintainer named does not exist, the list will be empty.
-
-=back
 
 =back
 
