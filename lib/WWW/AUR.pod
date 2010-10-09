@@ -201,38 +201,41 @@ L</maintainer>, the L<WWW::AUR::Login> object created by
 L</login>, and the L<WWW::AUR::Iterator> object created by
 L</packages>.
 
+Path parameters are given as a hash with the keys as follows:
+
 =over 4
 
-=item C<$BASEPATH>
+=item B<basepath>
 
 Specifies a base with which to set the C<dlpath>, C<extpath>, and
 C<destpath> quickly. Setting the base path sets the other path
 parameters to paths relative to the basepath.
 
 After the 'basepath' is set, other path parameters can still be
-overriden with their own parameters to C<new>.
+overriden with their own values.
 
 Defaults to C</tmp/WWW-AUR>.
 
-=item C<$DLPATH>
+=item B<dlpath>
 
 A directory to store downloaded source package files.
 
-Defaults to C<$BASEPATH/src>.
+Defaults to C<$basepath/src>.
 
-=item C<$EXTPATH>
+
+=item B<extpath>
 
 A directory to store source package directories. These are extracted
 from the source package file.
 
-Defaults to C<$BASEPATH/build>.
+Defaults to C<$basepath/build>.
 
-=item C<$DESTPATH>
+=item destpath
 
 A directory to store built binary package files. Binary package files
 are built from the source package files by using I<makepkg>.
 
-Defaults to C<$BASEPATH/cache>.
+Defaults to C<$basepath/cache>.
 
 =back
 
