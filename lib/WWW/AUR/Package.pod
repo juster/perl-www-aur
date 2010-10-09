@@ -169,6 +169,13 @@ The I<OutOfDate> RPC field was renamed to I<outdated>.
 
 =back
 
+=head2 info
+
+  %INFO = $OBJ->info;
+
+Returns all data from the info accessors as one hash. Keys are the
+same as the accessor names.
+
 =head2 pkgbuild
 
   %PKGBUILD = $OBJ->pkgbuild;
