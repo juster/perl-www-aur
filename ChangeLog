@@ -1,5 +1,10 @@
 2010-10-09  Justin Davis  <juster@cpan.org>
 
+	* RELEASE (0.04)
+
+	* lib/WWW/AUR.pod: Fix docs for PATH PARAMETERS. They still had
+	sigils on their names from when I copy/pasted.
+
 	* RELEASE (0.03)
 
 	* Makefile.PL: Add module requirements I forgot about.
