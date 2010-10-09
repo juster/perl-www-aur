@@ -32,7 +32,8 @@ SYNOPSIS
   
       $login->vote( 'my-favorite-package' );
       $login->disown( 'i-hate-this-package' );
-      $login->upload( '../a-new-package-file.src.pkg.tar.gz' );
+      $login->upload( '../a-new-package-file.src.pkg.tar.gz',
+                      'lib' );
   
       print "Iterating through ALL packages...\n";
       my $iter = $aur->packages;

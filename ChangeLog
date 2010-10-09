@@ -1,3 +1,24 @@
+2010-10-09  Justin Davis  <juster@cpan.org>
+
+	* RELEASE (0.03)
+
+	* Makefile.PL: Add module requirements I forgot about.
+
+	* lib/WWW/AUR/Package.pod: Fix typo in docs (%BUILD_PARMAS).
+	Add info() method.
+
+	* lib/WWW/AUR/Login.pm: Remove 'Returns' and 'Parameters'
+	in documentation. Add documentation for action methods
+	and upload method.
+
+	* lib/WWW/AUR/Maintainer.pm: Remove 'Returns' and 'Parameters'
+	in documentation.
+
+	* lib/WWW/AUR/Iterator.pm: Remove 'Returns' and 'Parameters'
+	in documentation.
+
+	* lib/WWW/AUR.pod: Fix wrong usage of 'upload' in SYNOPSIS.
+
 2010-10-07  Justin Davis  <juster@cpan.org>
 
 	* RELEASE (0.02)
