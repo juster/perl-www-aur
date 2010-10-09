@@ -4,6 +4,7 @@ name         'WWW-AUR';
 version_from 'lib/WWW/AUR.pm';
 author_from  'lib/WWW/AUR.pod';
 license      'perl';
+repository   'http://github.com/juster/perl-www-aur';
 
 requires 'Archive::Tar'   => 0;
 requires 'Carp'           => 0;
