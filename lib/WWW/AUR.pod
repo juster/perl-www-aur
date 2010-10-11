@@ -22,7 +22,7 @@ WWW::AUR - API for the Archlinux User Repository website.
   printf "Built binary pkgfile and saved to %s.\n", $pkg->bin_pkg_path;
   
   my $who = $pkg->maintainer();
-  printf "%s is maintained by %s.\n", $pkg->{name}, $who->name;
+  printf "%s is maintained by %s.\n", $pkg->name, $who->name;
   
   print "As well as the following packages:\n";
   for my $otherpkg ( $who->packages ) {
@@ -40,7 +40,8 @@ WWW::AUR - API for the Archlinux User Repository website.
   print "Iterating through ALL packages...\n";
   my $iter = $aur->packages;
   while ( my $pkgobj = $iter->next ) {
-      print "$pkgobj->{name} -- $pkgobj->{version}\n";
+      my %info = $pkgobj->info;
+      print "$info{name} -- $info{version}\n";
   }
 
 =head1 DESCRIPTION
@@ -249,7 +250,7 @@ Defaults to C<$basepath/cache>.
 
 =item * L<http://aur.archlinux.org>
 
-=item * L<makepkg>(8)
+=item * L<http://www.archlinux.org/pacman/makepkg.8.html>
 
 =back
 
