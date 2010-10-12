@@ -6,7 +6,7 @@ use Test::More;
 
 BEGIN {
     eval { require IPC::Cmd; 1 }
-        or plan 'skip_all' => 'Test need IPC::Cmd installed';
+        or plan 'skip_all' => 'Test needs IPC::Cmd installed';
     IPC::Cmd::can_run( 'makepkg' )
         or plan 'skip_all' => 'Test needs makepkg utility';
 
