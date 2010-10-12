@@ -18,6 +18,8 @@ requires 'File::Spec'     => 0;
 requires 'Text::Balanced' => 0;
 requires 'URI'            => 0;
 
+test_requires 'Test::More' => '0.87_01';
+
 clean_files 't/tmp';
 
 WriteAll;
