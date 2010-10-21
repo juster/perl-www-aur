@@ -13,11 +13,8 @@ our $VERSION = '0.04';
 
 sub new
 {
-    my $class  = shift;
-    my %params = @_;
-    $params{ basepath } ||= $BASEPATH;
-
-    return bless \%params, $class
+    my $class = shift;
+    return bless { path_params( @_ ) }, $class
 }
 
 sub search
@@ -26,9 +23,8 @@ sub search
     my $found_ref = WWW::AUR::RPC::search( $query );
 
     require WWW::AUR::Package;
-    my %params = path_params( %$self );
     return map {
-        WWW::AUR::Package->new( $_->{name}, info => $_, %params );
+        WWW::AUR::Package->new( $_->{name}, info => $_, %$self );
     } @$found_ref;
 }
 
@@ -38,11 +34,9 @@ sub _def_wrapper_method
 
     no strict 'refs';
     *{ "WWW::AUR::$name" } = sub {
-        my $self        = shift;
-        my %path_params = path_params( %$self );
-
+        my $self = shift;
         eval "require $class";
-        return eval { $class->new( @_, %path_params ) };
+        return eval { $class->new( @_, %$self ) };
     };
 }
 
