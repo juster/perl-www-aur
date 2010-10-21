@@ -4,13 +4,16 @@ use warnings;
 use strict;
 use Test::More tests => 8;
 
+use WWW::AUR::PKGBUILD;
 use WWW::AUR::Package;
+use Scalar::Util qw(blessed);
 
 sub pbtext_ok
 {
     my ($pbtext, $expect_ref, $test_name) = @_;
 
-    my %parsed = WWW::AUR::Package::_pkgbuild_fields( $pbtext );
+    my $pbobj = WWW::AUR::PKGBUILD->new( $pbtext );
+    my %parsed = $pbobj->fields;
     is_deeply( \%parsed, $expect_ref, $test_name );
     return;
 }
@@ -59,7 +62,7 @@ depends=('dep>=0.01' 'dep-two')
 conflicts=('conflict<999.999' 'conflict-two')
 END_PKGBUILD
 
-my %parsed = WWW::AUR::Package::_pkgbuild_fields( $pbtext );
+my %parsed = WWW::AUR::PKGBUILD->new( $pbtext )->fields;
 is_deeply( $parsed{depends}, [ { 'pkg' => 'dep',
                                  'ver' => '0.01',
                                  'cmp' => '>=',
@@ -83,10 +86,10 @@ is_deeply( $parsed{conflicts}, [ { 'pkg' => 'conflict',
 
 my $pkg      = WWW::AUR::Package->new( 'perl-alpm', basepath => 't/tmp' );
 my $pkgbuild = $pkg->pkgbuild;
-is ref $pkgbuild, 'HASH';
-is $pkgbuild->{pkgname}, 'perl-alpm';
+is blessed( $pkgbuild ), 'WWW::AUR::PKGBUILD';
+is $pkgbuild->pkgname, 'perl-alpm';
 
 ok $pkg->extract;
 $pkgbuild = $pkg->pkgbuild;
-is ref $pkgbuild, 'HASH';
-is $pkgbuild->{pkgname}, 'perl-alpm';
+is blessed( $pkgbuild ), 'WWW::AUR::PKGBUILD';
+is $pkgbuild->pkgname, 'perl-alpm';
