@@ -24,12 +24,22 @@ sub is_path_param
 
 sub path_params
 {
-    my %filterme = @_;
+    my @filterme = @_;
     my %result;
-    for my $key ( grep { is_path_param( $_ ) } keys %filterme ) {
-        $result{ $key } = $filterme{ $key };
+
+    FILTER_LOOP:
+    while ( my $key = shift @filterme ) {
+        next unless is_path_param( $key );
+        my $val = shift @filterme or last FILTER_LOOP;
+        $result{ $key } = $val;
     }
-    return %result;
+
+    my $base = $result{ 'base' } || $BASEPATH;
+    # Fill path parameters with default values if they are unspecified...
+    return ( 'dlpath'   => File::Spec->catdir( $base, 'src'   ),
+             'extpath'  => File::Spec->catdir( $base, 'build' ),
+             'destpath' => File::Spec->catdir( $base, 'cache' ),
+             %result );
 }
 
 my @_CATEGORIES = qw{ daemons devel editors emulators games gnome
