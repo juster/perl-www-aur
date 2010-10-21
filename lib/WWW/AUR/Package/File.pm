@@ -120,20 +120,20 @@ sub make_src_path
 sub _builtpkg_path
 {
     my ($self, $pkgdest) = @_;
-    my $pkgbuild    = $self->pkgbuild;
-    my $arch        = $pkgbuild->arch;
+    my $pkgbuild = $self->pkgbuild;
+    my $arch     = $pkgbuild->arch;
 
     if ( eval { $arch->[0] eq 'any' } ) {
         $arch = 'any';
     }
 
     unless ( $arch eq 'any' ) {
-        $arch = `uname -m`;
-        chomp $arch;
+        chomp ( $arch = `uname -m` );
     }
 
     my $pkgfile = sprintf '%s-%s-%d-%s.pkg.tar.xz',
         $pkgbuild->pkgname, $pkgbuild->pkgver, $pkgbuild->pkgrel, $arch;
+
     return File::Spec->catfile( $pkgdest, $pkgfile );
 }
 
@@ -160,15 +160,21 @@ sub build
     $cmd = "$cmd $params{args}"   if $params{args};
 
     if ( $params{quiet} ) { $cmd .= ' 2>&1 >/dev/null'; }
- 
+
     local $ENV{PKGDEST} = $pkgdest;
-    ( system $cmd ) == 0
-        or die sprintf "makepkg failed to run, error code \%d.\nError",
-            $? >> 8;
+    system $cmd;
+    unless ( $? == 0 ) {
+        my $errmsg = sprintf "makepkg failed to run: %s.\nError",
+            ( $? & 127
+              ? sprintf 'signal %d',     $?  & 127
+              : sprintf 'error code %d', $? >> 8 );
+        die $errmsg;
+    }
 
     chdir $oldcwd;
 
     my $built_path = $self->_builtpkg_path( $pkgdest );
+
     die "makepkg succeeded but the package file is missing.\nError"
         unless -f $built_path;
     return $self->{builtpkg_path} = $built_path;
