@@ -33,7 +33,7 @@ sub pkgbuild
     return $self->{pkgbuild}
         if $self->{pkgbuild};
 
-    $self->extract() unless $self->src_pkg_dir();
+    $self->extract() unless $self->src_dir_path();
     
     my $pbpath = $self->make_src_path( 'PKGBUILD' );
     open my $pbfile, '<', $pbpath or die "open: $!";
@@ -207,7 +207,7 @@ WWW::AUR::Package::File - Load, extract, and build a source package file
   my $pbobj    = $fileobj->pkgbuild
   my %pbfields = $pbobj->fields();
   print "Package file path  : %s\n", $fileobj->src_pkg_path;
-  print "Extracted dir      : %s\n", $fileobj->src_pkg_dir;
+  print "Extracted dir      : %s\n", $fileobj->src_dir_path;
   print "Built package path : %s\n", $fileobj->bin_pkg_path;
 
 =head1 CONSTRUCTOR
@@ -322,9 +322,9 @@ extracted source package directory.
 If I<download> has been called, then the path of the downloaded source
 package file is returned. Otherwise C<undef> is returned.
 
-=head2 src_pkg_dir
+=head2 src_dir_path
 
-  undef | $PATH = $OBJ->src_pkg_dir;
+  undef | $PATH = $OBJ->src_dir_path;
 
 If I<extract> has been called, then the path of the extract source
 package dir is returned. Otherwise C<undef> is returned.
@@ -340,20 +340,20 @@ is returned. Otherwise C<undef> is returned.
 
   $PATH = $OBJ->make_src_path( $RELPATH )
 
-Helper function to easily lookup the absolute path to a file
-inside the source package directory. This just builts the
-path it does not guarantee the file exists!
+Helper function to easily lookup the absolute path to a file inside
+the source directory. This just builts the path it does not guarantee
+the file exists!
 
 =over 4
 
 =item C<$RELPATH>
 
-The relative path to a file I<inside> the extracted source package
+The relative path to a file I<inside> the extracted source
 directory. This is allowed to have a leading forward-slash.
 
 =item C<$PATH>
 
-The absolute path to the file inside the source package directory.
+The absolute path to the file inside the source directory.
 
 =back
 
