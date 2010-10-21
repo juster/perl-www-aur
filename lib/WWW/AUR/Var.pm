@@ -34,8 +34,8 @@ sub path_params
         $result{ $key } = $val;
     }
 
-    my $base = $result{ 'base' } || $BASEPATH;
     # Fill path parameters with default values if they are unspecified...
+    my $base = $result{ 'basepath' } || $BASEPATH;
     return ( 'dlpath'   => File::Spec->catdir( $base, 'src'   ),
              'extpath'  => File::Spec->catdir( $base, 'build' ),
              'destpath' => File::Spec->catdir( $base, 'cache' ),
