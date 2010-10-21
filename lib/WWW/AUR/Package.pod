@@ -178,7 +178,7 @@ same as the accessor names.
 
 =head2 pkgbuild
 
-  %PKGBUILD = $OBJ->pkgbuild;
+  $PKGBUILD_OBJ = $OBJ->pkgbuild;
 
 Parses the PKGBUILD file and returns it as a L<WWW::AUR::PKGBUILD>
 object.

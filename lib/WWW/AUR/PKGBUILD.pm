@@ -187,9 +187,16 @@ primitive parsing. PKGBUILD fields (ie pkgname, pkgver, pkgdesc) are
 extracted into a hash. Bash arrays are extracted into an arrayref
 (ie depends, makedepends, source).
 
+Remember, bash is more lenient about using arrays than perl is. Bash
+treats one-element arrays as simple values and vice-versa. Perl
+doesn't. I might use a module to copy bash's behavior later on.
+
 =head1 CONSTRUCTOR
 
   $OBJ = WWW::AUR::PKGBUILD->new( $PBTEXT | $PBFILE );
+
+All this does is create a new B<WWW::AUR::PKGBUILD> object and
+then call the L<read/> method with the provided arguments.
 
 =over 4
 

@@ -32,6 +32,8 @@ sub pkgbuild
 
     return $self->{pkgbuild}
         if $self->{pkgbuild};
+
+    $self->extract() unless $self->src_pkg_dir();
     
     my $pbpath = $self->make_src_path( 'PKGBUILD' );
     open my $pbfile, '<', $pbpath or die "open: $!";
@@ -109,11 +111,12 @@ sub make_src_path
 {
     my ($self, $relpath) = @_;
     
-    Carp::croak 'You must call extract() before srcdir_file()'
-        unless $self->{srcpkg_dir};
+    Carp::croak 'You must call extract() before make_src_path()'
+        unless $self->src_dir_path;
 
     $relpath =~ s{\A/+}{};
-    return $self->{srcpkg_dir} . q{/} . $relpath;
+    return File::Spec->catfile( $self->src_dir_path,
+                                $relpath );
 }
 
 #---PRIVATE METHOD---
@@ -187,7 +190,6 @@ sub bin_pkg_path
     return $self->{builtpkg_path};
 }
 
-
 1;
 
 __END__
@@ -198,9 +200,19 @@ WWW::AUR::Package::File - Load, extract, and build a source package file
 
 =head1 SYNOPSIS
 
+  use WWW::AUR::Package::File;
+  my $fileobj = WWW::AUR::Package::File->new( 'package.src.tar.gz' );
+  $fileobj->extract();
+  $fileobj->build();
+  my $pbobj    = $fileobj->pkgbuild
+  my %pbfields = $pbobj->fields();
+  print "Package file path  : %s\n", $fileobj->src_pkg_path;
+  print "Extracted dir      : %s\n", $fileobj->src_pkg_dir;
+  print "Built package path : %s\n", $fileobj->bin_pkg_path;
+
 =head1 CONSTRUCTOR
 
-  $OBJ = WWW::AUR::Package::File->new( $PATH, %PATH_PARAMS );
+  $OBJ = WWW::AUR::Package::File->new( $PATH, %PATH_PARAMS? );
 
 =over 4
 
@@ -273,6 +285,36 @@ makepkg.
 
 =back
 
+=head3 Errors
+
+=over 4
+
+=item I<makepkg failed to run: signal %d.>
+
+=item I<makepkg failed to run: error code %d.>
+
+=item I<makepkg succeeded but the package file is missing.>
+
+=back
+
+=head2 pkgbuild
+
+  $PKGBUILD_OBJ = $OBJ->pkgbuild;
+
+Create an object representing the PKGBUILD file of a source package.
+A PKGBUILD is the main component of a source package. If the
+source package archive has not been extracted yet, L</extract>
+will be called automatically.
+
+=over 4
+
+=item C<$PKGBUILD_OBJ>
+
+A L<WWW::AUR::PKGBUILD> object representing the PKGBUILD in the
+extracted source package directory.
+
+=back
+
 =head2 src_pkg_path
 
   undef | $PATH = $OBJ->src_pkg_path;
@@ -293,6 +335,35 @@ package dir is returned. Otherwise C<undef> is returned.
 
 If I<build> has been called, then the path of the built binary package
 is returned. Otherwise C<undef> is returned.
+
+=head2 make_src_path
+
+  $PATH = $OBJ->make_src_path( $RELPATH )
+
+Helper function to easily lookup the absolute path to a file
+inside the source package directory. This just builts the
+path it does not guarantee the file exists!
+
+=over 4
+
+=item C<$RELPATH>
+
+The relative path to a file I<inside> the extracted source package
+directory. This is allowed to have a leading forward-slash.
+
+=item C<$PATH>
+
+The absolute path to the file inside the source package directory.
+
+=back
+
+=head3 Errors
+
+=over 4
+
+=item I<You must call extract() before make_src_path()>
+
+=back
 
 =head1 SEE ALSO
 
