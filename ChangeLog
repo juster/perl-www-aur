@@ -1,3 +1,13 @@
+2010-10-21  Justin Davis  <juster@cpan.org>
+
+	* RELEASE (0.05)
+
+	* lib/WWW/AUR/Package/File.pm: Extracted package file code
+	from lib/WWW/AUR/Package/File.pm.
+
+	* lib/WWW/AUR/PKGBUILD.pm: Extracted PKGBUILD code from
+	lib/WWW/AUR/Package.pm.
+
 2010-10-09  Justin Davis  <juster@cpan.org>
 
 	* RELEASE (0.04)

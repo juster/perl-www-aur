@@ -20,7 +20,7 @@ SYNOPSIS
       printf "Built binary pkgfile and saved to %s.\n", $pkg->bin_pkg_path;
   
       my $who = $pkg->maintainer();
-      printf "%s is maintained by %s.\n", $pkg->{name}, $who->name;
+      printf "%s is maintained by %s.\n", $pkg->name, $who->name;
   
       print "As well as the following packages:\n";
       for my $otherpkg ( $who->packages ) {
@@ -38,7 +38,8 @@ SYNOPSIS
       print "Iterating through ALL packages...\n";
       my $iter = $aur->packages;
       while ( my $pkgobj = $iter->next ) {
-          print "$pkgobj->{name} -- $pkgobj->{version}\n";
+          my %info = $pkgobj->info;
+          print "$info{name} -- $info{version}\n";
       }
 
 DESCRIPTION
@@ -63,7 +64,7 @@ TESTS WARNING
 SEE ALSO
     * http://github.com/juster/perl-www-aur
     * http://aur.archlinux.org
-    * makepkg(8)
+    * http://www.archlinux.org/pacman/makepkg.8.html
 
 AUTHOR
     Justin Davis, `<juster at cpan dot org>'
