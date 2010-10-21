@@ -181,7 +181,7 @@ sub _def_file_wrapper
     };
 }
 
-_def_file_wrapper( $_ ) for qw{ pkgbuild extract src_pkg_path
+_def_file_wrapper( $_ ) for qw{ extract src_pkg_path
                                 src_dir_path make_src_path build
                                 bin_pkg_path };
 
@@ -232,6 +232,7 @@ sub pkgbuild
         if $self->{pkgbuild_obj};
 
     my $pbtext = $self->_download_pkgbuild;
+
     return $self->{pkgbuild_obj} = WWW::AUR::PKGBUILD->new( $pbtext );
 }
 
