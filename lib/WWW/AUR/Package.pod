@@ -94,7 +94,7 @@ not be found.
 
 =head1 METHODS
 
-=head2 PACKAGE INFO ACCESSORS
+=head2 Package Info Accessors
 
   $IDNUM    = $OBJ->id;         (RPC Field Names)
   $NAME     = $OBJ->name;
@@ -180,14 +180,13 @@ same as the accessor names.
 
   %PKGBUILD = $OBJ->pkgbuild;
 
-Parses the PKGBUILD file and returns it as a hash, converting all bash
-arrays to array references.  The hash key names are identical to the
-PKGBUILD variable names. See L<PKGBUILD>(5).
+Parses the PKGBUILD file and returns it as a L<WWW::AUR::PKGBUILD>
+object.
 
-If the package has already been extracted (see L</extract>)
-then the PKGBUILD is read from the PKGBUILD file extracted to
-disk. Otherwise, the PKGBUILD is read direct from the AUR webpage
-without downloading a source package file.
+If the package has already been extracted then the PKGBUILD is read
+from the PKGBUILD file extracted to disk. Otherwise, the PKGBUILD is
+read direct from the AUR webpage without downloading a source package
+file.
 
 =head2 download
 
@@ -214,82 +213,22 @@ The absolute path to the source package file that was downloaded.
 
 =back
 
-=head2 extract
+=head2 Package File Methods
 
   $SRCPKGDIR = $OBJ->extract;
-
-=over 4
-
-=item C<$SRCPKGDIR>
-
-The absolute path to the directory where the source package was
-extracted. (This is the directory that is contained in the source
-package file, extracted)
-
-=back
-
-=head2 build
-
   $BINPKGDIR = $OBJ->build( %BUILD_PARAMS? );
-
-Builds the AUR package, using the makepkg utility.
-
-=over 4
-
-=item C<%BUILD_PARAMS> (Optional)
-
-Path parameters can be mixed with build parameters. Several build
-parameters can be used to provide arguments to makepkg.
-
-Build parameter keys:
-
-=over 4
-
-=item pkgdest
-
-Overrides where to store the built binary package file.
-
-=item quiet
-
-If set to a true value the makepkg output is redirected to I</dev/null>.
-
-=item prefix
-
-A string to prefix before the makepkg command.
-
-=item args
-
-A string to append to the makepkg command as arguments.
-
-=back
-
-=item C<$BINPKGDIR>
-
-The absolute path to the binary package that was created by running
-makepkg.
-
-=back
-
-=head2 src_pkg_path
-
   undef | $PATH = $OBJ->src_pkg_path;
-
-If I<download> has been called, then the path of the downloaded source
-package file is returned. Otherwise C<undef> is returned.
-
-=head2 src_pkg_dir
-
   undef | $PATH = $OBJ->src_pkg_dir;
-
-If I<extract> has been called, then the path of the extract source
-package dir is returned. Otherwise C<undef> is returned.
-
-=head2 bin_pkg_path
-
   undef | $PATH = $OBJ->bin_pkg_path;
 
-If I<build> has been called, then the path of the built binary package
-is returned. Otherwise C<undef> is returned.
+After calling L</download> a L<WWW::AUR::Package::File> object is
+stored inside the B<WWW::AUR::Package> object. All of the
+B<WWW::AUR::Package::File> methods are wrapped by the Package object.
+
+The I<extract> and I<build> methods call L</download> first if it has
+not already been called. I<build> calls the I<build> method in the
+L<WWW::AUR::Package::File> object, which will call the corresponding
+I<extract> method if it has not already been called.
 
 =head1 SEE ALSO
 
@@ -297,7 +236,9 @@ is returned. Otherwise C<undef> is returned.
 
 =item * L<WWW::AUR>
 
-=item * L<makepkg>(8)
+=item * L<WWW::AUR::Package::File>
+
+=item * L<WWW::AUR::PKGBUILD>
 
 =back
 
