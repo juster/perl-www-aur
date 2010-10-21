@@ -163,13 +163,13 @@ sub build
  
     local $ENV{PKGDEST} = $pkgdest;
     ( system $cmd ) == 0
-        or Carp::croak sprintf 'makepkg failed to run, error code %d',
+        or die sprintf "makepkg failed to run, error code \%d.\nError",
             $? >> 8;
 
     chdir $oldcwd;
 
     my $built_path = $self->_builtpkg_path( $pkgdest );
-    Carp::croak 'makepkg succeeded but the package file is missing'
+    die "makepkg succeeded but the package file is missing.\nError"
         unless -f $built_path;
     return $self->{builtpkg_path} = $built_path;
 }
