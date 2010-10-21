@@ -133,8 +133,7 @@ sub _def_field_acc
         my ($self) = @_;
         my $val = $self->{'fields'}{$name};
 
-        return q{}   unless defined $val;
-        return @$val if     ref $val eq 'ARRAY';
+        return q{} unless defined $val;
         return $val;
     }
 }
