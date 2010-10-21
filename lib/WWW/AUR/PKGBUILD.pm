@@ -139,13 +139,12 @@ sub _def_field_acc
     }
 }
 
-for my $field ( qw{ pkgname pkgver pkgdesc url license install
-                    changelog source noextract
-                    md5sums sha1sums sha256sums sha384sums sha512sums
-                    groups arch backup depends makedepends optdepends
-                    conflicts provides replaces options } ) {
-    _def_field_acc( $field );
-}
+_def_field_acc( $_ ) for ( qw{ pkgname pkgver pkgdesc pkgrel url
+                               license install changelog source
+                               noextract md5sums sha1sums sha256sums
+                               sha384sums sha512sums groups arch
+                               backup depends makedepends optdepends
+                               conflicts provides replaces options } );
 
 1;
 
