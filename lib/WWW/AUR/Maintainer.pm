@@ -61,7 +61,7 @@ WWW::AUR::Maintainer - List packages owned by a given maintainer.
 
 If the maintainer matching the given name does not exist, it is hard
 to tell. Currently if a bad maintainer name is given, the results
-of L<METHODS/packages> will return an empty list.
+of L</packages> will return an empty list.
 
 =over 4
 
@@ -72,7 +72,7 @@ The name of the maintainer.
 =item C<%PATH_PARAMS> (Optional)
 
 These are propogated to the L<WWW::AUR::Package> objects created by
-L<METHODS/packages>. See L<WWW::AUR/PATH PARAMETERS> for
+L</packages>. See L<WWW::AUR/PATH PARAMETERS> for
 more info.
 
 =back

@@ -37,15 +37,15 @@ WWW::AUR::Package - Query, download, and build AUR packages.
   
   # download() method sets the src_pkg_path() accessor...
   $pkg->download;
-  print "Downloaded %s to %s.\n", $pkg->name, $pkg->src_pkg_path;
+  printf "Downloaded %s to %s.\n", $pkg->name, $pkg->src_pkg_path;
   
   # extract() method sets the src_dir_path() accessor...
   $pkg->extract;
-  print "Extracted source package to %s.\n", $pkg->src_dir_path;
+  printf "Extracted source package to %s.\n", $pkg->src_dir_path;
   
   # build() method sets the bin_pkg_path() accessor...
   $pkg->build;
-  print "Build binary package and saved to %s.\n", $pkg->bin_pkg_path();
+  printf "Build binary package and saved to %s.\n", $pkg->bin_pkg_path();
   
   # After extracting, pkgbuild() is read from the file on disk...
   %pkgbuild = $pkg->pkgbuild;

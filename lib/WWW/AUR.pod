@@ -192,8 +192,8 @@ If the login failed.
 
 The constructor's only parameters are for paths to use in
 objects. Path parameters are propogated to every L<WWW::AUR::Package>
-object that is created. Package objects are created when methods such
-as L</search> and L</find>.
+object that is created. Package objects are created when using methods
+such as L</search> and L</find>.
 
 Path parameters are also propogated to objects that create their own
 L<WWW::AUR::Package> object, in turn. For example they are propogated
@@ -231,10 +231,10 @@ from the source package file.
 
 Defaults to C<$basepath/build>.
 
-=item destpath
+=item B<destpath>
 
 A directory to store built binary package files. Binary package files
-are built from the source package files by using I<makepkg>.
+are built from the source package files by using C<makepkg>.
 
 Defaults to C<$basepath/cache>.
 

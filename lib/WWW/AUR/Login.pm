@@ -193,7 +193,7 @@ WWW::AUR::Login - Login to the AUR and manage packages, vote, etc.
   $login->unflag( 'up-to-date-package' );
   
   # Upload a new package file...
-  $login->upload( '/path/to/package-file.src.tar.gz' );
+  $login->upload( '/path/to/package-file.src.tar.gz', 'devel' );
   
   # Use the inherited WWW::AUR::Maintainer accessors.
   my $name     = $login->name;

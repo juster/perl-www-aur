@@ -163,8 +163,9 @@ WWW::AUR::PKGBUILD - Parse PKGBUILD files created for makepkg
   close $fh;
   
   # Or read from text
-  my $pbtext = do { local (@ARGV, $/) = 'PKGBUILD' };
-  my $pb = WWW::AUR::PKGBUILD->new( $pbtext );
+  my $pbtext = do { local (@ARGV, $/) = 'PKGBUILD'; <> };
+  my $pbobj  = WWW::AUR::PKGBUILD->new( $pbtext );
+  my %pb     = $pbobj->fields();
 
   # Array fields are converted into arrayrefs...
   my $deps = join q{, }, @{ $pb{depends} };
@@ -188,15 +189,16 @@ extracted into a hash. Bash arrays are extracted into an arrayref
 (ie depends, makedepends, source).
 
 Remember, bash is more lenient about using arrays than perl is. Bash
-treats one-element arrays as simple values and vice-versa. Perl
-doesn't. I might use a module to copy bash's behavior later on.
+treats one-element arrays the same as non-array parameters and
+vice-versa. Perl doesn't. I might use a module to copy bash's behavior
+later on.
 
 =head1 CONSTRUCTOR
 
   $OBJ = WWW::AUR::PKGBUILD->new( $PBTEXT | $PBFILE );
 
 All this does is create a new B<WWW::AUR::PKGBUILD> object and
-then call the L<read/> method with the provided arguments.
+then call the L</read> method with the provided arguments.
 
 =over 4
 
