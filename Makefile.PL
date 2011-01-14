@@ -13,7 +13,6 @@ requires 'Fcntl'          => 0;
 requires 'HTTP::Cookies'  => 0;
 requires 'JSON'           => 0;
 requires 'LWP::UserAgent' => 0;
-requires 'parent'         => 0;
 requires 'File::Path'     => '2.06';
 requires 'File::Spec'     => 0;
 requires 'Text::Balanced' => 0;

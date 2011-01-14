@@ -6,11 +6,12 @@ use strict;
 use HTTP::Cookies  qw();
 use Carp           qw();
 
+use WWW::AUR::Maintainer;
 use WWW::AUR::UserAgent;
 use WWW::AUR::URI;
 use WWW::AUR qw( _category_index );
 
-use parent qw(WWW::AUR::Maintainer);
+our @ISA = qw(WWW::AUR::Maintainer);
 
 my $UPLOADURI      = "${WWW::AUR::BASEURI}/pkgsubmit.php";
 my $COOKIE_NAME    = 'AURSID';

@@ -3,8 +3,10 @@ package WWW::AUR::UserAgent;
 use warnings;
 use strict;
 
-use parent qw(LWP::UserAgent);
+use LWP::UserAgent;
 use WWW::AUR;
+
+our @ISA = qw(LWP::UserAgent);
 
 sub new
 {

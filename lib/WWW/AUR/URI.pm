@@ -3,13 +3,13 @@ package WWW::AUR::URI;
 use warnings;
 use strict;
 
-use Carp qw();
-use URI  qw();
+use Carp     qw();
+use URI      qw();
+use Exporter qw();
 
 use WWW::AUR;
 
-use parent qw(Exporter);
-
+our @ISA    = qw(Exporter);
 our @EXPORT = qw(pkgfile_uri pkgbuild_uri pkg_uri rpc_uri);
 
 my $PKGURI  = "$WWW::AUR::BASEURI/packages.php";
