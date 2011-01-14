@@ -11,7 +11,7 @@ use Carp           qw();
 use Cwd            qw(getcwd);
 
 use WWW::AUR::PKGBUILD qw();
-use WWW::AUR::Var      qw(path_params);
+use WWW::AUR           qw(_path_params);
 
 sub new
 {
@@ -22,7 +22,7 @@ sub new
         unless -r $path;
 
     bless { 'srcpkg_path' => $path,
-            path_params( @_ ) }, $class;
+            _path_params( @_ ) }, $class;
 }
 
 #---PUBLIC METHOD---

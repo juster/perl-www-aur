@@ -10,9 +10,9 @@ use Carp           qw();
 
 use WWW::AUR::Package::File;
 use WWW::AUR::UserAgent;
-use WWW::AUR::Var;
 use WWW::AUR::URI;
 use WWW::AUR::RPC;
+use WWW::AUR qw( _path_params );
 
 ##############################################################################
 # CONSTANTS
@@ -40,7 +40,7 @@ sub new
     }
     else { %info = %{ $params{info} }; }
 
-    my $self = bless { path_params( @_ ),
+    my $self = bless { _path_params( @_ ),
                        pkgfile     => "$name.src.tar.gz",
                        info        => \%info,
                       }, $class;
@@ -130,7 +130,7 @@ sub download
         unless $resp->is_success;
 
     $self->{pkgfile_obj} = WWW::AUR::Package::File->new
-        ( $pkgpath, path_params( %$self ));
+        ( $pkgpath, _path_params( %$self ));
 
     return $pkgpath;
 }
@@ -159,7 +159,7 @@ sub maintainer
 
     # Propogate parameters to our new Maintainer object...
     require WWW::AUR::Maintainer;
-    my %params = path_params( %$self );
+    my %params = _path_params( %$self );
     my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
 
     return $m_obj;

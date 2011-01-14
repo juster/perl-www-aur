@@ -8,7 +8,7 @@ use Carp qw();
 
 use WWW::AUR::UserAgent;
 use WWW::AUR::URI;
-use WWW::AUR::Var;
+use WWW::AUR qw( _category_name );
 
 my %_RENAME_FOR = ( 'Description' => 'desc',
                     'NumVotes'    => 'votes',
@@ -29,7 +29,7 @@ sub _rpc_pretty_pkginfo
         $result{ $newkey } = $info_ref->{ $key };
     }
 
-    $result{category} = category_name( $result{category} );
+    $result{category} = _category_name( $result{category} );
 
     return \%result;
 }

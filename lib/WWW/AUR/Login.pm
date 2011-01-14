@@ -7,12 +7,12 @@ use HTTP::Cookies  qw();
 use Carp           qw();
 
 use WWW::AUR::UserAgent;
-use WWW::AUR::Var;
 use WWW::AUR::URI;
+use WWW::AUR qw( _category_index );
 
 use parent qw(WWW::AUR::Maintainer);
 
-my $UPLOADURI      = "${BASEURI}/pkgsubmit.php";
+my $UPLOADURI      = "${WWW::AUR::BASEURI}/pkgsubmit.php";
 my $COOKIE_NAME    = 'AURSID';
 my $BAD_LOGIN_MSG  = 'Bad username or password.';
 my $PKG_EXISTS_MSG = ( 'You are not allowed to overwrite the '
@@ -29,9 +29,9 @@ sub new
         unless @_ >= 2;
     my ($name, $password) = @_;
 
-    my $ua   = WWW::AUR::UserAgent->new( agent      => $USERAGENT,
+    my $ua   = WWW::AUR::UserAgent->new( agent      => $WWW::AUR::USERAGENT,
                                          cookie_jar => HTTP::Cookies->new() );
-    my $resp = $ua->post( $BASEURI,
+    my $resp = $ua->post( $WWW::AUR::BASEURI,
                           [ user   => $name,
                             passwd => $password ]);
 
@@ -96,16 +96,14 @@ sub _def_action_method
 {
     my ($name, $goodmsg) = @_;
     
-    my $method = sub {
+    no strict 'refs';
+    *{ $name } = sub {
         my ($self, $pkg) = @_;
         my $txt = $self->_do_pkg_action( $name => $pkg );
         Carp::croak qq{Failed to perform the $name action on package "$pkg"}
             unless $txt =~ /\A$goodmsg/;
         return $txt;
     };
-
-    no strict 'refs';
-    *{ "WWW::AUR::Login::$name" } = $method;
 
     return;
 }
@@ -139,7 +137,7 @@ sub upload
     Carp::croak "Given file path ($pkgfile_path) does not exist"
         unless -f $pkgfile_path;
 
-    my $catidx = category_index( $catname );
+    my $catidx = _category_index( $catname );
     my $ua     = $self->{useragent};
     my $resp   = $ua->post( $UPLOADURI,
                             'Content-Type' => 'form-data',

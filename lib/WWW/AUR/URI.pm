@@ -6,18 +6,18 @@ use strict;
 use Carp qw();
 use URI  qw();
 
-use WWW::AUR::Var;
+use WWW::AUR;
 
 use parent qw(Exporter);
 
-our @EXPORT    = qw(pkgfile_uri pkgbuild_uri pkg_uri rpc_uri);
+our @EXPORT = qw(pkgfile_uri pkgbuild_uri pkg_uri rpc_uri);
 
-my $PKGURI    = "$BASEURI/packages.php";
+my $PKGURI  = "$WWW::AUR::BASEURI/packages.php";
 
 sub pkgfile_uri
 {
     my ($pkgname) = @_;
-    my $uri = URI->new( $BASEURI );
+    my $uri = URI->new( $WWW::AUR::BASEURI );
     $uri->path( "/packages/$pkgname/$pkgname.tar.gz" );
     return $uri->as_string;
 }
@@ -25,7 +25,7 @@ sub pkgfile_uri
 sub pkgbuild_uri
 {
     my ($pkgname) = @_;
-    my $uri = URI->new( $BASEURI );
+    my $uri = URI->new( $WWW::AUR::BASEURI );
     $uri->path( "/packages/$pkgname/$pkgname/PKGBUILD" );
     return $uri->as_string;
 }
@@ -49,7 +49,7 @@ sub rpc_uri
     Carp::croak( "$method is not a valid AUR RPC method" )
         unless $_IS_RPC_METHOD{ $method };
 
-    my $uri = URI->new( "${BASEURI}/rpc.php" );
+    my $uri = URI->new( "${WWW::AUR::BASEURI}/rpc.php" );
     $uri->query_form( 'type' => $method, 'arg' => $arg );
     return $uri->as_string;
 }

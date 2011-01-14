@@ -6,7 +6,6 @@ use strict;
 use WWW::AUR::UserAgent;
 use WWW::AUR::Package;
 use WWW::AUR::URI;
-use WWW::AUR::Var;
 
 my $PKGENTRY_MATCH = qr{ <tr> \s*
                          <td .*? </td> \s*
