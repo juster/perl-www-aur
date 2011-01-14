@@ -2,7 +2,7 @@
 
 use warnings;
 use strict;
-use Test::More tests => 8;
+use Test::More tests => 9;
 
 use WWW::AUR::PKGBUILD;
 use WWW::AUR::Package;
@@ -93,3 +93,9 @@ ok $pkg->extract;
 $pkgbuild = $pkg->pkgbuild;
 is blessed( $pkgbuild ), 'WWW::AUR::PKGBUILD';
 is $pkgbuild->pkgname, 'perl-alpm';
+
+$pbtext = <<'END_PKGBUILD';
+arch=(''i686' 'x86_64'')
+END_PKGBUILD
+$pkgbuild = WWW::AUR::PKGBUILD->new( $pbtext );
+is_deeply ( $pkgbuild->arch, [ 'i686 x86_64' ] );

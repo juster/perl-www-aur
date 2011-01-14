@@ -23,30 +23,33 @@ sub _unquote_bash
     my $elem;
 
     # Extract the values of a bash array...
-    if ( $bashtext =~ s/ \A [(] ([^)]*) [)] (.*) \z /$1/xms ) {
-        my ( $arrtext, @result );
+    if ( $bashtext =~ s/ \A [(] ([^)]*) [)] (.*) \z /$2/xms ) {
+        my ( $arrtext, @result ) = ( $1 );
 
-        ( $arrtext, $bashtext ) = ( $1, $2 );
         while ( length $arrtext ) {
             ( $elem, $arrtext ) = _unquote_bash( $arrtext );
             $arrtext =~ s/ \A \s+ //xms;
-            push @result, $elem;
+            push @result, $elem if $elem;
         }
 
-        return ( \@result, $bashtext );
+        $elem = \@result;
     }
-
     # Single quoted strings cannot escape the quote (')...
-    if ( $bashtext =~ / \A ' (.+?) ' (.*) \z /xms ) {
-        ( $elem, $bashtext ) = ( $1, $2 );
+    elsif ( $bashtext =~ s/ \A ' ([^']*) ' (.*) \z /$2/xms ) {
+        $elem = $1;
     }
     # Double quoted strings can...
     elsif ( substr $bashtext, 0, 1 eq q{"} ) {
         ( $elem, $bashtext ) = extract_delimited( $bashtext, q{"} );
     }
+    # Check if a quoted string abuts our unquoted one
+    elsif ( $bashtext =~ s/ \A ([^'"\s]+) (['"].*) /$2/xms ) {
+        $elem = $1;
+        $elem .= _unquote_bash( $bashtext );
+    }
     # Otherwise regular words are treated as one element...
     else {
-        ( $elem, $bashtext ) = $bashtext =~ / \A (\S+) (.+) \z /xms;
+        ( $elem, $bashtext ) = $bashtext =~ / \A (\S+) (.*) \z /xms;
     }
 
     return ( $elem, $bashtext );
@@ -138,12 +141,12 @@ sub _def_field_acc
     }
 }
 
-_def_field_acc( $_ ) for ( qw{ pkgname pkgver pkgdesc pkgrel url
-                               license install changelog source
-                               noextract md5sums sha1sums sha256sums
-                               sha384sums sha512sums groups arch
-                               backup depends makedepends optdepends
-                               conflicts provides replaces options } );
+_def_field_acc( $_ ) for qw{ pkgname pkgver pkgdesc pkgrel url
+                             license install changelog source
+                             noextract md5sums sha1sums sha256sums
+                             sha384sums sha512sums groups arch
+                             backup depends makedepends optdepends
+                             conflicts provides replaces options };
 
 1;
 
