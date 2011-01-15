@@ -2,11 +2,23 @@
 
 use warnings;
 use strict;
-use Test::More tests => 9;
+use Test::More tests => 13;
 
 use WWW::AUR::PKGBUILD;
 use WWW::AUR::Package;
 use Scalar::Util qw(blessed);
+
+*unquote_bash = $WWW::AUR::PKGBUILD::{'_unquote_bash'};
+
+my ($empty) = unquote_bash( q{ <-- Space should fail!} );
+is $empty, q{};
+
+my $str;
+($str) = unquote_bash( "HI" );
+is $str, q{HI};
+
+($str) = unquote_bash( q{"Hello, World!"} );
+is $str, q{Hello, World!};
 
 sub pbtext_ok
 {
@@ -87,15 +99,18 @@ is_deeply( $parsed{conflicts}, [ { 'pkg' => 'conflict',
 my $pkg      = WWW::AUR::Package->new( 'perl-alpm', basepath => 't/tmp' );
 my $pkgbuild = $pkg->pkgbuild;
 is blessed( $pkgbuild ), 'WWW::AUR::PKGBUILD';
+
 is $pkgbuild->pkgname, 'perl-alpm';
 
 ok $pkg->extract;
 $pkgbuild = $pkg->pkgbuild;
 is blessed( $pkgbuild ), 'WWW::AUR::PKGBUILD';
 is $pkgbuild->pkgname, 'perl-alpm';
+is $pkgbuild->pkgdesc, 'ArchLinux Package Manager backend library.';
 
 $pbtext = <<'END_PKGBUILD';
 arch=(''i686' 'x86_64'')
 END_PKGBUILD
 $pkgbuild = WWW::AUR::PKGBUILD->new( $pbtext );
-is_deeply ( $pkgbuild->arch, [ 'i686 x86_64' ] );
+is $pkgbuild->arch->[0], 'i686 x86_64';
+
