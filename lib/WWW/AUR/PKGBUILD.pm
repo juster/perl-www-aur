@@ -19,40 +19,57 @@ sub new
 #---HELPER FUNCTION---
 sub _unquote_bash
 {
-    my ($bashtext) = @_;
+    my ($bashtext, $start) = @_;
     my $elem;
 
-    # Extract the values of a bash array...
-    if ( $bashtext =~ s/ \A [(] ([^)]*) [)] (.*) \z /$2/xms ) {
-        my ( $arrtext, @result ) = ( $1 );
+    $start ||= 0;
+    ( pos $bashtext ) = $start;
 
-        while ( length $arrtext ) {
-            ( $elem, $arrtext ) = _unquote_bash( $arrtext );
-            $arrtext =~ s/ \A \s+ //xms;
+    # Extract the values of a bash array...
+    if ( $bashtext =~ / \G [(] ([^)]*) [)] /gcx ) {
+        my $arrtext = $1;
+        my @result;
+
+        ARRAY_LOOP:
+        while ( 1 ) {
+            my ($elem, $elem_end) = _unquote_bash( $arrtext, pos $arrtext );
             push @result, $elem if $elem;
+
+            # There should only be spaces leftover.
+            ( pos $arrtext ) = $elem_end;
+            last ARRAY_LOOP if ( $elem_end >= length $arrtext ||
+                                 $arrtext !~ /\G\s+/g );
         }
 
-        $elem = \@result;
+        # Arrays are special, we do not recurse after we find one.
+        return \@result, pos $bashtext;
     }
+
+    # The rest is for string "parsing"...
+
     # Single quoted strings cannot escape the quote (')...
-    elsif ( $bashtext =~ s/ \A ' ([^']*) ' (.*) \z /$2/xms ) {
+    if ( $bashtext =~ /\G'([^']*)'/gc ) {
         $elem = $1;
     }
     # Double quoted strings can...
-    elsif ( substr $bashtext, 0, 1 eq q{"} ) {
-        ( $elem, $bashtext ) = extract_delimited( $bashtext, q{"} );
-    }
-    # Check if a quoted string abuts our unquoted one
-    elsif ( $bashtext =~ s/ \A ([^'"\s]+) (['"].*) /$2/xms ) {
-        $elem = $1;
-        $elem .= _unquote_bash( $bashtext );
+    elsif ( $bashtext =~ /\G"/gc ) {
+        my $beg = pos $bashtext;
+        # Skip past escaped double-quotes and non-double-quote chars.
+        while ( $bashtext =~ / \G (?: \\" | [^"] ) /gcx ) { ; }
+
+        $elem = substr $bashtext, $beg, ( pos $bashtext ) - $beg;
+        ++( pos $bashtext ); # skip the closing "
     }
     # Otherwise regular words are treated as one element...
-    else {
-        ( $elem, $bashtext ) = $bashtext =~ / \A (\S+) (.*) \z /xms;
+    elsif ( $bashtext =~ /\G([^ \n\t'"]+)/gc ) {
+        $elem = $1;
     }
+    # If none of the above matches, then we stop recursion.
+    else { return q{}, $start; }
 
-    return ( $elem, $bashtext );
+    # We recurse in order to concatenate adjacent strings.
+    my ( $next_elem, $next_end ) = _unquote_bash( $bashtext, pos $bashtext );
+    return ( $elem . $next_elem, $next_end );
 }
 
 #---HELPER FUNCTION---
@@ -77,14 +94,12 @@ sub _pkgbuild_fields
     my ($pbtext) = @_;
 
     my %pbfields;
-    while ( $pbtext =~ / ^ (\w+) = /xmsg ) { 
+    while ( $pbtext =~ / \G .*? \n? ^ (\w+) = /gxms ) { 
         my $name = $1;
-        my $value;
-
-        $pbtext = substr $pbtext, pos $pbtext;
-        ( $value, $pbtext ) = _unquote_bash( $pbtext );
+        my ( $value, $endpos ) = _unquote_bash( $pbtext, pos $pbtext );
 
         $pbfields{ $name } = $value;
+        ( pos $pbtext ) = $endpos;
     }
 
     for my $depkey ( qw/ depends conflicts / ) {
