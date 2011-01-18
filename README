@@ -47,14 +47,14 @@ sudo make install
      (http://www.archlinux.org/pacman/makepkg.8.html)
 
 ** Web Page
-  This module provides an interface for the straight-forward AUR user as
-  well as for AUR author, aka package maintainers. The goal is to be able
-  to do anything with this module that you could with a web browser.
+   This module provides an interface for the straight-forward AUR user as
+   well as for AUR author, aka package maintainers. The goal is to be able
+   to do anything with this module that you could with a web browser.
 
 ** Package Building
-  The WWW::AUR::Package module also allows the module user to download and
-  build source packages using makepkg. Installation is left up to the
-  module user and is not implemented in this module.
+   The WWW::AUR::Package module also allows the module user to download and
+   build source packages using makepkg. Installation is left up to the
+   module user and is not implemented in this module.
 
 * Testing
   The automated testing (by using 'make test') can only succeed if there
