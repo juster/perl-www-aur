@@ -1,20 +1,34 @@
 Changes -*- org -*-
 
 * 0.06 [2011-01-30 Sun]
+
 ** POD Documentation
-   Fixes many errors in the documentation.
+
+Fixes many errors in the documentation.
+
 ** PKGBUILD Parsing
-   PKGBUILD parsing is now more resilient. The parsing is still far from
-   perfect but strange quotations now result in the same value that bash
-   gives them. I have also changed how parsing works, internally. I
-   suspect it is more efficient than previously.
+
+PKGBUILD parsing is now more resilient. The parsing is still far from
+perfect but strange quotations now result in the same value that bash
+gives them. I have also changed how parsing works, internally. I
+suspect it is more efficient than previously.
+
 ** Org-mode documentation
-   I've decided to switch to Emacs's org-mode for all README and changelog
-   files in my own projects.
+
+I've decided to switch to Emacs's org-mode for all README and
+changelog files in my own projects.
+
 ** HTTPS Logins
-   All actions taken while logged in now use HTTPS in order to secure
-   the login's session key. This also requires the Crypt::SSLeay
-   module to be installed if you want to login and do stuff.
+
+All actions taken while logged in now use HTTPS in order to secure
+the login's session key. This also requires the Crypt::SSLeay
+module to be installed if you want to login and do stuff.
+   
+** Delete Action Added
+
+Adds the delete package action in case any Trusted User wants to
+use this module to delete packages. It is kind of scary what you
+can do with it but heck... I trust you!
 
 * Old GNU-style ChangeLog Entries:
 
