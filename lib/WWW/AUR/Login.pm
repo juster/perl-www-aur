@@ -281,25 +281,29 @@ I<< <LWP error> >>.
 
 =head2 adopt disown [un]vote [un]notify [un]flag
 
-  $HTML = $OBJ->adopt( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->disown( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->unvote( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->vote( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->unnotify( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->notify( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->unflag( $PKGID | $PKGNAME | $PKGOBJ );
-  $HTML = $OBJ->flag( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->adopt( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->disown( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->unvote( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->vote( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->unnotify( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->notify( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->unflag( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->flag( $PKGID | $PKGNAME | $PKGOBJ );
+  $MSG = $OBJ->delete( $PKGID | $PKGNAME | $PKGOBJ );
 
 If you are an AUR maintainer you already know what these do. These
 actions are the same actions you can perform to a package (with
 buttons on the webpage) when you are logged in.
 
+In order to use the delete method you must be logged in as a
+Trusted User.
+
 =over 4
 
-=item C<$HTML>
+=item C<$MSG>
 
-The HTML text of the response given when we performed the action. You
-probably don't need to use this.
+This is the message displayed at the top of the page by the AUR after
+an action is completed. Not really useful but there it is.
 
 =item C<$PKGID>
 
@@ -341,11 +345,14 @@ attempted action. When we scraped the HTML it did not match the output
 we expected. Maybe the AUR website was changed and this module wasn't
 updated?
 
-=item Failed to perform the I<< <action> >> action on package "I<< <package> >>"
+=item I<< <action> >> action on I<< <package> >> failed:\n<< <AUR message> >>
 
-This seems to never really happen. Even if you try to do something silly
-like adopt a package owned by someone else, call C<notify> when you are
-already being notified, etc... AUR will say the action succeeded.
+This hardly happens. If this does it is probably an internal error.
+A stack-trace is printed out. I<< <action> >> is the name of the
+action method, I<< <package> >> is the argument passed to the
+method (converted to a name if possible), I<< <AUR message> >>
+is the message the AUR prints at the top of the webpage.
+
 
 =back
 
