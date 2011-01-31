@@ -1,6 +1,6 @@
 package WWW::AUR::UserAgent;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use LWP::UserAgent;

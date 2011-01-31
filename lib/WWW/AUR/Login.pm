@@ -1,6 +1,6 @@
 package WWW::AUR::Login;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use HTTP::Cookies  qw();

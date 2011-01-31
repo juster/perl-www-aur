@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 use Test::More tests => 4;
 use File::Spec::Functions qw(rel2abs splitpath catdir);

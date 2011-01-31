@@ -1,6 +1,6 @@
 package WWW::AUR::RPC;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use JSON qw();

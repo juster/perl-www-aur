@@ -1,6 +1,6 @@
 package WWW::AUR::PKGBUILD;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use Fcntl          qw(SEEK_SET);

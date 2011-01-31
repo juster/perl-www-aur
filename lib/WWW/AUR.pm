@@ -1,6 +1,6 @@
 package WWW::AUR;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use Exporter;

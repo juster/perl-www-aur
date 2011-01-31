@@ -1,6 +1,6 @@
 package WWW::AUR::Package::File;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use File::Basename qw(basename);

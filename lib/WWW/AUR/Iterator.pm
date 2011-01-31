@@ -1,6 +1,6 @@
 package WWW::AUR::Iterator;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use WWW::AUR::UserAgent;

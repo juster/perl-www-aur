@@ -1,6 +1,6 @@
 package WWW::AUR::URI;
 
-use warnings;
+use warnings 'FATAL' => 'all';
 use strict;
 
 use Carp     qw();
