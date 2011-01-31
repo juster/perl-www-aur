@@ -12,7 +12,7 @@ BEGIN {
 
     our $VERSION   = '0.05';
     our $BASEPATH  = '/tmp/WWW-AUR';
-    our $BASEURI   = 'http://aur.archlinux.org';
+    our $HOST      = 'aur.archlinux.org';
     our $USERAGENT = "WWW::AUR/v${VERSION}";
 
     our @ISA       = qw(Exporter);

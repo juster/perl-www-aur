@@ -13,7 +13,7 @@ use WWW::AUR qw( _category_index );
 
 our @ISA = qw(WWW::AUR::Maintainer);
 
-my $UPLOADURI      = "${WWW::AUR::BASEURI}/pkgsubmit.php";
+my $UPLOADURI      = "https://$WWW::AUR::HOST/pkgsubmit.php";
 my $COOKIE_NAME    = 'AURSID';
 my $BAD_LOGIN_MSG  = 'Bad username or password.';
 my $PKG_EXISTS_MSG = ( 'You are not allowed to overwrite the '
@@ -32,9 +32,8 @@ sub new
 
     my $ua   = WWW::AUR::UserAgent->new( agent      => $WWW::AUR::USERAGENT,
                                          cookie_jar => HTTP::Cookies->new() );
-    my $resp = $ua->post( $WWW::AUR::BASEURI,
-                          [ user   => $name,
-                            passwd => $password ]);
+    my $resp = $ua->post( "https://$WWW::AUR::HOST",
+                          [ user => $name, passwd => $password ] );
 
     Carp::croak 'Failed to login to AUR: bad username or password'
         if $resp->content =~ /$BAD_LOGIN_MSG/;
@@ -43,7 +42,6 @@ sub new
         if ! $resp->is_success && $resp->code != 302;
 
     my $self = $class->SUPER::new( $name );
-    $self->{password}  = $password;
     $self->{useragent} = $ua;
     return $self;
 }
@@ -60,12 +58,12 @@ sub _do_pkg_action
 
     my $id   = _pkgid( $pkg );
     my $ua   = $self->{useragent};
-    my $resp = $ua->post( pkg_uri( ID => $id ),
-                          [ "IDs[$id]" => 1, 'ID' => $id,
-                            $action    => 1, @params ] );
+    my $uri  = pkg_uri( 'https' => 1, 'ID' => $id );
+    my $resp = $ua->post( $uri, [ "IDs[$id]" => 1, 'ID' => $id,
+                                  $action    => 1, @params ] );
 
     Carp::croak 'Failed to send package action: ' . $resp->status_line
-        if ! $resp->is_success;
+        unless $resp->is_success;
 
     my ($pkgoutput) = $resp->content =~ /$PKGOUTPUT_MATCH/;
     Carp::croak 'Failed to parse package action response'

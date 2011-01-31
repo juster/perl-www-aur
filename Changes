@@ -11,6 +11,10 @@ Changes -*- org -*-
 ** Org-mode documentation
    I've decided to switch to Emacs's org-mode for all README and changelog
    files in my own projects.
+** HTTPS Logins
+   All actions taken while logged in now use HTTPS in order to secure
+   the login's session key. This also requires the Crypt::SSLeay
+   module to be installed if you want to login and do stuff.
 
 * Old GNU-style ChangeLog Entries:
 
