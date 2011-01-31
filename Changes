@@ -18,11 +18,19 @@ suspect it is more efficient than previously.
 I've decided to switch to Emacs's org-mode for all README and
 changelog files in my own projects.
 
-** HTTPS Logins
+** Logins
+
+*** HTTPS Logins
 
 All actions taken while logged in now use HTTPS in order to secure
 the login's session key. This also requires the Crypt::SSLeay
 module to be installed if you want to login and do stuff.
+
+*** Multilingual Logins
+
+Multilingual logins will now work properly. The internal webpage
+requests are set to English so the module only has to check for errors
+in one language.
    
 ** Delete Action Added
 

@@ -22,6 +22,23 @@ my $PKG_EXISTS_ERR = 'You tried to submit a package you do not own';
 
 my $PKGOUTPUT_MATCH = qr{ <p [ ] class="pkgoutput"> ( [^<]+ ) </p> }xms;
 
+sub _new_cookie_jar
+{
+    my $jar = HTTP::Cookies->new();
+
+    my ($domain, $port) = split /:/, $WWW::AUR::HOST;
+    $port ||= 443; # we use https for logins
+
+    # This REALLY should take a hash as argument...
+    $jar->set_cookie( 0, 'AURLANG' => 'en', # version, key, val
+                      '/', $domain, $port,  # path, domain, port
+                      0, 0,                 # path_spec, secure
+                      0, 0,                 # maxage, discard
+                      {} );                 # rest
+
+    return $jar;
+}
+
 sub new
 {
     my $class = shift;
@@ -31,8 +48,8 @@ sub new
     my ($name, $password) = @_;
 
     my $ua   = WWW::AUR::UserAgent->new( agent      => $WWW::AUR::USERAGENT,
-                                         cookie_jar => HTTP::Cookies->new() );
-    my $resp = $ua->post( "http://$WWW::AUR::HOST/index.php",
+                                         cookie_jar => _new_cookie_jar());
+    my $resp = $ua->post( "https://$WWW::AUR::HOST/index.php",
                           [ user => $name, passwd => $password ] );
 
     Carp::croak 'Failed to login to AUR: bad username or password'
