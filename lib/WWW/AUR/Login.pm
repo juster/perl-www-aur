@@ -32,41 +32,48 @@ sub new
 
     my $ua   = WWW::AUR::UserAgent->new( agent      => $WWW::AUR::USERAGENT,
                                          cookie_jar => HTTP::Cookies->new() );
-    my $resp = $ua->post( "https://$WWW::AUR::HOST",
+    my $resp = $ua->post( "http://$WWW::AUR::HOST/index.php",
                           [ user => $name, passwd => $password ] );
 
     Carp::croak 'Failed to login to AUR: bad username or password'
         if $resp->content =~ /$BAD_LOGIN_MSG/;
 
-    Carp::croak 'Failed to login to AUR: ' . $resp->status_line
-        if ! $resp->is_success && $resp->code != 302;
+    unless ( $resp->code == 302 ) {
+        Carp::croak 'Failed to login to AUR: ' . $resp->status_line
+            unless $resp->is_success;
+    }
 
     my $self = $class->SUPER::new( $name );
-    $self->{useragent} = $ua;
+    $self->{'useragent'} = $ua;
     return $self;
 }
 
 my %_PKG_ACTIONS = map { ( lc $_ => "do_$_" ) }
-    qw{ Adopt Disown Vote UnVote Notify UnNotify Flag UnFlag };
+    qw{ Adopt Disown Vote UnVote Notify UnNotify Flag UnFlag Delete };
 
 sub _do_pkg_action
 {
     my ($self, $act, $pkg, @params) = @_;
 
+    Carp::croak 'Please provide a proper package ID/name/obj argument'
+        unless $pkg;
+
     my $action = $_PKG_ACTIONS{ $act }
         or Carp::croak "$act is not a valid action for a package";
 
     my $id   = _pkgid( $pkg );
-    my $ua   = $self->{useragent};
+    my $ua   = $self->{'useragent'};
     my $uri  = pkg_uri( 'https' => 1, 'ID' => $id );
-    my $resp = $ua->post( $uri, [ "IDs[$id]" => 1, 'ID' => $id,
-                                  $action    => 1, @params ] );
+    my $resp = $ua->post( $uri, [ "IDs[$id]" => 1,
+                                  'ID'       => $id,
+                                  $action    => 1,
+                                  @params ] );
 
     Carp::croak 'Failed to send package action: ' . $resp->status_line
         unless $resp->is_success;
 
     my ($pkgoutput) = $resp->content =~ /$PKGOUTPUT_MATCH/;
-    Carp::croak 'Failed to parse package action response'
+    Carp::confess 'Failed to parse package action response'
         unless $pkgoutput;
 
     return $pkgoutput;
@@ -91,6 +98,16 @@ sub _pkgid
     return $pkg->id;
 }
 
+#---HELPER FUNCTION---
+# If provided pkg is an object, call its name method, otherwise pass through.
+sub _pkgdesc
+{
+    my ($pkg) = @_;
+    my $name;
+    return $name if $name = eval { $pkg->name };
+    return $pkg;
+}
+
 sub _def_action_method
 {
     my ($name, $goodmsg) = @_;
@@ -98,9 +115,12 @@ sub _def_action_method
     no strict 'refs';
     *{ $name } = sub {
         my ($self, $pkg) = @_;
+
         my $txt = $self->_do_pkg_action( $name => $pkg );
-        Carp::croak qq{Failed to perform the $name action on package "$pkg"}
-            unless $txt =~ /\A$goodmsg/;
+        unless ( $txt =~ /\A$goodmsg/ ) {
+            Carp::confess sprintf qq{%s action on "%s" failed:\n%s\n},
+                ucfirst $name, _pkgdesc( $pkg ), $txt;
+        }
         return $txt;
     };
 
@@ -127,6 +147,23 @@ my %_ACTIONS = ( 'adopt'    => 'The selected packages have been adopted.',
 
 while ( my ($name, $goodmsg) = each %_ACTIONS ) {
     _def_action_method( $name, $goodmsg );
+}
+
+sub delete
+{
+    my ($self, $pkg) = @_;
+
+    my $txt = $self->_do_pkg_action( 'delete'         => $pkg,
+                                     'confirm_Delete' => 1 );
+
+    unless ( $txt =~ /\AThe selected packages have been deleted[.]/ ) {
+        my $msg = sprintf q{Failed to perform the delete action on }
+            . q{package "%s"}, _pkgdesc( $pkg );
+        Carp::croak $msg;
+    }
+
+    return $txt;
+
 }
 
 sub upload
