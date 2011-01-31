@@ -3,7 +3,6 @@ package WWW::AUR::PKGBUILD;
 use warnings;
 use strict;
 
-use Text::Balanced qw(extract_delimited extract_bracketed);
 use Fcntl          qw(SEEK_SET);
 use Carp           qw();
 

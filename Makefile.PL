@@ -15,7 +15,6 @@ requires 'JSON'           => 0;
 requires 'LWP::UserAgent' => 0;
 requires 'File::Path'     => '2.06';
 requires 'File::Spec'     => 0;
-requires 'Text::Balanced' => 0;
 requires 'URI'            => 0;
 
 test_requires 'Test::More' => '0.87_01';
