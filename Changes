@@ -1,3 +1,19 @@
+Changes -*- org -*-
+
+* 0.06 [2011-01-30 Sun]
+** POD Documentation
+   Fixes many errors in the documentation.
+** PKGBUILD Parsing
+   PKGBUILD parsing is now more resilient. The parsing is still far from
+   perfect but strange quotations now result in the same value that bash
+   gives them. I have also changed how parsing works, internally. I
+   suspect it is more efficient than previously.
+** Org-mode documentation
+   I've decided to switch to Emacs's org-mode for all README and changelog
+   files in my own projects.
+
+* Old GNU-style ChangeLog Entries:
+
 2010-10-21  Justin Davis  <juster@cpan.org>
 
 	* RELEASE (0.05)
