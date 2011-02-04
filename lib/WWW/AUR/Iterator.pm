@@ -165,7 +165,7 @@ If we have iterated through all packages, then C<undef> is returned.
 =item C<$PKGNAME>
 
 The name of the next package in the AUR. This is faster than
-L<METHODS/next> because L<WWW::AUR::Package> objects do not have to be
+L</next> because L<WWW::AUR::Package> objects do not have to be
 created for every package on the AUR.
 
 =item C<undef>
@@ -184,20 +184,15 @@ Justin Davis, C<< <juster at cpan dot org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-www-aur at
-rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-AUR>.  I will be
-notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
+Please email me any bugs you find. I will try to fix them as quick as I can.
 
 =head1 SUPPORT
 
-Send me an email at the above address if you have any questions or
-need help.
+Send me an email if you have any questions or need help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010 Justin Davis.
+Copyright 2011 Justin Davis.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

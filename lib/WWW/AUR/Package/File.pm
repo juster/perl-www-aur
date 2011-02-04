@@ -221,7 +221,7 @@ WWW::AUR::Package::File - Load, extract, and build a source package file
 The path to a source package file. These typically end with the
 .src.tar.gz suffix.
 
-=item C<%PATH_PARAMS>
+=item C<%PATH_PARAMS> B<(Optional)>
 
 Optional path parameters. See L<WWW::AUR/PATH PARAMETERS>.
 
@@ -251,28 +251,27 @@ Builds the AUR package, using the makepkg utility.
 
 =over 4
 
-=item C<%BUILD_PARAMS> (Optional)
+=item C<%BUILD_PARAMS> B<(Optional)>
 
 Path parameters can be mixed with build parameters. Several build
-parameters can be used to provide arguments to makepkg.
-
-Build parameter keys:
+parameters can be used to provide arguments to makepkg. Build
+parameter keys:
 
 =over 4
 
-=item pkgdest
+=item B<pkgdest>
 
 Overrides where to store the built binary package file.
 
-=item quiet
+=item B<quiet>
 
 If set to a true value the makepkg output is redirected to I</dev/null>.
 
-=item prefix
+=item B<prefix>
 
 A string to prefix before the makepkg command.
 
-=item args
+=item B<args>
 
 A string to append to the makepkg command as arguments.
 
@@ -283,17 +282,17 @@ A string to append to the makepkg command as arguments.
 The absolute path to the binary package that was created by running
 makepkg.
 
-=back
-
-=head3 Errors
+=item B<Errors>
 
 =over 4
 
-=item I<makepkg failed to run: signal %d.>
+=item * I<makepkg failed to run: signal %d.>
 
-=item I<makepkg failed to run: error code %d.>
+=item * I<makepkg failed to run: error code %d.>
 
-=item I<makepkg succeeded but the package file is missing.>
+=item * I<makepkg succeeded but the package file is missing.>
+
+=back
 
 =back
 
@@ -319,21 +318,21 @@ extracted source package directory.
 
   undef | $PATH = $OBJ->src_pkg_path;
 
-If I<download> has been called, then the path of the downloaded source
+If L</download> has been called, then the path of the downloaded source
 package file is returned. Otherwise C<undef> is returned.
 
 =head2 src_dir_path
 
   undef | $PATH = $OBJ->src_dir_path;
 
-If I<extract> has been called, then the path of the extract source
+If L</extract> has been called, then the path of the extract source
 package dir is returned. Otherwise C<undef> is returned.
 
 =head2 bin_pkg_path
 
   undef | $PATH = $OBJ->bin_pkg_path;
 
-If I<build> has been called, then the path of the built binary package
+If L</build> has been called, then the path of the built binary package
 is returned. Otherwise C<undef> is returned.
 
 =head2 make_src_path
@@ -341,7 +340,7 @@ is returned. Otherwise C<undef> is returned.
   $PATH = $OBJ->make_src_path( $RELPATH )
 
 Helper function to easily lookup the absolute path to a file inside
-the source directory. This just builts the path it does not guarantee
+the source directory. This just builds the path it does not guarantee
 the file exists!
 
 =over 4
@@ -383,20 +382,15 @@ Justin Davis, C<< <juster at cpan dot org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-www-aur at
-rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-AUR>.  I will be
-notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
+Please email me any bugs you find. I will try to fix them as quick as I can.
 
 =head1 SUPPORT
 
-Send me an email at the above address if you have any questions or
-need help.
+Send me an email if you have any questions or need help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010 Justin Davis.
+Copyright 2011 Justin Davis.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

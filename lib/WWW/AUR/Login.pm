@@ -272,9 +272,7 @@ The AUR user name to login as.
 
 The password needed to login as the specified user.
 
-=back
-
-=head2 Errors
+=item B<Errors>
 
 The following errors messages are thrown with C<Carp::croak> if we
 were unable to login to the AUR.
@@ -291,6 +289,8 @@ the password for the username is incorrect.
 If LWP failed to retrieve the page because of some problem with the
 HTTP request an HTTP status code and short message is given at
 I<< <LWP error> >>.
+
+=back
 
 =back
 
@@ -338,9 +338,7 @@ is looked up in order to find the ID number.
 
 A L<WWW::AUR::Package> object.
 
-=back
-
-=head3 Errors
+=item B<Errors>
 
 =over 4
 
@@ -370,6 +368,7 @@ action method, I<< <package> >> is the argument passed to the
 method (converted to a name if possible), I<< <AUR message> >>
 is the message the AUR prints at the top of the webpage.
 
+=back
 
 =back
 
@@ -446,19 +445,15 @@ Justin Davis, C<< <juster at cpan dot org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-www-aur at
-rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-AUR>.  I will be
-notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
+Please email me any bugs you find. I will try to fix them as quick as I can.
 
 =head1 SUPPORT
 
-Read the manual first.  Send me an email if you still need help.
+Send me an email if you have any questions or need help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010 Justin Davis.
+Copyright 2011 Justin Davis.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
