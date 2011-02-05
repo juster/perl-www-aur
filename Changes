@@ -6,6 +6,16 @@ Changes -*- org -*-
  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
                          |___/                   |___/ 
 
+* Release 0.07 [2011-02-04 Fri]
+
+** Fix Broken Test                                                      :FIX:
+
+I foolishly broke a test by changing outside circumstances. I had
+renamed 'Archlinux::Messages' to 'Archlinux::Term' and so the
+'perl-archlinux-messages' package on the AUR was deleted in favor of
+'perl-archlinux-term'. One of our tests checks for the existance of
+'perl-archlinux-messages' on the AUR, which fails.
+
 * Release 0.06 [2011-02-04 Fri]
 
 ** POD Documentation
