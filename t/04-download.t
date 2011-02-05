@@ -19,8 +19,8 @@ ok -f $pkgfile, 'source package file was downloaded';
 ok $download_size == (-s $pkgfile),
     'downloaded file size matches the web reported size';
 
-$pkg = $aur->find( 'perl-archlinux-messages' );
-ok $pkg, 'looked up perl-archlinux-messages package';
+$pkg = $aur->find( 'perl-archlinux-term' );
+ok $pkg, 'looked up perl-archlinux-term package';
 
 my $done = 0;
 my $cb = sub {
