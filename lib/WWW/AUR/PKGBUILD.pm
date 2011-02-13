@@ -101,7 +101,7 @@ sub _pkgbuild_fields
         ( pos $pbtext ) = $endpos;
     }
 
-    for my $depkey ( qw/ depends conflicts / ) {
+    for my $depkey ( qw/ makedepends depends conflicts / ) {
         my @fixed;
 
         @fixed = map { _depstr_to_hash($_) } @{$pbfields{ $depkey }}
