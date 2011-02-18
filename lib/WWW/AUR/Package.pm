@@ -233,7 +233,11 @@ sub pkgbuild
 
     my $pbtext = $self->_download_pkgbuild;
 
-    return $self->{pkgbuild_obj} = WWW::AUR::PKGBUILD->new( $pbtext );
+    $self->{pkgbuild_txt} = $pbtext;
+    $self->{pkgbuild_obj} = eval { WWW::AUR::PKGBUILD->new( $pbtext ) };
+    Carp::confess if $@; # stack trace
+
+    return $self->{pkgbuild_obj};
 }
 
 1;
