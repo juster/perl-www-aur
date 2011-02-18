@@ -8,7 +8,7 @@ use WWW::AUR::PKGBUILD;
 use WWW::AUR::Package;
 use Scalar::Util qw(blessed);
 
-*unquote_bash = $WWW::AUR::PKGBUILD::{'_unquote_bash'};
+*unquote_bash = *WWW::AUR::PKGBUILD::_unquote_bash;
 
 my ($empty) = unquote_bash( q{ <-- Space should fail!} );
 is $empty, q{};
@@ -69,7 +69,6 @@ pbtext_ok( $pbtext,
                                'ver' => '0',
                                'str' => 'perl', } ],
              'provides' => [ 'perl-cpanplus-dist-arch' ],
-             'conflicts' => [], # an empty list is stored
              'url'      => 'http://github.com/juster/perl-cpanplus-dist-arch',
              'md5sums'  => [],
              'source'   => [] },
@@ -119,5 +118,5 @@ $pbtext = <<'END_PKGBUILD';
 arch=(''i686' 'x86_64'')
 END_PKGBUILD
 $pkgbuild = WWW::AUR::PKGBUILD->new( $pbtext );
-is $pkgbuild->arch->[0], 'i686 x86_64';
+is_deeply $pkgbuild->arch, [ qw/ i686 x86_64 / ];
 
