@@ -51,6 +51,9 @@ sub _def_wrapper_method
     *{ "WWW::AUR::$name" } = sub {
         my $self = shift;
         eval "require $class";
+        if ( $@ ) {
+            Carp::confess "Failed to load $class module:\n$@";
+        }
         return eval { $class->new( @_, %$self ) };
     };
 }
