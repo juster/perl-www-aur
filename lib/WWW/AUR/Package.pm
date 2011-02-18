@@ -138,7 +138,7 @@ sub download
 
 #---PUBLIC METHOD---
 # Purpose: Scrape the package webpage to get the maintainer's name
-sub maintainer
+sub maintainer_name
 {
     my ($self) = @_;
 
@@ -156,13 +156,23 @@ sub maintainer
 
     # Orphaned packages don't have a maintainer...
     return undef if $username eq 'None';
+    return $username;
+}
+
+#---PUBLIC METHOD---
+# Purpose: Returns an object representing the package maintainer.
+sub maintainer
+{
+    my ($self) = @_;
+
+    my $mname = $self->maintainer_name();
+    return undef unless defined $mname;
 
     # Propogate parameters to our new Maintainer object...
     require WWW::AUR::Maintainer;
     my %params = _path_params( %$self );
-    my $m_obj  = WWW::AUR::Maintainer->new( $username, %params );
-
-    return $m_obj;
+    my $mobj   = WWW::AUR::Maintainer->new( $mname, %params );
+    return $mobj;
 }
 
 sub _def_file_wrapper
