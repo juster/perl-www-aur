@@ -21,7 +21,7 @@ sub pkgfile_uri
 sub pkgbuild_uri
 {
     my ($pkgname) = @_;
-    return "http://$WWW::AUR::HOST/packages/$pkgname/$pkgname/PKGBUILD"
+    return "http://$WWW::AUR::HOST/packages/$pkgname/PKGBUILD"
 }
 
 sub pkg_uri
