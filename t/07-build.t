@@ -14,10 +14,11 @@ BEGIN {
     use_ok 'WWW::AUR::Package';
 }
 
-my $pkg = WWW::AUR::Package->new( 'perl-cpanplus-dist-arch',
-                                  basepath => 't/tmp' );
-diag "Building perl-cpanplus-dist-arch";
-my $builtpath = $pkg->build( quiet => 1 );
+my $pkgname = 'perl-archlinux-term';
+
+my $pkg = WWW::AUR::Package->new( $pkgname, 'basepath' => 't/tmp' );
+diag "Test building $pkgname";
+my $builtpath = $pkg->build( 'quiet' => 1 );
 ok $builtpath;
 is $builtpath, $pkg->bin_pkg_path;
 

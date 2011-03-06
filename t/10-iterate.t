@@ -21,8 +21,7 @@ sub check_pkgobjs
 {
     my ($pkgnames_ref) = @_;
 
-    diag q{Iterating through 100 package objects
-(this might take a little longer)};
+    diag q{Iterating through 100 package objects (slower)};
 
     my $iter = WWW::AUR::Iterator->new;
     while ( @$pkgnames_ref ) {

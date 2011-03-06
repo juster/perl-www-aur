@@ -24,9 +24,11 @@ sub pbtext_ok
 {
     my ($pbtext, $expect_ref, $test_name) = @_;
 
+    my ($line) = reverse caller;
+
     my $pbobj = WWW::AUR::PKGBUILD->new( $pbtext );
     my %parsed = $pbobj->fields;
-    is_deeply( \%parsed, $expect_ref, $test_name );
+    is_deeply( \%parsed, $expect_ref, "line $line: $test_name" );
     return;
 }
 
@@ -68,7 +70,9 @@ pbtext_ok( $pbtext,
                                'cmp' => '>',
                                'ver' => '0',
                                'str' => 'perl', } ],
-             'provides' => [ 'perl-cpanplus-dist-arch' ],
+             'provides' => [ { 'pkg' => 'perl-cpanplus-dist-arch',
+                               'ver' => undef,
+                               'str' => 'perl-cpanplus-dist-arch' } ],
              'url'      => 'http://github.com/juster/perl-cpanplus-dist-arch',
              'md5sums'  => [],
              'source'   => [] },
