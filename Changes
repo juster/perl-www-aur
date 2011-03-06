@@ -6,6 +6,41 @@ Changes -*- org -*-
  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
                          |___/                   |___/ 
 
+* Release 0.08 [2011-03-06 Sun]
+
+** Rename packages() method to iter()
+
+I thought packages() might be a bit misleading as to what you are
+actually getting from the method (a WWW::AUR::Iterator object).
+
+** Update PKGBUILD URL
+
+The URLs for every PKGBUILD were changed on the website. The old
+scheme was /packages/$pkgname/$pkgname/PKGBUILD. The new scheme is
+/packages/$pkgname/PKGBUILD.
+
+** Better PKGBUILD Parsing
+
+*** Splits array fields on spaces
+    
+Some poorly authored PKGBUILDs have fields which should be arrays,
+but instead are one element arrays with many elements separated
+by spaces. We split arrays on spaces where possible (everywhere
+except optdepends) and where array fields are expected.
+
+*** Crude parameter expansion added
+
+We expand previously defined bash parameters (aka PKGBUILD fields).
+The expansion is very simple, no special modifiers are recognized.
+(Only ${NAME} is expanded, not ${NAME:-default}, etc). No command
+expansion, path expansion, etc is implemented.
+
+** WWW::AUR::Package->maintainer_name() method added
+
+This is handy when you don't want a full fledged WWW::AUR::Maintainer
+object. When creating objects, often their names, etc, are looked
+up on the AUR RPC. This takes more time.
+  
 * Release 0.07 [2011-02-04 Fri]
 
 ** Fix Broken Test                                                      :FIX:
