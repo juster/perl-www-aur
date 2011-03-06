@@ -121,6 +121,16 @@ sub _depstr_to_hash
               'ver' => $ver, 'str' => $depstr };
 }
 
+sub _provides_to_hash
+{
+    my ($provstr) = @_;
+    my ($pkg, $ver) = $provstr =~ / \A ([^=]+)
+                                    (?: = (.*))?
+                                  /xms;
+    Carp::confess "Failed to parse provides string: $_" unless $pkg;
+    return +{ 'pkg' => $pkg, 'ver' => $ver, 'str' => $provstr };
+}
+
 #---HELPER FUNCTION---
 sub _pkgbuild_fields
 {
@@ -159,6 +169,12 @@ sub _pkgbuild_fields
 
         $pbfields{ $depkey }
             = [ map { _depstr_to_hash($_) } @{ $pbfields{ $depkey } } ];
+    }
+
+    # Provides has no comparison operator and may have no version...
+    if ( $pbfields{'provides'} ) {
+        $pbfields{'provides'} =
+            [ map { _provides_to_hash($_) } @{$pbfields{'provides'}} ];
     }
     
     return %pbfields;
