@@ -163,14 +163,20 @@ sub maintainer_name
 # Purpose: Returns an object representing the package maintainer.
 sub maintainer
 {
-    my ($self) = @_;
-
+    my $self  = shift;
     my $mname = $self->maintainer_name();
     return undef unless defined $mname;
 
     # Propogate parameters to our new Maintainer object...
+    Carp::croak 'Only a hash of path parameters are allowed as argument'
+        unless @_ % 2 == 0;
+
     require WWW::AUR::Maintainer;
-    my %params = _path_params( %$self );
+
+    # Propogate parameters to our new Maintainer object...
+    # Path parameters given as arguments override the path params the
+    # package object was given...
+    my %params = ( _path_params( %$self ), _path_params( @_ ) );
     my $mobj   = WWW::AUR::Maintainer->new( $mname, %params );
     return $mobj;
 }
