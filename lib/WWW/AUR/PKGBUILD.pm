@@ -115,8 +115,10 @@ sub _depstr_to_hash
 
     Carp::confess "Failed to parse depend string: $_" unless $pkg;
 
-    $cmp ||= q{>};
-    $ver ||= 0;
+    # If no cmp operator or version are given, return a condition
+    # that will match any version. (>= 0)
+    ( $cmp, $ver ) = ( q{>=}, 0 ) unless $cmp;
+
     return +{ 'pkg' => $pkg, 'cmp' => $cmp,
               'ver' => $ver, 'str' => $depstr };
 }
