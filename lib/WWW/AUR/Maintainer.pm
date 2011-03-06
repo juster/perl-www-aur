@@ -69,7 +69,7 @@ of L</packages> will return an empty list.
 
 The name of the maintainer.
 
-=item C<%PATH_PARAMS> B<(Optional)>
+=item C<%PATH_PARAMS> I<(Optional)>
 
 These are propogated to the L<WWW::AUR::Package> objects created by
 L</packages>. See L<WWW::AUR/PATH PARAMETERS> for more info.

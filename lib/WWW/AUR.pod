@@ -74,11 +74,11 @@ fail if the AUR website is down...
 
 =head1 CONSTRUCTOR
 
-  $OBJ = WWW::AUR->new( %PATH_PARAMS );
+  $OBJ = WWW::AUR->new( %PATH_PARAMS? );
 
 =over 4
 
-=item C<%PATH_PARAMS>
+=item C<%PATH_PARAMS> I<(Optional)>
 
 These parameters are optional. See L</PATH PARAMETERS>.
 

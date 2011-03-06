@@ -78,17 +78,17 @@ for more information.
 
 The name of the AUR package.
 
-=item C<%PATH_PARAMS>
+=item C<%PATH_PARAMS> I<(Optional)>
 
-Optional path parameters. See L<WWW::AUR/PATH PARAMETERS>.
+Path parameters. See L<WWW::AUR/PATH PARAMETERS>.
 
-=item Errors
+=item B<Errors>
 
 =over 4
 
-=item Failed to find package: I<$NAME>
+=item Failed to find package: C<$NAME>
 
-This error is I<croaked> if the package with the given I<$NAME> could
+This error is I<croak>-ed if the package with the given C<$NAME> could
 not be found.
 
 =back
