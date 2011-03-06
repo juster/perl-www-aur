@@ -55,9 +55,9 @@ to read this README file skip to step 4.
 
 #+BEGIN_EXAMPLE
 
-curl -O http://search.cpan.org/CPAN/authors/id/J/JU/JUSTER/WWW-AUR-0.05.tar.gz
-tar xf WWW-AUR-0.05.tar.gz
-cd WWW-AUR-0.05
+curl -O http://search.cpan.org/CPAN/authors/id/J/JU/JUSTER/WWW-AUR-X.XX.tar.gz
+tar xf WWW-AUR-X.XX.tar.gz
+cd WWW-AUR-X.XX
 perl Makefile.PL
 make
 make test
