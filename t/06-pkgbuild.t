@@ -74,8 +74,11 @@ pbtext_ok( $pbtext,
                                'ver' => undef,
                                'str' => 'perl-cpanplus-dist-arch' } ],
              'url'      => 'http://github.com/juster/perl-cpanplus-dist-arch',
-             'md5sums'  => [],
-             'source'   => [] },
+             ( map { ( $_ => [] ) }
+               qw { md5sums sha1sums sha256sums sha384sums sha512sums
+                    noextract source replaces conflicts groups backup
+                    optdepends } ),
+            },
            'perl-cpanplus-dist-arch-git PKGBUILD parses' );
 
 $pbtext = <<'END_PKGBUILD';
