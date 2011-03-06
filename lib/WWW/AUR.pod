@@ -152,9 +152,9 @@ If no matching maintainer was found.
 
 =back
 
-=head2 packages
+=head2 iter
 
-  $ITEROBJ = $OBJ->packages()
+  $ITEROBJ = $OBJ->iter()
 
 =over 4
 

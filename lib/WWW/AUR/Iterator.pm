@@ -96,8 +96,11 @@ WWW::AUR::Iterator - An iterator for looping through all AUR packages.
 
 =head1 SYNOPSIS
 
-  my $iter = $aurobj->packages;
-  # or my $iter = WWW::AUR::Iterator->new();
+  my $aurobj = WWW:AUR->new();
+  my $iter = $aurobj->iter();
+
+  # or without WWW::AUR:
+  my $iter = WWW::AUR::Iterator->new();
 
   while ( my $pkg = $iter->next ) {
       print $pkg->name, "\n";

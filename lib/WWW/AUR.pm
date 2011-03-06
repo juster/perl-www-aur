@@ -60,7 +60,7 @@ sub _def_wrapper_method
 
 _def_wrapper_method( 'find'       => 'WWW::AUR::Package'    );
 _def_wrapper_method( 'maintainer' => 'WWW::AUR::Maintainer' );
-_def_wrapper_method( 'packages'   => 'WWW::AUR::Iterator'   );
+_def_wrapper_method( 'iter'       => 'WWW::AUR::Iterator'   );
 _def_wrapper_method( 'login'      => 'WWW::AUR::Login'      );
 
 #-----------------------------------------------------------------------------
