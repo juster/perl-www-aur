@@ -52,17 +52,20 @@ WWW::AUR::Package - Query, download, and build AUR packages.
   
   # Get the package owner maintainer object...
   my $maint_obj = $pkg->maintainer();
+  
+  # Or maybe you only want their name... (this is faster)
+  my $maint_name = $pkg->maintainer_name();
 
 =head1 DESCRIPTION
 
-The package class is the most important class for the B<WWW::AUR>
-package. Using a package object, you can lookup any information you
-need for the package as well as download, extract, and build
-the package with the makepkg command.
+The package class is the most important class for the I<WWW-AUR>
+distribution. Using a package object, you can lookup any information
+you need for the package as well as download, extract, and build the
+package with the makepkg command.
 
 =head1 CONSTRUCTOR
 
-  $OBJ = WWW::AUR::Package->new( $NAME, %PATH_PARAMS );
+  $OBJ = WWW::AUR::Package->new( $NAME, %PATH_PARAMS? );
 
 The constructor takes the package name as its argument. An error will
 be I<croaked> with L<Carp> if the package could not be found on the
@@ -210,6 +213,38 @@ is downloaded. Two parameters are passed to the supplied code reference:
 =item C<$SRCPKGPATH>
 
 The absolute path to the source package file that was downloaded.
+
+=back
+
+=head2 maintainer
+
+  $MAINTAINER_OBJ = $OBJ->maintainer( %PATH_PARAMS? )
+
+=over 4
+
+=item C<$MAINTAINER_OBJ>
+
+The L<WWW::AUR::Maintainer> object representing the maintainer of this
+package.
+
+=item C<%PATH_PARAMS> I<(Optional)>
+
+Optional path parameters to store in the new maintainer object. These
+will get passed to any package object that are initialized by it.
+
+=back
+
+=head2 maintainer_name
+
+  $MAINTAINER_NAME = $OBJ->maintainer_name()
+
+=over 4
+
+=item C<$MAINTAINER_NAME>
+
+The name of the maintainer of this package. This method is alot faster
+than C<maintainer()> because it does not verify anything. This just
+scrapes the package's webpage for the maintainer name.
 
 =back
 
