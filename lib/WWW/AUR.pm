@@ -4,7 +4,8 @@ use warnings 'FATAL' => 'all';
 use strict;
 
 use Exporter;
-use Carp qw();
+use Carp       qw();
+use File::Spec qw();
 
 BEGIN {
     # We must define these as soon as possible. They are used in other
