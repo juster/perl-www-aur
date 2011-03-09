@@ -8,11 +8,11 @@ use File::Path     qw(make_path);
 use File::Spec     qw();
 use Carp           qw();
 
-use WWW::AUR::Package::File;
-use WWW::AUR::UserAgent;
-use WWW::AUR::URI;
-use WWW::AUR::RPC;
-use WWW::AUR qw( _path_params );
+use WWW::AUR::Package::File qw();
+use WWW::AUR::UserAgent     qw();
+use WWW::AUR::URI           qw( pkgbuild_uri pkgfile_uri pkg_uri );
+use WWW::AUR::RPC           qw();
+use WWW::AUR                qw( _path_params );
 
 ##############################################################################
 # CONSTANTS

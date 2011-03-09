@@ -6,10 +6,10 @@ use strict;
 use HTTP::Cookies  qw();
 use Carp           qw();
 
-use WWW::AUR::Maintainer;
-use WWW::AUR::UserAgent;
-use WWW::AUR::URI;
-use WWW::AUR qw( _category_index );
+use WWW::AUR::Maintainer qw();
+use WWW::AUR::UserAgent  qw();
+use WWW::AUR::URI        qw( pkg_uri );
+use WWW::AUR             qw( _category_index );
 
 our @ISA = qw(WWW::AUR::Maintainer);
 

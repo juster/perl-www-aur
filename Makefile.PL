@@ -23,7 +23,7 @@ clean_files 't/tmp';
 
 no_index 'dir' => 'ex';
 
-for ( glob 'WWW::AUR::{RPC,URI,UserAgent}' ) {
+for ( glob 'WWW::AUR::{RPC,UserAgent}' ) {
     no_index 'package' => $_;
 }
 

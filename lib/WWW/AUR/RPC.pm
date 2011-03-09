@@ -6,9 +6,9 @@ use strict;
 use JSON qw();
 use Carp qw();
 
-use WWW::AUR::UserAgent;
-use WWW::AUR::URI;
-use WWW::AUR qw( _category_name );
+use WWW::AUR::UserAgent qw();
+use WWW::AUR::URI       qw( rpc_uri );
+use WWW::AUR            qw( _category_name );
 
 my %_RENAME_FOR = ( 'Description' => 'desc',
                     'NumVotes'    => 'votes',

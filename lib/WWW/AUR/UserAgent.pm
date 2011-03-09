@@ -3,8 +3,8 @@ package WWW::AUR::UserAgent;
 use warnings 'FATAL' => 'all';
 use strict;
 
-use LWP::UserAgent;
-use WWW::AUR;
+use LWP::UserAgent qw();
+use WWW::AUR       qw();
 
 our @ISA = qw(LWP::UserAgent);
 
