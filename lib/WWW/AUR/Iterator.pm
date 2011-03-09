@@ -3,18 +3,16 @@ package WWW::AUR::Iterator;
 use warnings 'FATAL' => 'all';
 use strict;
 
-use WWW::AUR::UserAgent;
-use WWW::AUR::Package;
-use WWW::AUR::URI;
+use WWW::AUR::UserAgent qw();
+use WWW::AUR::Package   qw();
+use WWW::AUR::URI       qw( pkg_uri );
+use WWW::AUR            qw( _category_name );
 
-my $PKGENTRY_MATCH = qr{ <tr> \s*
-                         <td .*? </td> \s*
-                         <td .*? </td> \s*
-                         <td .*? >
-                          <span [ ] class='f4'>
-                           <a [ ] href='packages[.]php[?]ID=\d+'>
-                            <span [ ] class='black'>
-                             ( \S+ ) }xms;
+my $PKGID_MATCH = qr{ <td .*? </td> \s*
+                      <td .*? </td> \s*
+                      <td .*? >
+                      <span [ ] class='f4'>
+                      <a [ ] href='packages[.]php[?]ID=(\d+)'> }xms;
 
 sub new
 {
@@ -27,10 +25,10 @@ sub new
 sub reset
 {
     my ($self) = @_;
-    $self->{curridx}   = 0;
-    $self->{finished}  = 0;
-    $self->{packages}  = [];
-    $self->{useragent} = WWW::AUR::UserAgent->new();
+    $self->{'curridx'}   = 0;
+    $self->{'finished'}  = 0;
+    $self->{'packages'}  = [];
+    $self->{'useragent'} = WWW::AUR::UserAgent->new();
     return;
 }
 
@@ -38,7 +36,8 @@ sub reset
 sub _pkglist_uri
 {
     my ($startidx) = @_;
-    return pkg_uri( SB => q{n}, SO => q{a}, O  => $startidx, PP => 100 );
+    return pkg_uri( q{SB} => q{n}, q{O}  => $startidx, 
+                    q{SO} => q{a}, q{PP} => 100 );
 }
 
 #---PRIVATE METHOD---
@@ -52,38 +51,76 @@ sub _scrape_pkglist
     Carp::croak 'Failed to GET package list webpage: ' . $resp->status_line
         unless $resp->is_success;
 
-    my @packages = $resp->content =~ /$PKGENTRY_MATCH/xmsg;
-    return \@packages;
-}
+    my @pkginfos;
+    my $rows_ref = _split_table_rows( $resp->content );
+    shift @$rows_ref; # remove the header column
 
-sub next_name
-{
-    my ($self) = @_;
+    for my $rowhtml ( @$rows_ref ) {
+        my ($id) = $rowhtml =~ /$PKGID_MATCH/;
+        my $cols_ref = _strip_row_cols( $rowhtml );
 
-    return undef if $self->{finished};
-
-    # Load a new batch of packages if our internal list is empty...
-    if ( @{ $self->{packages} } == 0 ) {
-        my $newpkgs = $self->_scrape_pkglist;
-        $self->{curridx} += 100;
-
-        if ( @$newpkgs == 0 ) {
-            $self->{finished} = 1;
-            return undef;
-        }
-
-        $self->{packages} = $newpkgs;
+        # Package id, name, version, category #, and maintainer name.
+        my ($name, @ver) = split /\s+/, $cols_ref->[1];
+        push @pkginfos, $id, $name, "@ver", @{$cols_ref}[ 2 .. 4 ];
     }
 
-    return shift @{ $self->{packages} };
+    return \@pkginfos;
+}
+
+sub _split_table_rows
+{
+    my ($html) = @_;
+    my @rows = $html =~ m{ <tr> ( .*? ) </tr> }gxs;
+    return \@rows;
+}
+
+sub _strip_row_cols
+{
+    my ($rowhtml) = @_;
+    my @cols = ( map { s/\A\s+//; s/\s+\z//; $_ }
+                 map { s/<[^>]+>//g; $_ }
+                 $rowhtml =~ m{ <td [^>]*> ( .*? ) </td> }gxs );
+    return \@cols;
 }
 
 sub next
 {
     my ($self) = @_;
 
-    my $next = $self->next_name;
-    return ( $next ? WWW::AUR::Package->new( $next, %$self ) : undef );
+    # There are no more packages to iterate over...
+    return undef if $self->{'finished'};
+
+    my @pkginfo = splice @{ $self->{'packages'} }, 0, 6;
+    if ( @pkginfo ) {
+        my $maint = $pkginfo[5];
+        if ( $maint eq 'orphan' ) { undef $maint; }
+        return { 'id'         => $pkginfo[0],
+                 'name'       => $pkginfo[1],
+                 'version'    => $pkginfo[2],
+                 'category'   => _category_name( $pkginfo[3] ),
+                 'desc'       => $pkginfo[4],
+                 'maintainer' => $maint };
+    }
+
+    # Load a new batch of packages if our internal list is empty...
+    my $newpkgs = $self->_scrape_pkglist;
+
+    $self->{'curridx'} += 100;
+    $self->{'packages'} = $newpkgs;
+    $self->{'finished'} = 1 if scalar @$newpkgs == 0;
+
+    # Recurse, just avoids code copy/pasting...
+    return $self->next();
+}
+
+sub next_obj
+{
+    my ($self) = @_;
+
+    my $next = $self->next;
+    return ( $next
+             ? WWW::AUR::Package->new( $next->{'name'}, %$self )
+             : undef );
 }
 
 1;
@@ -102,13 +139,14 @@ WWW::AUR::Iterator - An iterator for looping through all AUR packages.
   # or without WWW::AUR:
   my $iter = WWW::AUR::Iterator->new();
 
-  while ( my $pkg = $iter->next ) {
+  while ( my $pkg = $iter->next_obj ) {
       print $pkg->name, "\n";
   }
 
   $iter->reset;
-  while ( my $pkgname = $iter->next_name ) {
-      print "$pkgname\n";
+  while ( my $p = $iter->next ) {
+      print "$_:$p->{$_}\n" for qw{ id name version category desc maintainer };
+      print "---\n";
   }
 
 =head1 DESCRIPTION
@@ -145,13 +183,29 @@ I<WWW::AUR::Iterator> object.
 
 =head2 next
 
-  $PKGOBJ | undef = $OBJ->next();
+  \%PKGINFO | undef = $OBJ->next();
+
+This package scrapes the L<http://aur.archlinux.org/packages.php>
+webpage as if it kept clicking the Next button and recording each
+package.
 
 =over 4
 
-=item C<$PKGOBJ>
+=item C<\%PKGINFO>
 
-A L<WWW::AUR::Package> object representing the next package in the AUR.
+A hash reference containing all the easily available information about
+that particular package. The follow table lists each key and its
+corresponding value.
+
+  |------------+------------------------------------------------|
+  | NAME       | VALUE                                          |
+  |------------+------------------------------------------------|
+  | id         | The AUR ID number of the package.              |
+  | name       | The name (pkgname) of the package.             |
+  | desc       | The description (pkgdesc) of the package.      |
+  | category   | The AUR category name assigned to the package. |
+  | maintainer | The name of the maintainer of the package.     |
+  |------------+------------------------------------------------|
 
 =item C<undef>
 
@@ -159,17 +213,20 @@ If we have iterated through all packages, then C<undef> is returned.
 
 =back
 
-=head2 next_name
+=head2 next_obj
 
-  $PKGNAME | undef = $OBJ->next_name();
+  $PKGOBJ | undef = $OBJ->next_obj();
+
+This package is like the L</next> method above but creates a new
+object as a convenience. Keep in mind an HTTP request to AUR must be
+made when creating a new WWW::AUR::Package object.  Use the L</next>
+method if you can, it is faster.
 
 =over 4
 
-=item C<$PKGNAME>
+=item C<$PKGOBJ>
 
-The name of the next package in the AUR. This is faster than
-L</next> because L<WWW::AUR::Package> objects do not have to be
-created for every package on the AUR.
+A L<WWW::AUR::Package> object representing the next package in the AUR.
 
 =item C<undef>
 

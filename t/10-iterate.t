@@ -10,8 +10,8 @@ use WWW::AUR::Iterator;
 my $iter = WWW::AUR::Iterator->new;
 
 my ( $i, @found ) = 0;
-while ( $i < 100 && ( my $pkgname = $iter->next_name )) {
-    push @found, $pkgname;
+while ( $i < 100 && ( my $pkg = $iter->next )) {
+    push @found, $pkg->{'name'};
     ++$i;
 }
 
@@ -26,7 +26,7 @@ sub check_pkgobjs
     my $iter = WWW::AUR::Iterator->new;
     while ( @$pkgnames_ref ) {
         my $pkgname = shift @$pkgnames_ref;
-        my $pkg     = $iter->next;
+        my $pkg     = $iter->next_obj;
         return 0 unless $pkg->name eq $pkgname;
     }
     return 1;
