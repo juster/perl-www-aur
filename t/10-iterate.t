@@ -2,7 +2,7 @@
 
 use warnings 'FATAL' => 'all';
 use strict;
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 diag 'Iterating through 100 package names';
 
@@ -33,3 +33,7 @@ sub check_pkgobjs
 }
 
 ok check_pkgobjs( \@found ), 'Package names and package objects match';
+
+my $end = WWW::AUR::Iterator->new;
+$end->{'curridx'} = 100_000;
+ok ! defined $end->next, 'Iterator stops after reaching the end';
