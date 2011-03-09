@@ -72,6 +72,10 @@ be I<croaked> with L<Carp> if the package could not be found on the
 AUR.  Path parameters are optional, see L<WWW::AUR/PATH PARAMETERS>
 for more information.
 
+  NOTE: In order to look up a package by name, this module must query
+        the AUR RPC first. Just keep in mind every WWW::AUR::Package
+        object you creates requires an HTTP request.
+
 =over 4
 
 =item C<$NAME>
