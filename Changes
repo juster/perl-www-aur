@@ -6,6 +6,48 @@ Changes -*- org -*-
  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
                          |___/                   |___/ 
 
+* Release 0.09 [2011-03-09 Wed]
+
+** Default dependency data structure
+
+I corrected the data structure that is created for a dependency which
+does not specify a version and only a package name. Without a version
+specified the dep should be satisfied by any version. The hash ref
+that is created is similiar to this:
+
+: { 'pkg' => q{...}, 'cmp' => q{>=}, 'ver' => 0, 'str' => q{...} }
+
+** Improved PKGBUILD parsing
+
+While I was using this module to iterate over the entire AUR I noticed
+there were many badly written PKGBUILDs that did not parse
+properly. Some bad (and not so bad) habits that are accounted for
+include...
+
+ - Fields which should be arrays but aren't.
+ - Backslashes (\) after every array element.
+ - Commented array elements.
+
+** Expand empty parameters
+
+Because of a mistake of mine empty but defined parameters were not
+expanded to the empty string. Now they are.
+
+** Public WWW::AUR::URI module
+
+I documented the WWW::AUR::URI module and allowed it to be indexed
+by CPAN. This module might be useful for advanced users.
+
+** WWW::AUR::Iterator is more robust
+
+WWW::AUR::Iterator was rewritten to provide more data without creating
+a WWW::AUR::Package object. The Iterator->next() method was changed to
+return a hash ref of all available data that I could scrape. The data
+is scraped from the package list (packages.php) webpage on the AUR.
+
+The old next() method which returns an object was renamed to
+next_obj().
+
 * Release 0.08 [2011-03-06 Sun]
 
 ** Rename packages() method to iter()
