@@ -90,7 +90,7 @@ sub _expand_bash
 
     my $expand_field = sub {
         my $name = shift;
-        return $fields_ref->{ $name } if $fields_ref->{ $name };
+        return $fields_ref->{ $name } if defined $fields_ref->{ $name };
         return qq{\$$name};
         # TODO: error reporting?
     };
