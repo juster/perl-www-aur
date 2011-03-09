@@ -169,10 +169,11 @@ sub _pkgbuild_fields
         # Filter out stupid (un-needed) trailing /'s
         # Try to filter out commented items too (common in source arrays)
         # (These should be done by the parser, eventually)
-        $val_ref    = [ grep { length } map { s/\#.*//; $_ }
-                        grep { $_ ne q{\\} }
-                        map  { s/\A\s+//; s/\s+\z//; $_ } # trim ws
-                        map  { split } @$val_ref ];
+        $val_ref    = [ grep { $_ ne q{\\} } # <-- my nemesis
+                        map  { split }       # some don't know how arrays work
+                        map  { s/\A\s+//; s/\s+\z//; $_ }    # trim ws
+                        grep { length } map { s/\#.*//; $_ } # kill comments
+                        @$val_ref ];
 
         $pbfields{ $arrkey } = $val_ref;
     }
