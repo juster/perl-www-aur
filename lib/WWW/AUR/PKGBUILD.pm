@@ -237,7 +237,7 @@ sub _slurp
 sub read
 {
     my $self = shift;
-    $self->{'text'} = ( ref $_[0] eq 'IO' ? _slurp( shift ) : shift );
+    $self->{'text'} = ( ref $_[0] eq 'GLOB' ? _slurp( shift ) : shift );
 
     my %pbfields = _pkgbuild_fields( $self->{'text'} );
     $self->{'fields'} = \%pbfields;    
