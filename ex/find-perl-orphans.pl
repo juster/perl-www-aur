@@ -3,9 +3,6 @@
 use warnings;
 use strict;
 use WWW::AUR;
-use Text::Wrap;
-
-my $MAXCOLS = 78;
 
 sub print_progress
 {
