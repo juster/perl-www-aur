@@ -34,6 +34,8 @@ t/07-build.t
 t/08-maintainer.t
 t/09-login.t
 t/10-iterate.t
+t/11-parseinwild.t
+t/PKGBUILDs/turbovnc-bin
 xt/manifest.t
 xt/pod.t
 ex/find-perl-orphans.pl
