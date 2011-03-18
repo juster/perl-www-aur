@@ -2,7 +2,7 @@
 
 use warnings 'FATAL' => 'all';
 use strict;
-use Test::More tests => 3;
+use Test::More;
 
 diag 'Iterating through 100 package names';
 
@@ -37,3 +37,12 @@ ok check_pkgobjs( \@found ), 'Package names and package objects match';
 my $end = WWW::AUR::Iterator->new;
 $end->{'curridx'} = 100_000;
 ok ! defined $end->next, 'Iterator stops after reaching the end';
+
+my $indexed = WWW::AUR::Iterator->new;
+$indexed->set_pos( 10_000 );
+my $pkg = $indexed->next;
+
+# More specific test would be nice but I'm not sure what...
+ok( ( lc substr $pkg->{'name'}, 0, 1 ) gt 'a' );
+
+done_testing;

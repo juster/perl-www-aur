@@ -6,20 +6,43 @@ use strict;
 use WWW::AUR::UserAgent qw();
 use WWW::AUR::Package   qw();
 use WWW::AUR::URI       qw( pkg_uri );
-use WWW::AUR            qw( _category_name );
+use WWW::AUR            qw( _path_params _category_name );
 
 my $PKGID_MATCH = qr{ <td .*? </td> \s*
-                      <td .*? </td> \s*
                       <td .*? >
                       <span [ ] class='f4'>
                       <a [ ] href='packages[.]php[?]ID=(\d+)'> }xms;
 
 sub new
 {
-    my $class  = shift;
-    my $self   = bless { @_ }, $class;
+    my $class = shift;
+    my $self  = bless {}, $class;
+    $self->init( @_ );
+}
+
+sub init
+{
+    my $self = shift;
+
+    my $startidx;
+    $startidx = shift if @_ % 2 == 1;
+
+    %$self = ( %$self, _path_params( @_ ));
     $self->reset();
+    $self->set_pos( $startidx ) if $startidx;
+
     return $self;
+}
+
+sub set_pos
+{
+    my ($self, $startidx) = @_;
+    Carp::croak 'Argument to set_pos() must an integer'
+        unless $startidx =~ /\A\d+\z/;
+    
+    $self->{'curridx'}  = $startidx;
+    $self->{'finished'} = 0;
+    $self->{'packages'} = [];
 }
 
 sub reset
@@ -45,8 +68,8 @@ sub _scrape_pkglist
 {
     my ($self) = @_;
 
-    my $uri  = _pkglist_uri( $self->{curridx} );
-    my $resp = $self->{useragent}->get( $uri );
+    my $uri  = _pkglist_uri( $self->{'curridx'} );
+    my $resp = $self->{'useragent'}->get( $uri );
     
     Carp::croak 'Failed to GET package list webpage: ' . $resp->status_line
         unless $resp->is_success;
