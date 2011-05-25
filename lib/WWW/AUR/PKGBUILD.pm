@@ -94,7 +94,7 @@ sub _expand_bash
         return qq{\$$name};
         # TODO: error reporting?
     };
-    
+
     $bashstr =~ s{ \$ ([\w_]+) }
                  { $expand_field->( $1 ) }gex;
 
@@ -114,10 +114,6 @@ sub _depstr_to_hash
                                              (.*) )? \z/xms;
 
     Carp::confess "Failed to parse depend string: $_" unless $pkg;
-
-    # If no cmp operator or version are given, return a condition
-    # that will match any version. (>= 0)
-    ( $cmp, $ver ) = ( q{>=}, 0 ) unless $cmp;
 
     return +{ 'pkg' => $pkg, 'cmp' => $cmp,
               'ver' => $ver, 'str' => $depstr };
@@ -218,7 +214,7 @@ sub _pkgbuild_fields
         $pbfields{'provides'} =
             [ map { _provides_to_hash($_) } @{$pbfields{'provides'}} ];
     }
-    
+
     return %pbfields;
 }
 
