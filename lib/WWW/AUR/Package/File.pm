@@ -134,10 +134,14 @@ sub _builtpkg_path
         chomp ( $arch = `uname -m` );
     }
 
-    my $pkgfile = sprintf '%s-%s-%d-%s.pkg.tar.xz',
+    my $pkgfile = sprintf '%s-%s-%d-%s.pkg.tar',
         $pkgbuild->pkgname, $pkgbuild->pkgver, $pkgbuild->pkgrel, $arch;
 
-    return File::Spec->catfile( $pkgdest, $pkgfile );
+    ($pkgfile) = ( grep { -f $_ }
+                   map { File::Spec->catfile( $pkgdest, $_ ) }
+                   glob( $pkgfile . '{,.xz,.gz}' ));
+
+    return $pkgfile
 }
 
 #---PUBLIC METHOD---
@@ -176,10 +180,8 @@ sub build
 
     chdir $oldcwd;
 
-    my $built_path = $self->_builtpkg_path( $pkgdest );
-
-    die "makepkg succeeded but the package file is missing.\nError"
-        unless -f $built_path;
+    my $built_path = $self->_builtpkg_path( $pkgdest )
+        or die "makepkg succeeded but the package file is missing.\nError";
     return $self->{builtpkg_path} = $built_path;
 }
 

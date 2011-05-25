@@ -1,10 +1,40 @@
 Changes -*- org -*-
-  ____ _                              _                
- / ___| |__   __ _ _ __   __ _  ___  | |    ___   __ _ 
-| |   | '_ \ / _` | '_ \ / _` |/ _ \ | |   / _ \ / _` |
-| |___| | | | (_| | | | | (_| |  __/ | |__| (_) | (_| |
- \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
-                         |___/                   |___/ 
+:   ____ _                              _                
+:  / ___| |__   __ _ _ __   __ _  ___  | |    ___   __ _ 
+: | |   | '_ \ / _` | '_ \ / _` |/ _ \ | |   / _ \ / _` |
+: | |___| | | | (_| | | | | (_| |  __/ | |__| (_) | (_| |
+:  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
+:                          |___/                   |___/ 
+
+* Release 0.10 [2011-05-25 Wed]
+
+** Add set_pos() method to WWW::AUR::Iterator.
+
+This is nice if you want to start iterating where you left off
+last. Keep in mind that the value you give set_pos() is not the ID of
+the package it is simply the offset that is given to the packages.php
+webpage as a query parameter.
+
+** Depend array with extra whitespace now parses                        :FIX:
+
+The only package on the AUR that seems to have this problem is
+turbovnc-bin.  To give you an idea of the problem, the depend string
+looks like this:
+
+: depends=('turbojpegipp >=1.11')
+
+This was throwing an error from inside WWW::AUR::PKGBUILD when attempting
+to parse this.
+
+*** Adds new test to parse example PKGBUILDs from the AUR
+
+I added a new test and a new directory (t/PKGBUILDs) for testing real-
+world examples that I find on the AUR. I have already accomodated for
+some poorly written / difficult to parse PKGBUILDs but I forgot to
+write tests to them. I'll try to add more later.
+
+I wanted to be sure I could parse turbovnc-bin's PKGBUILD after making
+fixes.
 
 * Release 0.09 [2011-03-09 Wed]
 
