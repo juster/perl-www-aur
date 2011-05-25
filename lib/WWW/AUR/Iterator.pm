@@ -39,10 +39,12 @@ sub set_pos
     my ($self, $startidx) = @_;
     Carp::croak 'Argument to set_pos() must an integer'
         unless $startidx =~ /\A\d+\z/;
-    
+
     $self->{'curridx'}  = $startidx;
     $self->{'finished'} = 0;
     $self->{'packages'} = [];
+
+    return;
 }
 
 sub reset
@@ -70,7 +72,7 @@ sub _scrape_pkglist
 
     my $uri  = _pkglist_uri( $self->{'curridx'} );
     my $resp = $self->{'useragent'}->get( $uri );
-    
+
     Carp::croak 'Failed to GET package list webpage: ' . $resp->status_line
         unless $resp->is_success;
 
@@ -158,19 +160,24 @@ WWW::AUR::Iterator - An iterator for looping through all AUR packages.
 
   my $aurobj = WWW:AUR->new();
   my $iter = $aurobj->iter();
-
+  
   # or without WWW::AUR:
   my $iter = WWW::AUR::Iterator->new();
-
+  
   while ( my $pkg = $iter->next_obj ) {
       print $pkg->name, "\n";
   }
-
+  
   $iter->reset;
   while ( my $p = $iter->next ) {
-      print "$_:$p->{$_}\n" for qw{ id name version category desc maintainer };
+      print "$_:$p->{$_}\n"
+          for qw{ id name version category desc maintainer };
       print "---\n";
   }
+  
+  # Retrieve information on the 12,345th package, alphabetically.
+  $iter->set_pos(12_345);
+  my $pkginfo  = $iter->next;
 
 =head1 DESCRIPTION
 
@@ -254,6 +261,21 @@ A L<WWW::AUR::Package> object representing the next package in the AUR.
 =item C<undef>
 
 If we have iterated through all packages, then C<undef> is returned.
+
+=back
+
+=head2 set_pos
+
+  undef = $OBJ->set_pos( $POS );
+
+Set the iterator position to the given index in the entire list of
+packages from packages.php.
+
+=over 4
+
+=item C<$POS>
+
+This is not the package ID but simply the list offset on the package webpage.
 
 =back
 
