@@ -8,8 +8,10 @@ use File::Spec::Functions qw(rel2abs splitpath catdir);
 use WWW::AUR;
 
 my $aur = WWW::AUR->new( basepath => 't/tmp' );
-my $pkg = $aur->find( 'perl-cpanplus-dist-arch' );
-ok $pkg, 'looked up perl-cpanplus-dist-arch package';
+my $pkg = $aur->find( 'perl-www-aur' );
+ok $pkg, 'looked up perl-www-aur package';
+
+exit 1 unless $pkg;
 
 my $download_size = $pkg->download_size();
 ok $download_size > 0, 'web download size';
