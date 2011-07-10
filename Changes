@@ -6,6 +6,13 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.11 [2011-07-10 Sun]
+
+** Fix tests, perl-cpanplus-dist-arch has moved to community.
+
+We can no longer look up the perl-cpanplus-dist-arch package on the
+AUR since it is not there anymore.
+
 * Release 0.10 [2011-05-25 Wed]
 
 ** Add set_pos() method to WWW::AUR::Iterator.
