@@ -24,4 +24,11 @@ is rpc_uri('search', 'foo'), "$rpc?type=search&arg=foo";
 is rpc_uri('search', 'foo'), "$rpc?type=search&arg=foo";
 is rpc_uri('msearch', 'juster'), "$rpc?type=msearch&arg=juster";
 
+$WWW::AUR::URI::Scheme = 'https';
+s/^http/https/ for $rpc, $pkgs;
+
+is rpc_uri('search', 'foo'), "$rpc?type=search&arg=foo";
+is pkgfile_uri('foo'), "$pkgs/fo/foo/foo.tar.gz";
+is pkgbuild_uri('bar'), "$pkgs/ba/bar/PKGBUILD";
+
 done_testing;
