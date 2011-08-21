@@ -92,7 +92,7 @@ sub search
     if ( $regexp ) {
         $results = [ grep { $_->{name} =~ /$regexp/ } @$results ];
     }
-    
+
     return $results;
 }
 

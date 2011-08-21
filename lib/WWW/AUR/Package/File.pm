@@ -110,7 +110,7 @@ sub src_dir_path
 sub make_src_path
 {
     my ($self, $relpath) = @_;
-    
+
     Carp::croak 'You must call extract() before make_src_path()'
         unless $self->src_dir_path;
 
