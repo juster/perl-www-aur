@@ -21,7 +21,6 @@ BEGIN {
                         _category_name _category_index);
 }
 
-use WWW::AUR::URI;
 use WWW::AUR::RPC;
 
 #---CONSTRUCTOR---
