@@ -6,6 +6,23 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.12 [2011-08-21 Sun]
+
+** Update PKGBUILD and package file URLs to match AUR changes.
+
+AUR package URLs are now stored under a new directory component.
+The new url component consists of the first two characters in the
+name of the package.
+
+The old URLs still work but I thought it wise to upgrade. Also
+adds a new 12-url.t test for simple URL tests.
+
+** Adds the multiinfo method to the WWW::AUR::RPC module.
+
+Yeah, the WWW::AUR::RPC module is undocumented and only used
+internally... but what the heck! I don't seem to have a use
+for it yet but maybe one day.
+
 * Release 0.11 [2011-07-10 Sun]
 
 ** Fix tests, perl-cpanplus-dist-arch has moved to community.
