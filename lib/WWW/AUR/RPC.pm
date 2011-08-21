@@ -57,6 +57,28 @@ sub info
     return %{ _rpc_pretty_pkginfo( $data->{results} ) };
 }
 
+sub minfo
+{
+    my (@names) = @_;
+
+    my $uri     = rpc_uri( "minfo", @names );
+    my $ua      = WWW::AUR::UserAgent->new;
+    my $resp    = $ua->get( $uri );
+
+    Carp::croak 'Failed to call minfo AUR RPC: ' . $resp->status_line
+        unless $resp->is_success;
+
+    my $json = JSON->new;
+    my $data = $json->decode( $resp->content );
+
+    if ( $data->{type} eq "error" ) {
+        return () if $data->{results} eq 'No results found';
+        Carp::croak "Remote error: $data->{results}";
+    }
+
+    return map { _rpc_pretty_pkginfo($_) } @{$data->{results}};
+}
+
 sub search
 {
     my ($query) = @_;
