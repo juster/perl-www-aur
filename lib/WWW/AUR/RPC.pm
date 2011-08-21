@@ -19,7 +19,7 @@ my %_RENAME_FOR = ( 'Description' => 'desc',
 
 #---HELPER FUNCTION---
 # Purpose: Map JSON package info keys to their new names...
-sub _rpc_pretty_pkginfo
+sub _munge_result
 {
     my ($info_ref) = @_;
 
@@ -54,7 +54,7 @@ sub info
         Carp::croak "Remote error: $data->{results}";
     }
 
-    return %{ _rpc_pretty_pkginfo( $data->{results} ) };
+    return %{ _munge_result( $data->{results} ) };
 }
 
 sub minfo
@@ -76,7 +76,7 @@ sub minfo
         Carp::croak "Remote error: $data->{results}";
     }
 
-    return map { _rpc_pretty_pkginfo($_) } @{$data->{results}};
+    return map { _munge_result($_) } @{$data->{results}};
 }
 
 sub search
@@ -109,7 +109,7 @@ sub search
         Carp::croak "Remote error: $data->{results}";
     }
 
-    my $results = [ map { _rpc_pretty_pkginfo( $_ ) } @{ $data->{results} } ];
+    my $results = [ map { _munge_result( $_ ) } @{ $data->{results} } ];
 
     if ( $regexp ) {
         $results = [ grep { $_->{name} =~ /$regexp/ } @$results ];
@@ -133,10 +133,10 @@ sub msearch
 
     if ( $json_ref->{type} eq 'error' ) {
         return [] if $json_ref->{results} eq 'No results found';
-        Carp::croak "Remote error: $json_ref->{results}";        
+        Carp::croak "Remote error: $json_ref->{results}";
     }
 
-    return [ map { _rpc_pretty_pkginfo( $_ ) } @{ $json_ref->{results} } ];
+    return [ map { _munge_result( $_ ) } @{ $json_ref->{results} } ];
 }
 
 1;
