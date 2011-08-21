@@ -81,7 +81,7 @@ I<< <LWP error> >>.
 
 =head1 METHODS
 
-=head2 adopt disown [un]vote [un]notify [un]flag
+=head2 adopt disown [un]vote [un]notify [un]flag delete
 
   $MSG = $OBJ->adopt( $PKGID | $PKGNAME | $PKGOBJ );
   $MSG = $OBJ->disown( $PKGID | $PKGNAME | $PKGOBJ );
