@@ -17,7 +17,7 @@ sub _pkgdir
 {
     my ($pkgname) = @_;
     my $pre = substr $pkgname, 0, 2;
-    return "packages/$pre/$pkgname"
+    return "packages/$pre/$pkgname";
 }
 
 sub pkgfile_uri
