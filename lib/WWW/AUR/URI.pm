@@ -13,16 +13,25 @@ our @ISA         = qw(Exporter);
 our @EXPORT_OK   = qw(pkgfile_uri pkgbuild_uri pkg_uri rpc_uri);
 our %EXPORT_TAGS = ( 'all' => [ @EXPORT_OK ] );
 
+sub _pkgdir
+{
+    my ($pkgname) = @_;
+    my $pre = substr $pkgname, 0, 2;
+    return "packages/$pre/$pkgname"
+}
+
 sub pkgfile_uri
 {
     my ($pkgname) = @_;
-    return "http://$WWW::AUR::HOST/packages/$pkgname/$pkgname.tar.gz";
+    my $dir = _pkgdir($pkgname);
+    return "http://$WWW::AUR::HOST/$dir/$pkgname.tar.gz";
 }
 
 sub pkgbuild_uri
 {
     my ($pkgname) = @_;
-    return "http://$WWW::AUR::HOST/packages/$pkgname/PKGBUILD"
+    my $dir = _pkgdir($pkgname);
+    return "http://$WWW::AUR::HOST/$dir/PKGBUILD"
 }
 
 sub pkg_uri
