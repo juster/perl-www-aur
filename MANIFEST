@@ -14,6 +14,7 @@ lib/WWW/AUR.pm
 lib/WWW/AUR.pod
 lib/WWW/AUR/RPC.pm
 lib/WWW/AUR/URI.pm
+lib/WWW/AUR/URI.pod
 lib/WWW/AUR/UserAgent.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
