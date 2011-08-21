@@ -35,7 +35,8 @@ sub new
     # Load up the info
     my %info;
     if ( ! defined $params{info} ) {
-        %info = eval { WWW::AUR::RPC::info( $name ) }
+        # handle an error or package not begin found
+        eval { %info = WWW::AUR::RPC::info( $name ) }
             or Carp::croak( "Failed to find package: $name" );
     }
     else { %info = %{ $params{info} }; }
