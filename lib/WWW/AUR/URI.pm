@@ -43,17 +43,26 @@ sub pkg_uri
     return $uri->as_string;
 }
 
-my @_RPC_METHODS = qw/ search info msearch /;
+my @_RPC_METHODS = qw/ search info minfo msearch /;
 
 sub rpc_uri
 {
-    my ($method, $arg) = @_;
+    my $method = shift;
 
     Carp::croak( "$method is not a valid AUR RPC method" )
         unless grep { $_ eq $method } @_RPC_METHODS;
 
     my $uri = URI->new( "http://$WWW::AUR::HOST/rpc.php" );
-    $uri->query_form( 'type' => $method, 'arg' => $arg );
+
+    my @qparms = ( 'type' => $method );
+    if ($method eq 'minfo') {
+        push @qparms, map { ( 'arg[]' => $_ ) } @_;
+    }
+    else {
+        push @qparms, ( 'arg' => shift );
+    }
+
+    $uri->query_form( \@qparms );
     return $uri->as_string;
 }
 
