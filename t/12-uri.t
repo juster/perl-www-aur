@@ -16,7 +16,7 @@ is pkgbuild_uri('b'), "$pkgs/b/b/PKGBUILD";
 
 my $rpc = "http://aur.archlinux.org/rpc.php";
 my $arg = "arg%5B%5D";
-is rpc_uri('minfo', qw/foo bar/), "$rpc?type=minfo&$arg=foo&$arg=bar";
+is rpc_uri('multiinfo', qw/foo bar/), "$rpc?type=multiinfo&$arg=foo&$arg=bar";
 is rpc_uri('info', qw/foo bar/),  "$rpc?type=info&arg=foo";
 is rpc_uri('info', 'foo'), rpc_uri('info', qw/foo bar/);
 

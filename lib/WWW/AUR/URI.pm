@@ -45,7 +45,7 @@ sub pkg_uri
     return $uri->as_string;
 }
 
-my @_RPC_METHODS = qw/ search info minfo msearch /;
+my @_RPC_METHODS = qw/ search info multiinfo msearch /;
 
 sub rpc_uri
 {
@@ -57,7 +57,7 @@ sub rpc_uri
     my $uri = URI->new( "$Scheme://$WWW::AUR::HOST/rpc.php" );
 
     my @qparms = ( 'type' => $method );
-    if ($method eq 'minfo') {
+    if ($method eq 'multiinfo') {
         push @qparms, map { ( 'arg[]' => $_ ) } @_;
     }
     else {

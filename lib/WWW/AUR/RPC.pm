@@ -57,15 +57,15 @@ sub info
     return %{ _munge_result( $data->{results} ) };
 }
 
-sub minfo
+sub multiinfo
 {
     my (@names) = @_;
 
-    my $uri     = rpc_uri( "minfo", @names );
+    my $uri     = rpc_uri( "multiinfo", @names );
     my $ua      = WWW::AUR::UserAgent->new;
     my $resp    = $ua->get( $uri );
 
-    Carp::croak 'Failed to call minfo AUR RPC: ' . $resp->status_line
+    Carp::croak 'Failed to call multiinfo AUR RPC: ' . $resp->status_line
         unless $resp->is_success;
 
     my $json = JSON->new;
