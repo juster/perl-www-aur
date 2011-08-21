@@ -5,6 +5,7 @@ README
 META.yml
 lib/WWW/AUR/Iterator.pm
 lib/WWW/AUR/Login.pm
+lib/WWW/AUR/Login.pod
 lib/WWW/AUR/Maintainer.pm
 lib/WWW/AUR/Package/File.pm
 lib/WWW/AUR/Package.pm
