@@ -35,6 +35,8 @@ t/08-maintainer.t
 t/09-login.t
 t/10-iterate.t
 t/11-parseinwild.t
+t/12-uri.t
+t/13-rpc.t
 t/PKGBUILDs/turbovnc-bin
 xt/manifest.t
 xt/pod.t
