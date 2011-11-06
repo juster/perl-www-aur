@@ -28,6 +28,12 @@ to me and is more succinct.
 - URI
 - JSON
 
+Logins to the AUR connect using the https port and are encrypted
+to protect your password and session cookie. In order to use
+WWW::AUR::Login you will also need the LWP-Protocol-https
+distribution installed. This brings in its own set of requirements
+for using SSL connections.
+
 ** Core Modules
 
 These distributions are included with perl (as of version 5.10) so
