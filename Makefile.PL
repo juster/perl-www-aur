@@ -24,6 +24,6 @@ test_requires 'Test::More' => '0.87_01';
 clean_files 't/tmp';
 
 no_index 'dir' => 'ex';
-no_index 'package' => $_ for glob 'WWW::AUR::{RPC,UserAgent}';
+no_index 'package' => 'WWW::AUR::RPC';
 
 WriteAll;
