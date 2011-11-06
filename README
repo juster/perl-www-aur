@@ -85,7 +85,7 @@ WWW::AUR has two basic purposes:
 ** Web Page
 
 This module provides an interface for the straight-forward AUR user as
-well as for AUR author, aka package maintainers. The goal is to be able
+well as for package author and trusted user. The (unmet) goal is to be able
 to do anything with this module that you could with a web browser.
 
 ** Package Building
