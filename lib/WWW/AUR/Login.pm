@@ -7,9 +7,8 @@ use HTTP::Cookies  qw();
 use Carp           qw();
 
 use WWW::AUR::Maintainer qw();
-use WWW::AUR::UserAgent  qw();
 use WWW::AUR::URI        qw( pkg_uri );
-use WWW::AUR             qw( _category_index );
+use WWW::AUR             qw( _category_index _useragent );
 
 our @ISA = qw(WWW::AUR::Maintainer);
 
@@ -47,8 +46,7 @@ sub new
         unless @_ >= 2;
     my ($name, $password) = @_;
 
-    my $ua   = WWW::AUR::UserAgent->new( agent      => $WWW::AUR::USERAGENT,
-                                         cookie_jar => _new_cookie_jar());
+    my $ua   = _useragent( 'cookie_jar' => _new_cookie_jar());
     my $resp = $ua->post( "https://$WWW::AUR::HOST/index.php",
                           [ user => $name, passwd => $password ] );
 
@@ -191,7 +189,7 @@ sub upload
         unless -f $pkgfile_path;
 
     my $catidx = _category_index( $catname );
-    my $ua     = $self->{useragent};
+    my $ua     = $self->{'useragent'};
     my $resp   = $ua->post( $UPLOADURI,
                             'Content-Type' => 'form-data',
                             'Content'      =>

@@ -9,10 +9,9 @@ use File::Spec     qw();
 use Carp           qw();
 
 use WWW::AUR::Package::File qw();
-use WWW::AUR::UserAgent     qw();
 use WWW::AUR::URI           qw( pkgbuild_uri pkgfile_uri pkg_uri );
 use WWW::AUR::RPC           qw();
-use WWW::AUR                qw( _path_params );
+use WWW::AUR                qw( _path_params _useragent );
 
 ##############################################################################
 # CONSTANTS
@@ -84,7 +83,7 @@ sub download_size
 {
     my ($self) = @_;
 
-    my $ua   = WWW::AUR::UserAgent->new();
+    my $ua   = _useragent();
     my $resp = $ua->head( $self->_download_url() );
     
     return undef unless $resp->is_success;
@@ -123,7 +122,7 @@ sub download
         };
     }
 
-    my $ua   = WWW::AUR::UserAgent->new();
+    my $ua   = _useragent();
     my $resp = $ua->get( $self->_download_url(),
                          ':content_cb' => $store_chunk );
     close $pkgfile or die "close: $!";
@@ -144,7 +143,7 @@ sub maintainer_name
     my ($self) = @_;
 
     my $uri  = pkg_uri( ID => $self->id );
-    my $ua   = WWW::AUR::UserAgent->new();
+    my $ua   = _useragent();
     my $resp = $ua->get( $uri );
 
     Carp::croak sprintf q{Failed to load webpage for the }
@@ -229,9 +228,9 @@ sub _download_pkgbuild
     my $name         = $self->name;
     my $pkgbuild_uri = pkgbuild_uri( $name );
 
-    my $ua   = WWW::AUR::UserAgent->new();
+    my $ua   = _useragent();
     my $resp = $ua->get( $pkgbuild_uri );
-    
+
     Carp::croak "Failed to download ${name}'s PKGBUILD: "
         . $resp->status_line() unless $resp->is_success();
 

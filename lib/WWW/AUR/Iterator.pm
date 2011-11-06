@@ -3,10 +3,9 @@ package WWW::AUR::Iterator;
 use warnings 'FATAL' => 'all';
 use strict;
 
-use WWW::AUR::UserAgent qw();
 use WWW::AUR::Package   qw();
 use WWW::AUR::URI       qw( pkg_uri );
-use WWW::AUR            qw( _path_params _category_name );
+use WWW::AUR            qw( _path_params _category_name _useragent );
 
 my $PKGID_MATCH = qr{ <td .*? </td> \s*
                       <td .*? >
@@ -53,7 +52,7 @@ sub reset
     $self->{'curridx'}   = 0;
     $self->{'finished'}  = 0;
     $self->{'packages'}  = [];
-    $self->{'useragent'} = WWW::AUR::UserAgent->new();
+    $self->{'useragent'} = _useragent();
     return;
 }
 
