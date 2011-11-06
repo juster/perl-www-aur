@@ -13,19 +13,17 @@ requires 'Fcntl'          => 0;
 requires 'HTTP::Cookies'  => 0;
 requires 'JSON'           => 0;
 requires 'LWP::UserAgent' => '6';
-requires 'LWP::Protocol::https' => '6';
 requires 'File::Path'     => '2.06';
 requires 'File::Spec'     => 0;
 requires 'URI'            => 0;
+
+recommends 'LWP::Protocol::https' => '6';
 
 test_requires 'Test::More' => '0.87_01';
 
 clean_files 't/tmp';
 
 no_index 'dir' => 'ex';
-
-for ( glob 'WWW::AUR::{RPC,UserAgent}' ) {
-    no_index 'package' => $_;
-}
+no_index 'package' => $_ for glob 'WWW::AUR::{RPC,UserAgent}';
 
 WriteAll;
