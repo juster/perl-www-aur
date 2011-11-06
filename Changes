@@ -6,6 +6,15 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.13 [2011-11-06 Sun]
+
+** WWW::AUR::Iterator yields proper vote count and category.            :FIX:
+
+Previously, the vote count was mistaken for the category id. Neato!
+The hash key names that WWW::AUR::Iterator::next() returns are also
+changed slightly. 'maintainer' is shortened to 'maint' and 'category'
+is shortened to 'cat'.
+
 * Release 0.12 [2011-08-21 Sun]
 
 ** Update PKGBUILD and package file URLs to match AUR changes.
