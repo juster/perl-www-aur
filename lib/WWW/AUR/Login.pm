@@ -18,6 +18,7 @@ my $BAD_LOGIN_MSG  = 'Bad username or password.';
 my $PKG_EXISTS_MSG = ( 'You are not allowed to overwrite the '
                        . '<b>.*?</b> package.' );
 my $PKG_EXISTS_ERR = 'You tried to submit a package you do not own';
+my $COMMADD_MSG    = quotemeta '<b>Comment has been added.</b>';
 
 my $PKGOUTPUT_MATCH = qr{ <p [ ] class="pkgoutput"> ( [^<]+ ) </p> }xms;
 
@@ -153,7 +154,7 @@ my %_ACTIONS = ( 'adopt'    => 'The selected packages have been adopted.',
                  'notify'   => ( 'You have been added to the comment '
                                  . 'notification list for' ),
                  'unnotify' => ( 'You have been removed from the comment '
-                                 . 'notification ist for' ),
+                                 . 'notification list for' ),
 
                  'flag'     => ( 'The selected packages have been flagged '
                                  . 'out-of-date.' ),
@@ -200,6 +201,25 @@ sub upload
                              ] );
 
     Carp::croak $PKG_EXISTS_ERR if $resp->content =~ /$PKG_EXISTS_MSG/;
+
+    return;
+}
+
+sub comment
+{
+    my ($self, $pkg, $com) = @_;
+
+    Carp::croak 'comment text cannot be empty' unless
+        ( defined $com && length $com );
+
+    my $id = _pkgid($pkg);
+    my $ua = $self->{'useragent'};
+    my $uri = pkg_uri('https' => 1, 'ID' => $id); # GET & POST params... meh
+    my $prms = [ 'ID' => $id, 'comment' => $com, 'submit' => 'Submit' ];
+    my $resp = $ua->post($uri, $prms);
+
+    Carp::croak "failed to post comment to package #$id"
+        unless $resp->is_success && $resp->content =~ /$COMMADD_MSG/;
 
     return;
 }
