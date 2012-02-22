@@ -6,6 +6,14 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.14 [2012-02-22 Wed]
+
+** Message checking for unnotify action response had a typo.            :FIX:
+
+If you used the unnotify method of a Login object, the code that checks
+the response from the website had a missing character in it. So unnotify
+would always appear to fail.
+
 * Release 0.13 [2011-11-06 Sun]
 
 ** WWW::AUR::Iterator yields proper vote count and category.            :FIX:
