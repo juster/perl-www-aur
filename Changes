@@ -6,6 +6,14 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.15 [2012-06-26 Tue]                                         :FIX:
+
+** Update WWW::AUR::Login to use the new security token for actions.
+
+The aur.archlinux.org website was updated to require a new security token
+for package actions. This prevents XSS vulnerabilities. The token is the
+same as the session ID cookie.
+
 * Release 0.14 [2012-02-22 Wed]
 
 ** Message checking for unnotify action response had a typo.            :FIX:
