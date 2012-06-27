@@ -61,7 +61,19 @@ sub new
 
     my $self = $class->SUPER::new( $name );
     $self->{'useragent'} = $ua;
+    $self->{'sid'} = $self->sid()
+        or Carp::croak 'Failed to read session cookie from login';
+
     return $self;
+}
+
+sub sid
+{
+    my ($self) = @_;
+	my $jar = $self->{'useragent'}->cookie_jar;
+    my $sid;
+    $jar->scan(sub { $sid = $_[2] if($_[1] eq 'AURSID') });
+    return $sid;
 }
 
 my %_PKG_ACTIONS = map { ( lc $_ => "do_$_" ) }
@@ -82,6 +94,7 @@ sub _do_pkg_action
     my $uri  = pkg_uri( 'https' => 1, 'ID' => $id );
     my $resp = $ua->post( $uri, [ "IDs[$id]" => 1,
                                   'ID'       => $id,
+                                  'token'    => $self->{'sid'},
                                   $action    => 1,
                                   @params ] );
 
@@ -196,6 +209,7 @@ sub upload
                             'Content'      =>
                             [ category  => $catidx,
                               submit    => 'Upload',
+                              token     => $self->{'sid'},
                               pkgsubmit => 1,
                               pfile     => [ $pkgfile_path ],
                              ] );
@@ -215,7 +229,8 @@ sub comment
     my $id = _pkgid($pkg);
     my $ua = $self->{'useragent'};
     my $uri = pkg_uri('https' => 1, 'ID' => $id); # GET & POST params... meh
-    my $prms = [ 'ID' => $id, 'comment' => $com, 'submit' => 'Submit' ];
+    my $prms = [ 'ID' => $id, 'comment' => $com, 'submit' => 'Submit',
+                 'token' => $self->{'sid'}, ];
     my $resp = $ua->post($uri, $prms);
 
     Carp::croak "failed to post comment to package #$id"
