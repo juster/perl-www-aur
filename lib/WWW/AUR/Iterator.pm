@@ -7,11 +7,6 @@ use WWW::AUR::Package   qw();
 use WWW::AUR::URI       qw( pkg_uri );
 use WWW::AUR            qw( _path_params _category_name _useragent );
 
-my $PKGID_MATCH = qr{ <td .*? </td> \s*
-                      <td .*? >
-                      <span [ ] class='f4'>
-                      <a [ ] href='packages[.]php[?]ID=(\d+)'> }xms;
-
 sub new
 {
     my $class = shift;
@@ -76,16 +71,14 @@ sub _scrape_pkglist
         unless $resp->is_success;
 
     my @pkginfos;
-    my $rows_ref = _splitrows( $resp->content );
-    shift @$rows_ref; # remove the header column
+    my @rows = _splitrows( $resp->content );
+    shift @rows; # remove the header column
 
-    for my $rowhtml ( @$rows_ref ) {
-        my ($id) = $rowhtml =~ /$PKGID_MATCH/;
-        my $cols_ref = _splitcols( $rowhtml );
+    for my $rowhtml ( @rows ) {
+        my @cols = _splitcols( $rowhtml );
 
-        # Store id, name, version, category, votes, desc, and maintainer.
-        my ($name, $ver) = split /\s+/, $cols_ref->[1], 2;
-        push @pkginfos, $id, $name, $ver, @{$cols_ref}[ 0, 2 .. 4 ];
+        # cat, name, version, votes, desc, maintainer
+        push @pkginfos, @cols;
     }
 
     return \@pkginfos;
@@ -94,8 +87,8 @@ sub _scrape_pkglist
 sub _splitrows
 {
     my ($html) = @_;
-    my @rows = $html =~ m{ <tr> ( .*? ) </tr> }gxs;
-    return \@rows;
+    my @rows = $html =~ m{ <tr[^>]*> ( .*? ) </tr> }gxs;
+    return @rows;
 }
 
 sub _splitcols
@@ -106,8 +99,7 @@ sub _splitcols
         s/<[^>]+>//g; # delete tags
         s/\A\s+//; s/\s+\z//; # trim whitespace
     }
-
-    return \@cols;
+    return @cols;
 }
 
 sub next
@@ -117,15 +109,15 @@ sub next
     # There are no more packages to iterate over...
     return undef if $self->{'finished'};
 
-    my @pkginfo = splice @{ $self->{'packages'} }, 0, 7;
+    my @pkginfo = splice @{ $self->{'packages'} }, 0, 6;
     if ( @pkginfo ) {
         my $pkg;
-        my @k = qw/id name version cat votes desc/;
+        my @k = qw/cat name version votes desc/;
         for my $i (0 .. $#k) {
             $pkg->{$k[$i]} = $pkginfo[$i];
         }
 
-        my $maint = $pkginfo[6];
+        my $maint = $pkginfo[5];
         $pkg->{'maint'} = ($maint eq 'orphan' ? undef : $maint);
         return $pkg;
     }
@@ -233,7 +225,6 @@ corresponding value.
   |------------+------------------------------------------------|
   | NAME       | VALUE                                          |
   |------------+------------------------------------------------|
-  | id         | The AUR ID number of the package.              |
   | name       | The name (pkgname) of the package.             |
   | votes      | The number of votes for the package.           |
   | desc       | The description (pkgdesc) of the package.      |

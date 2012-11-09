@@ -40,7 +40,7 @@ sub pkg_uri
     my %params = @_;
     my $scheme = delete $params{'https'} ? 'https' : 'http';
     $scheme  ||= $Scheme;
-    my $uri    = URI->new( "$scheme://$WWW::AUR::HOST/packages.php" );
+    my $uri    = URI->new( "$scheme://$WWW::AUR::HOST/packages/" );
     $uri->query_form([ %params ]);
     return $uri->as_string;
 }
