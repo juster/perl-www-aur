@@ -17,9 +17,6 @@ use WWW::AUR                qw( _path_params _useragent );
 # CONSTANTS
 #-----------------------------------------------------------------------------
 
-my $MAINTAINER_MATCH = qr{ <th> Maintainer: [ ] </th> \s+
-                           <td> ([^<]+) </td> }xms;
-
 #---CONSTRUCTOR---
 sub new
 {
@@ -58,8 +55,16 @@ sub _def_info_accessor
     };
 }
 
-for ( qw{ id name version desc category locationid url urlpath
-          license votes outdated } ) { _def_info_accessor( $_ ); }
+for ( qw{ id name version desc category url urlpath
+          license votes outdated ctime mtime } ) {
+    _def_info_accessor( $_ );
+}
+
+sub maintainer_name
+{
+    my ($self) = @_;
+    return $self->{'info'}{'maintainer'}; # might be undef for orphan
+}
 
 #---PUBLIC METHOD---
 # Returns a copy of the package info as a hash...
@@ -132,30 +137,6 @@ sub download
         ( $pkgpath, _path_params( %$self ));
 
     return $pkgpath;
-}
-
-
-#---PUBLIC METHOD---
-# Purpose: Scrape the package webpage to get the maintainer's name
-sub maintainer_name
-{
-    my ($self) = @_;
-
-    my $uri  = pkg_uri( ID => $self->id );
-    my $ua   = _useragent();
-    my $resp = $ua->get( $uri );
-
-    Carp::croak sprintf q{Failed to load webpage for the }
-        . q{"%s" package:\n%s}, $self->name, $resp->status_line
-        unless $resp->is_success;
-
-    my ($username) = $resp->content() =~ /$MAINTAINER_MATCH/xms;
-    Carp::croak qq{Failed to scrape package webpage for maintainer}
-        unless $username;
-
-    # Orphaned packages don't have a maintainer...
-    return undef if $username eq 'None';
-    return $username;
 }
 
 #---PUBLIC METHOD---

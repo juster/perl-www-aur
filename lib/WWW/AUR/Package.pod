@@ -108,12 +108,13 @@ not be found.
   $VERSION  = $OBJ->version;
   $DESC     = $OBJ->desc;       ("Description")
   $CATEGORY = $OBJ->category;
-  $LOCID    = $OBJ->locationid;
   $URL      = $OBJ->url;
   $URLPATH  = $OBJ->urlpath;
   $LICENSE  = $OBJ->license;
   $VOTES    = $OBJ->votes;      ("NumVotes")
   $OUTDATED = $OBJ->outdated;   ("OutOfDate")
+  $CTIME    = $OBJ->ctime;      ("FirstSubmitted")
+  $MTIME    = $OBJ->mtime;      ("LastModified")
 
 These accessors correlate exactly to the keys returned to by the AUR's
 rpc.php output given. Most of the fields are self explanatory.
@@ -173,6 +174,14 @@ The I<NumVotes> RPC field was renamed to, simply, I<votes>.
 =item C<$OUTDATED>
 
 The I<OutOfDate> RPC field was renamed to I<outdated>.
+
+=item C<$CTIME>
+
+The I<FirstSubmitted> RPC field was renamed to I<ctime>.
+
+=item C<$MTIME>
+
+The I<LastModified> RPC field was renamed to I<mtime>.
 
 =back
 

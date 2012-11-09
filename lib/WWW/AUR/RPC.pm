@@ -12,8 +12,9 @@ use WWW::AUR            qw( _category_name _useragent );
 my %_RENAME_FOR = ( 'Description' => 'desc',
                     'NumVotes'    => 'votes',
                     'CategoryID'  => 'category',
-                    'LocationID'  => 'location',
                     'OutOfDate'   => 'outdated',
+                    'FirstSubmitted' => 'ctime',
+                    'LastModified' => 'mtime',
                    );
 
 #---HELPER FUNCTION---
