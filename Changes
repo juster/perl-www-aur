@@ -6,6 +6,24 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+
+* Release 0.16 [2012-11-09 Fri]  
+
+** Update WWW::AUR::RPC for RPC JSON changes.
+
+The JSON changed in several ways. An error is no longer emitted when
+there are no results. Result counts were added to the results (but not
+used).  Creation time and modification time were added. We can also
+use the maintainer name from the JSON results instead of needing a
+seperate page scrape.
+
+** Fix package list scraping to work for new AUR HTML design.
+
+WWW::AUR::Iterator was broken because the HTML changed. This has been
+updated and the id element of the iterator was removed because that
+information is no longer supplied. The packages.php URL was also changed
+to packages/.
+
 * Release 0.15 [2012-06-26 Tue]                                         :FIX:
 
 ** Update WWW::AUR::Login to use the new security token for actions.
