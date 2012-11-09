@@ -17,9 +17,8 @@ use WWW::AUR                qw( _path_params _useragent );
 # CONSTANTS
 #-----------------------------------------------------------------------------
 
-my $MAINTAINER_MATCH = qr{ <span [ ] class='f3'>
-                           Maintainer: \s+ ( [^<]+ )
-                           </span> }xms;
+my $MAINTAINER_MATCH = qr{ <th> Maintainer: [ ] </th> \s+
+                           <td> ([^<]+) </td> }xms;
 
 #---CONSTRUCTOR---
 sub new
