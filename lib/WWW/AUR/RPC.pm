@@ -71,7 +71,6 @@ sub multiinfo
     my $data = $json->decode( $resp->content );
 
     if ( $data->{type} eq "error" ) {
-        return () if $data->{results} eq 'No results found';
         Carp::croak "Remote error: $data->{results}";
     }
 
@@ -104,7 +103,6 @@ sub search
         or die 'Failed to decode the search AUR json request';
 
     if ( $data->{type} eq 'error' ) {
-        return [] if $data->{results} eq 'No results found';
         Carp::croak "Remote error: $data->{results}";
     }
 
