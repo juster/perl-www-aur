@@ -99,7 +99,7 @@ sub _expand_bash
                  { $expand_field->( $1 ) }gex;
 
     # TODO: check for special expansion modifiers
-    $bashstr =~ s( \$ { ([^}]+) } )
+    $bashstr =~ s( \$ \{ ([^}]+) \} )
                  ( $expand_field->( $1 ) )gex;
 
     return $bashstr;
