@@ -48,7 +48,7 @@ sub new
     my ($name, $password) = @_;
 
     my $ua   = _useragent( 'cookie_jar' => _new_cookie_jar());
-    my $resp = $ua->post( "https://$WWW::AUR::HOST/index.php",
+    my $resp = $ua->post( "https://$WWW::AUR::HOST/login",
                           [ user => $name, passwd => $password ] );
 
     Carp::croak 'Failed to login to AUR: bad username or password'
@@ -61,16 +61,16 @@ sub new
 
     my $self = $class->SUPER::new( $name );
     $self->{'useragent'} = $ua;
-    $self->{'sid'} = $self->sid()
+    $self->{'sid'} = _sidcookie($ua)
         or Carp::croak 'Failed to read session cookie from login';
 
     return $self;
 }
 
-sub sid
+sub _sidcookie
 {
-    my ($self) = @_;
-	my $jar = $self->{'useragent'}->cookie_jar;
+    my ($ua) = @_;
+    my $jar = $ua->cookie_jar;
     my $sid;
     $jar->scan(sub { $sid = $_[2] if($_[1] eq 'AURSID') });
     return $sid;
