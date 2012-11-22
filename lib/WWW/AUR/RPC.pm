@@ -99,8 +99,7 @@ sub search
         unless $resp->is_success;
 
     my $json = JSON->new;
-    my $data = $json->decode( $resp->content )
-        or die 'Failed to decode the search AUR json request';
+    my $data = $json->decode( $resp->content );
 
     if ( $data->{type} eq 'error' ) {
         Carp::croak "Remote error: $data->{results}";
