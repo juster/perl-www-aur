@@ -20,10 +20,11 @@ Right now the methods are the same as LWP::UserAgent.
 =head1 CLASS METHODS
 
 This class also contains the C<InitTLS> class method to load
-the modules required for SSL/TLS https connections. This is only
-used by the WWW::AUR::Login module. C<InitTLS> takes no parameters.
-I find this an improvement compared to having C<LWP::UserAgent>
-raise an error internally.
+the modules required for SSL/TLS https connections. This is
+used by WWW::AUR::Login and WWW::AUR::RPC.
+C<InitTLS> takes no parameters. If TLS cannot be loaded
+(for example, if LWP::Protocol::https fails to load) then an error
+message is croaked.
 
 =head1 SEE ALSO
 

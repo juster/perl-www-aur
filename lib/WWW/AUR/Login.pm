@@ -47,9 +47,10 @@ sub new
         unless @_ >= 2;
     my ($name, $password) = @_;
 
-    my $ua   = _useragent( 'cookie_jar' => _new_cookie_jar());
+    my $ua = _useragent( 'cookie_jar' => _new_cookie_jar());
+    $ua->InitTLS;
     my $resp = $ua->post( "https://$WWW::AUR::HOST/login",
-                          [ user => $name, passwd => $password ] );
+        [ user => $name, passwd => $password ] );
 
     Carp::croak 'Failed to login to AUR: bad username or password'
         if $resp->content =~ /$BAD_LOGIN_MSG/;

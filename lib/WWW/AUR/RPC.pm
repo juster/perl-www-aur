@@ -6,8 +6,8 @@ use strict;
 use JSON qw();
 use Carp qw();
 
-use WWW::AUR::URI       qw( rpc_uri );
-use WWW::AUR            qw( _category_name _useragent );
+use WWW::AUR::URI qw( rpc_uri );
+use WWW::AUR qw( _category_name _useragent );
 
 my %_RENAME_FOR = ( 'Description' => 'desc',
                     'NumVotes'    => 'votes',
@@ -39,9 +39,10 @@ sub info
 {
     my ($name) = @_;
 
-    my $uri     = rpc_uri( "info", $name );
-    my $ua      = _useragent();
-    my $resp    = $ua->get( $uri );
+    my $uri = rpc_uri( "info", $name );
+    my $ua = _useragent();
+	$ua->InitTLS;
+    my $resp = $ua->get( $uri );
 
     Carp::croak 'Failed to call info AUR RPC: ' . $resp->status_line
         unless $resp->is_success;
@@ -60,8 +61,9 @@ sub multiinfo
 {
     my (@names) = @_;
 
-    my $uri  = rpc_uri( "multiinfo", @names );
-    my $ua   = _useragent();
+    my $uri = rpc_uri( "multiinfo", @names );
+    my $ua = _useragent();
+	$ua->InitTLS;
     my $resp = $ua->get( $uri );
 
     Carp::croak 'Failed to call multiinfo AUR RPC: ' . $resp->status_line
@@ -92,8 +94,9 @@ sub search
         $query  =~ s/\$\z//;
     }
 
-    my $uri  = rpc_uri( 'search', $query );
-    my $ua   = _useragent();
+    my $uri = rpc_uri( 'search', $query );
+    my $ua = _useragent();
+ 	$ua->InitTLS;
     my $resp = $ua->get( $uri );
     Carp::croak 'Failed to search AUR using RPC: ' . $resp->status_line
         unless $resp->is_success;
@@ -119,12 +122,13 @@ sub msearch
     my ($name) = @_;
 
     my $aururi = rpc_uri( 'msearch', $name );
-    my $ua     = _useragent();
-    my $resp   = $ua->get( $aururi );
+    my $ua = _useragent();
+	$ua->InitTLS;
+    my $resp = $ua->get( $aururi );
     Carp::croak qq{Failed to lookup maintainer using RPC:\n}
         . $resp->status_code unless $resp->is_success;
 
-    my $json     = JSON->new;
+    my $json = JSON->new;
     my $json_ref = $json->decode( $resp->content );
 
     if ( $json_ref->{type} eq 'error' ) {
