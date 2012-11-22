@@ -128,7 +128,6 @@ sub msearch
     my $json_ref = $json->decode( $resp->content );
 
     if ( $json_ref->{type} eq 'error' ) {
-        return [] if $json_ref->{results} eq 'No results found';
         Carp::croak "Remote error: $json_ref->{results}";
     }
 
