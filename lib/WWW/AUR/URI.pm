@@ -54,7 +54,8 @@ sub rpc_uri
     Carp::croak( "$method is not a valid AUR RPC method" )
         unless grep { $_ eq $method } @_RPC_METHODS;
 
-    my $uri = URI->new( "$Scheme://$WWW::AUR::HOST/rpc.php" );
+    # The RPC only works with https.
+    my $uri = URI->new( "https://$WWW::AUR::HOST/rpc" );
 
     my @qparms = ( 'type' => $method );
     if ($method eq 'multiinfo') {
