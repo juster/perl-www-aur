@@ -126,7 +126,7 @@ sub msearch
 	$ua->InitTLS;
     my $resp = $ua->get( $aururi );
     Carp::croak qq{Failed to lookup maintainer using RPC:\n}
-        . $resp->status_code unless $resp->is_success;
+        . $resp->status_line unless $resp->is_success;
 
     my $json = JSON->new;
     my $json_ref = $json->decode( $resp->content );
