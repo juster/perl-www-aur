@@ -12,7 +12,7 @@ use WWW::AUR qw(); # for global variables
 our @ISA         = qw(Exporter);
 our @EXPORT_OK   = qw(pkgfile_uri pkgbuild_uri pkg_uri rpc_uri);
 our %EXPORT_TAGS = ( 'all' => [ @EXPORT_OK ] );
-our $Scheme      = 'http';
+our $Scheme      = 'https';
 
 sub _pkgdir
 {
@@ -38,9 +38,7 @@ sub pkgbuild_uri
 sub pkg_uri
 {
     my %params = @_;
-    my $scheme = delete $params{'https'} ? 'https' : 'http';
-    $scheme  ||= $Scheme;
-    my $uri    = URI->new( "$scheme://$WWW::AUR::HOST/packages/" );
+    my $uri    = URI->new( "$Scheme://$WWW::AUR::HOST/packages/" );
     $uri->query_form([ %params ]);
     return $uri->as_string;
 }
@@ -55,7 +53,7 @@ sub rpc_uri
         unless grep { $_ eq $method } @_RPC_METHODS;
 
     # The RPC only works with https.
-    my $uri = URI->new( "https://$WWW::AUR::HOST/rpc" );
+    my $uri = URI->new( "$Scheme://$WWW::AUR::HOST/rpc" );
 
     my @qparms = ( 'type' => $method );
     if ($method eq 'multiinfo') {

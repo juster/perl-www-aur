@@ -10,10 +10,10 @@ WWW::AUR::URI - Generate dynamic URIs for accessing the AUR
   $uri = pkgbuild_uri('perl-www-aur');
   $uri = pkg_uri('SB' => 'n', 'O' => 1234, 'https' => 'YUP');
   
-  # Override Scheme to use https or something...
-  local $WWW::AUR::URI::Scheme = 'https';
+  # Override Scheme to use http...
+  local $WWW::AUR::URI::Scheme = 'http';
   my $httpsuri = pkgfile_uri('perl-www-aur');
-  print $httpsuri # "https://aur.archlinux.org/..."
+  print $httpsuri # "http://aur.archlinux.org/..."
 
 =head1 DESCRIPTION
 
@@ -66,7 +66,7 @@ The standard URI to the conveniently extracted PKGBUILD file.
 
   $URI = pkg_uri( %QUERY_PARAMS )
 
-This generates a URI for the L<http://aur.archlinux.org/packages.php>
+This generates a URI for the L<https://aur.archlinux.org/packages.php>
 webpage. The one that shows package information and comments, etc.
 
 =over 4
@@ -75,14 +75,6 @@ webpage. The one that shows package information and comments, etc.
 
 You can supply whatever query parameters that you want. You might want
 to look at the AUR's HTML source to learn how they work.
-
-One special parameter that acts differently is the C<'https'>
-parameter. If this key exists and its value is a truthy value, then
-the URI is given as an I<https> link and not an I<http> link.  The
-C<'https'> parameter is also not passed in as a query parameter.
-
-If the C<'https'> parameter is not given, then the value of the
-L</Scheme> global package variable is used instead.
 
 =item C<$URI>
 
@@ -120,15 +112,14 @@ The URI to the rpc.php page with query parameters in place.
 =head2 Scheme
 
 This scalar contains the URI scheme to be inserted into all generated
-URIs. I suppose the only real use for this is if you want to only
-generate "https" URIs. The default value is "http".
+URIs. The default value is "https".
 
 =over 4
 
 =item B<Example>
 
-  # This prints a URI starting with https://
-  local $WWW::AUR::URI::Scheme = 'https';
+  # This prints a URI starting with http://
+  local $WWW::AUR::URI::Scheme = 'http';
   print pkgbuild_uri('perl-www-aur'), "\n";
 
 =back
