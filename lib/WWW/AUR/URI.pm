@@ -10,7 +10,7 @@ use Exporter qw();
 use WWW::AUR qw(); # for global variables
 
 our @ISA         = qw(Exporter);
-our @EXPORT_OK   = qw(pkgfile_uri pkgbuild_uri pkg_uri rpc_uri);
+our @EXPORT_OK   = qw(pkgfile_uri pkgbuild_uri pkgsubmit_uri pkg_uri rpc_uri);
 our %EXPORT_TAGS = ( 'all' => [ @EXPORT_OK ] );
 our $Scheme      = 'https';
 
@@ -33,6 +33,11 @@ sub pkgbuild_uri
     my ($pkgname) = @_;
     my $dir = _pkgdir($pkgname);
     return "$Scheme://$WWW::AUR::HOST/$dir/PKGBUILD"
+}
+
+sub pkgsubmit_uri
+{
+	return "$Scheme://$WWW::AUR::HOST/submit/";
 }
 
 sub pkg_uri

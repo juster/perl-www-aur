@@ -7,12 +7,11 @@ use HTTP::Cookies  qw();
 use Carp           qw();
 
 use WWW::AUR::Maintainer qw();
-use WWW::AUR::URI        qw( pkg_uri );
+use WWW::AUR::URI        qw( pkg_uri pkgsubmit_uri );
 use WWW::AUR             qw( _category_index _useragent );
 
 our @ISA = qw(WWW::AUR::Maintainer);
 
-my $UPLOADURI      = "https://$WWW::AUR::HOST/pkgsubmit.php";
 my $COOKIE_NAME    = 'AURSID';
 my $BAD_LOGIN_MSG  = 'Bad username or password.';
 my $PKG_EXISTS_MSG = ( 'You are not allowed to overwrite the '
@@ -205,7 +204,7 @@ sub upload
 
     my $catidx = _category_index( $catname );
     my $ua     = $self->{'useragent'};
-    my $resp   = $ua->post( $UPLOADURI,
+    my $resp   = $ua->post( pkgsubmit_uri(),
                             'Content-Type' => 'form-data',
                             'Content'      =>
                             [ category  => $catidx,
