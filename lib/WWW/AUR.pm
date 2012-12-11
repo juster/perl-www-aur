@@ -11,7 +11,7 @@ BEGIN {
     # We must define these as soon as possible. They are used in other
     # WWW::AUR modules. Like the ones we use after this block...
 
-    our $VERSION   = '0.16';
+    our $VERSION   = '0.17';
     our $BASEPATH  = '/tmp/WWW-AUR';
     our $HOST      = 'aur.archlinux.org';
     our $UA        = 'WWW::AUR::UserAgent';

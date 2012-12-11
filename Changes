@@ -6,6 +6,33 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.17 [2012-12-11 Mon]
+
+** Fix WWW::AUR::Login to use the new login and submit URLs.
+
+The old AUR allowed logins from any webpage. The new AUR only allows
+logins from the /login/ page. Package submition now takes place at
+the /submit/ URL.
+
+** Fix compilation error for perl 5.17.
+
+Perl version 5.17 does not like unescaped open curly brackets in
+regexps. CPAN testers kept sending me fail reports.
+
+** More JSON RPC updates.
+
+I missed some obsolete code.
+
+** Switch the default url scheme to https.
+
+Because JSON now only works with https we require the https support.
+Almost everything requires JSON so we might as well use https for
+everything else, too.
+
+** Fix a typo in WWW::AUR::RPC.
+
+msearch had a call to status_code instead of status_line for an
+HTTP::Response object.
 
 * Release 0.16 [2012-11-09 Fri]  
 
@@ -23,6 +50,12 @@ WWW::AUR::Iterator was broken because the HTML changed. This has been
 updated and the id element of the iterator was removed because that
 information is no longer supplied. The packages.php URL was also changed
 to packages/.
+
+** Fix missed updates for RPC changes.
+
+Remove more error checking when no results are found, which no longer applies.
+The WWW::AUR::URI::rpc_uri sub always uses https no matter which scheme is
+specified by $WWW::AUR::Scheme.
 
 * Release 0.15 [2012-06-26 Tue]                                         :FIX:
 
