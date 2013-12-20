@@ -90,9 +90,13 @@ The URI to I<packages/> with query parameters appended.
 This usually returns L<https://aur.archlinux.org/submit/> but can be changed
 with C<$WWW::AUR::HOST> and C<$WWW::AUR::URI::Scheme>.
 
+=over 4
+
 =item C<$URI>
 
 The URI used for submitting packages.
+
+=back
 
 =head2 rpc_uri
 
