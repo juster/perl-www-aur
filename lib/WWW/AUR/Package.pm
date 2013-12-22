@@ -36,7 +36,7 @@ sub new
 
     my $self = bless { _path_params( @_ ),
                        pkgfile     => "$name.src.tar.gz",
-                       info        => \%info,
+                       info        => $info,
                       }, $class;
 
     return $self;
