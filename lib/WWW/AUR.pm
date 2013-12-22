@@ -108,9 +108,13 @@ my @_CATEGORIES = qw{ daemons devel editors emulators games gnome
 #---INTERNAL FUNCTION---
 sub _category_name
 {
-    my ($idx) = @_;
-    return 'undefined' unless $idx > 0 && $idx <= scalar @_CATEGORIES;
-    return $_CATEGORIES[ $idx - 2 ];
+    my ($i) = @_;
+    $i -= 2;
+    if ( $i >= 0 && $i <= $#_CATEGORIES ) {
+        return $_CATEGORIES[$i];
+    } else {
+        return 'undefined';
+    }
 }
 
 #---INTERNAL FUNCTION---
