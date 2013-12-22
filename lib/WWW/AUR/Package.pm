@@ -31,7 +31,8 @@ sub new
         $info = $params{info};
     } else { 
         # this might croak on error
-        $info = WWW::AUR::RPC::info( $name );
+        $info = eval { WWW::AUR::RPC::info( $name ) };
+        Carp::croak( "Failed to find package: $name" ) unless ( $info );
     }
 
     my $self = bless { _path_params( @_ ),
