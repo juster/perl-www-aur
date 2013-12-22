@@ -52,9 +52,11 @@ sub info
 
     if ( $data->{type} eq "error" ) {
         Carp::croak "Remote error: $data->{results}";
+    } elsif ( $data->{resultcount} == 0 ) {
+        return undef;
+    } else {
+        return _munge_result( $data->{results} );
     }
-
-    return %{ _munge_result( $data->{results} ) };
 }
 
 sub multiinfo

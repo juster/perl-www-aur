@@ -21,20 +21,18 @@ use WWW::AUR                qw( _path_params _useragent );
 sub new
 {
     my $class = shift;
-
     Carp::croak( "You must at least supply a name as argument" ) if @_ == 0;
 
     my $name   = shift;
     my %params = @_;
 
-    # Load up the info
-    my %info;
-    if ( ! defined $params{info} ) {
-        # handle an error or package not begin found
-        eval { %info = WWW::AUR::RPC::info( $name ) }
-            or Carp::croak( "Failed to find package: $name" );
+    my $info;
+    if ( $params{info} ) {
+        $info = $params{info};
+    } else { 
+        # this might croak on error
+        $info = WWW::AUR::RPC::info( $name );
     }
-    else { %info = %{ $params{info} }; }
 
     my $self = bless { _path_params( @_ ),
                        pkgfile     => "$name.src.tar.gz",
