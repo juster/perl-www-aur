@@ -197,25 +197,29 @@ sub delete
 
 sub upload
 {
-    my ($self, $pkgfile_path, $catname) = @_;
-
-    Carp::croak "Given file path ($pkgfile_path) does not exist"
-        unless -f $pkgfile_path;
+    my ($self, $path, $catname) = @_;
+    unless ( -f $path ) {
+        Carp::croak "Given file path ($path) does not exist";
+    }
 
     my $catidx = _category_index( $catname );
-    my $ua     = $self->{'useragent'};
-    my $resp   = $ua->post( pkgsubmit_uri(),
-                            'Content-Type' => 'form-data',
-                            'Content'      =>
-                            [ category  => $catidx,
-                              submit    => 'Upload',
-                              token     => $self->{'sid'},
-                              pkgsubmit => 1,
-                              pfile     => [ $pkgfile_path ],
-                             ] );
+    my $form = [
+        'category' => $catidx,
+        'submit' => 'Upload',
+        'token' => $self->{'sid'},
+        'pkgsubmit' => 1,
+
+        # The AUR does not use the provided filename or mimetype.
+        # Specify dummy values to prevent LWP from detecting them.
+        'pfile' => [ $path, 'ignored-filename', 'ignored-mimetype' ],
+    ];
+    my $resp = $self->{'useragent'}->post(
+        pkgsubmit_uri(),
+        'Content-Type' => 'form-data',
+        'Content' => $form 
+    );
 
     Carp::croak $PKG_EXISTS_ERR if $resp->content =~ /$PKG_EXISTS_MSG/;
-
     return;
 }
 
@@ -243,3 +247,4 @@ sub comment
 *my_packages = \&WWW::AUR::Maintainer::packages;
 
 1;
+
