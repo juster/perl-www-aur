@@ -60,18 +60,6 @@ The L<WWW::AUR::Package> module also allows the module user to
 download and build source packages using I<makepkg>. Installation is
 left up to the module user and is not implemented in this module.
 
-=begin readme
-
-=head1 TESTS WARNING
-
-The automated testing (by using 'make test') can only succeed if there
-is an internet connection available. I suppose the tests would also
-fail if the AUR website is down...
-
-=end readme
-
-=for readme stop
-
 =head1 CONSTRUCTOR
 
   $OBJ = WWW::AUR->new( %PATH_PARAMS? );
@@ -239,8 +227,6 @@ are built from the source package files by using C<makepkg>.
 Defaults to C<$basepath/cache>.
 
 =back
-
-=for readme continue
 
 =head1 SEE ALSO
 
