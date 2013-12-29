@@ -5,39 +5,16 @@ use POSIX;
 use warnings;
 use strict;
 
+# Prints a brief usage message and exits.
 sub usage
 {
     print STDERR "usage: aurup.pl [[category] [file] ...]\n";
     exit 2;
 }
 
-sub parsecreds
-{
-    my($path) = @_;
-    open my $f, '<', $path or die "open: $!";
-    my($user, $pass);
-    if(!defined ($user = <$f>)){
-        die "empty username\n";
-    }
-    if(!defined ($pass = <$f>)){
-        die "empty password\n";
-    }
-    chomp $user;
-    chomp $pass;
-    close $f;
-    return ($user, $pass);
-}
-
-sub writecreds
-{
-    my($path, $user, $pass) = @_;
-    print "Storing credentials in $path...\n";
-    umask 077;
-    open my $f, '>', $path or die "open: $!";
-    print $f $user, "\n", $pass, "\n";
-    close $f or die "close: $!";
-}
-
+# Attempts to login with the provided user and password.
+# Returns undef if provided user/pass are wrong.
+# Exits the program for any other error.
 sub newlogin
 {
     my($user, $pass) = @_;
@@ -53,6 +30,7 @@ sub newlogin
     }
 }
 
+# Prints a message to screen and prompts the user for input from STDIN.
 sub prompt
 {
     my $ln = '';
@@ -64,6 +42,7 @@ sub prompt
     return $ln;
 }
 
+# Turn echo "on" or "off".
 sub echo
 {
     my($state) = @_;
@@ -80,37 +59,23 @@ sub echo
     $t->setattr(0, &POSIX::TCSANOW);
 }
 
+# Login to the AUR. Read a username/password from STDIN and
+# create a WWW::AUR::Login object. Exit the program if we
+# are unable to login.
 sub login
 {
-    my($path) = "$ENV{HOME}/.aurup";
-    if(-f $path){
-        my($user, $pass) = eval { parsecreds($path) };
-        if($@){
-            print STDERR "error: while reading $path: $@";
-        }else{
-            my $L = newlogin($user, $pass);
-	    return $L if($L);
-        }
-    }
-
-    ## If file parsing or login fails above, we trickle down to
-    ## asking the user interactively.
-
     for (1 .. 3) {
         my $user = prompt("Username: ");
         echo('off');
 	my $pass = prompt("Password: ");
         echo('on');
         print "\n";
-
         if(my $L = newlogin($user, $pass)){
-            writecreds($path, $user, $pass);
             return $L;
         }
     }
 
     ## Give up after 3 tries to login.
-
     print "Aborting.\n";
     exit 1;
 }
