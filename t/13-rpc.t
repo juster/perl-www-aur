@@ -19,9 +19,9 @@ sub chkflds
 use_ok 'WWW::AUR::RPC';
 
 
-my %info = WWW::AUR::RPC::info('perl-alpm');
-is $info{'name'}, 'perl-alpm';
-chkflds(\%info);
+my $info = WWW::AUR::RPC::info('perl-alpm');
+is $info->{'name'}, 'perl-alpm';
+chkflds($info);
 
 my @found = WWW::AUR::RPC::search('perl-');
 ok scalar @found > 0;

@@ -16,6 +16,13 @@ sorted but it turns out some are out of order.
 
 Patch submitted by Dylon Edwards. Thanks!
 
+** Internal WWW::AUR::RPC::info func changed.
+
+The return type of WWW::AUR::RPC::info change from a hash (list)
+to a hashref. An empty result was being returned as an empty
+hash where instead I thought an undef reference would be more
+fitting.
+
 * Release 0.17 [2012-12-11 Mon]
 
 ** Fix WWW::AUR::Login to use the new login and submit URLs.
