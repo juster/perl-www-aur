@@ -6,6 +6,16 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.18 [2013-12-29 Sun]
+
+** Fix incorrect categories used by WWW::AUR::Login::upload()
+
+When submitting a source package file to the AUR, categories are
+submitted as an ordinal. All this time I thought they were all
+sorted but it turns out some are out of order.
+
+Patch submitted by Dylon Edwards. Thanks!
+
 * Release 0.17 [2012-12-11 Mon]
 
 ** Fix WWW::AUR::Login to use the new login and submit URLs.
