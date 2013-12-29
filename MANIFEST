@@ -44,3 +44,4 @@ t/PKGBUILDs/turbovnc-bin
 xt/manifest.t
 xt/pod.t
 ex/find-perl-orphans.pl
+ex/aurup.pl
