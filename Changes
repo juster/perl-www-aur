@@ -6,6 +6,14 @@ Changes -*- org -*-
 :  \____|_| |_|\__,_|_| |_|\__, |\___| |_____\___/ \__, |
 :                          |___/                   |___/ 
 
+* Release 0.19 [2014-01-04 Sun]
+
+Fixes the 01-info.t test. The ``clyde-git'' package was removed
+from the AUR. The test looked up clyde-git in order to make
+sure the AUR::RPC::Info::info sub worked properly. Now we look
+up the ``yaourt'' package because it is the most popular
+package on the AUR.
+
 * Release 0.18 [2013-12-29 Sun]
 
 ** Fix incorrect categories used by WWW::AUR::Login::upload()
