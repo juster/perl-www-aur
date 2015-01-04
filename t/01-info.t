@@ -6,8 +6,9 @@ use Test::More;
 
 use_ok 'WWW::AUR::RPC';
 
-ok my $info = WWW::AUR::RPC::info( 'clyde-git' );
-is $info->{ name }, 'clyde-git';
+my $name = 'yaourt';
+ok my $info = WWW::AUR::RPC::info( $name );
+is $info->{ name }, $name;
 
 my @VALID_FIELDS = qw{ id name version category desc url urlpath
                        license votes outdated };
@@ -19,3 +20,4 @@ for my $field ( @VALID_FIELDS ) {
 is $info->{category}, 'system', 'category was converted to its name';
 
 done_testing();
+
