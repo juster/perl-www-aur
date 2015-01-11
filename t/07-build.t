@@ -14,11 +14,13 @@ BEGIN {
     use_ok 'WWW::AUR::Package';
 }
 
-my $pkgname = 'perl-archlinux-term';
-
+# Recursive check building ourself from the AUR. Crazy? Maybe.
+my $pkgname = 'perl-www-aur';
 my $pkg = WWW::AUR::Package->new( $pkgname, 'basepath' => 't/tmp' );
 diag "Test building $pkgname";
-my $builtpath = $pkg->build( 'quiet' => 1 );
+
+# Avoid our tests because we are already doing them.
+my $builtpath = $pkg->build( 'args' => '--nocheck' );
 ok $builtpath;
 is $builtpath, $pkg->bin_pkg_path;
 
