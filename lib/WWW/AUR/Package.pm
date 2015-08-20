@@ -13,6 +13,7 @@ use WWW::AUR::URI           qw( pkgbuild_uri pkgfile_uri pkg_uri );
 use WWW::AUR::RPC           qw();
 use WWW::AUR                qw( _path_params _useragent );
 
+        use Data::Dumper;
 ##############################################################################
 # CONSTANTS
 #-----------------------------------------------------------------------------
@@ -34,12 +35,15 @@ sub new
         $info = eval { WWW::AUR::RPC::info( $name ) };
         Carp::croak( "Failed to find package: $name" ) unless ( $info );
     }
+    $info->{git_clone_ro} = sprintf('https://%s/%s.git', $WWW::AUR::HOST, $name);
+    $info->{git_clone_rw} = sprintf('ssh+git://aur@%s/%s.git', $WWW::AUR::HOST, $name);
 
     my $self = bless { _path_params( @_ ),
                        pkgfile     => "$name.src.tar.gz",
                        info        => $info,
                       }, $class;
 
+        print Dumper($self);
     return $self;
 }
 
@@ -99,6 +103,8 @@ sub download
     my ($self, $usercb) = @_;
 
     my $pkgurl  = $self->_download_url();
+    use Data::Dumper;
+    print Dumper($pkgurl);
     my $pkgpath = File::Spec->catfile( $self->{dlpath},
                                        $self->{pkgfile} );
 

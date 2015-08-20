@@ -25,6 +25,7 @@ sub pkgfile_uri
 {
     my ($pkgname) = @_;
     my $dir = _pkgdir($pkgname);
+    #TODO: https://aur.archlinux.org/cgit/aur.git/snapshot/perl-www-aur.tar.gz
     return "$Scheme://$WWW::AUR::HOST/$dir/$pkgname.tar.gz";
 }
 
