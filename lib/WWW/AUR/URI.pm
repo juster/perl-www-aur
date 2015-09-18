@@ -25,7 +25,7 @@ sub pkgfile_uri
 {
     my ($pkgname) = @_;
     my $dir = _pkgdir($pkgname);
-    return "$Scheme://$WWW::AUR::HOST/$dir/$pkgname.tar.gz";
+    return "$Scheme://$WWW::AUR::HOST/cgit/aur.git/snapshot/$pkgname.tar.gz";
 }
 
 sub pkgbuild_uri
