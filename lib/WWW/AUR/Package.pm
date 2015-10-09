@@ -34,6 +34,8 @@ sub new
         $info = eval { WWW::AUR::RPC::info( $name ) };
         Carp::croak( "Failed to find package: $name" ) unless ( $info );
     }
+    $info->{git_clone_ro} = sprintf('https://%s/%s.git', $WWW::AUR::HOST, $name);
+    $info->{git_clone_rw} = sprintf('ssh+git://aur@%s/%s.git', $WWW::AUR::HOST, $name);
 
     my $self = bless { _path_params( @_ ),
                        pkgfile     => "$name.src.tar.gz",
